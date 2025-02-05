@@ -1,0 +1,212 @@
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">Dịch thuật từ Google Sheet</h1>
+                    
+                    <% if (error) { %>
+                        <div class="alert alert-danger" role="alert"><%= error %></div>
+                    <% } %>
+                    <% if (success) { %>
+                        <div class="alert alert-success" role="alert"><%= success %></div>
+                    <% } %>
+
+                    <form id="sheetTranslateForm" class="needs-validation" novalidate>
+                        <!-- Project Name -->
+                        <div class="mb-4">
+                            <label for="projectName" class="form-label">Tên dự án</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="projectName" 
+                                   name="projectName"
+                                   placeholder="VD: Dịch tài liệu kỹ thuật tháng 3/2024"
+                                   required>
+                            <div class="form-text">
+                                Đặt tên dự án để dễ dàng quản lý và theo dõi tiến độ
+                            </div>
+                        </div>
+
+                        <!-- Google Sheet URL -->
+                        <div class="mb-4">
+                            <label for="sheetUrl" class="form-label">URL Google Sheet</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="sheetUrl" 
+                                   name="sheetUrl" 
+                                   required
+                                   placeholder="https://docs.google.com/spreadsheets/d/...">
+                            <div class="accordion mt-2">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#urlGuideContent">
+                                            <i class="bi bi-info-circle me-2"></i> Hướng dẫn chia sẻ quyền
+                                        </button>
+                                    </h2>
+                                    <div id="urlGuideContent" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <p class="mb-2">Để dịch được Google Sheet, bạn cần:</p>
+                                            <ol class="small mb-2">
+                                                <li class="mb-2">
+                                                    <strong>Chia sẻ quyền chỉnh sửa</strong> cho email:
+                                                    <div class="d-flex align-items-center mt-1 bg-light p-2 rounded">
+                                                        <code class="me-2">anh.leviet@vti.com.vn</code>
+                                                        <button class="btn btn-sm btn-outline-primary" 
+                                                                onclick="copyEmail()"
+                                                                title="Copy email">
+                                                            <i class="bi bi-clipboard"></i>
+                                                        </button>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <strong>Các bước chia sẻ:</strong>
+                                                    <ul class="mt-1">
+                                                        <li>Mở Google Sheet của bạn</li>
+                                                        <li>Click nút "Share" góc trên bên phải</li>
+                                                        <li>Nhập email trên vào ô "Add people"</li>
+                                                        <li>Chọn quyền "Editor" (Chỉnh sửa)</li>
+                                                        <li>Click "Send"</li>
+                                                    </ul>
+                                                </li>
+                                            </ol>
+                                            <div class="alert alert-warning py-2 small">
+                                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                                Nếu không chia sẻ quyền chỉnh sửa, hệ thống sẽ không thể cập nhật bản dịch vào sheet của bạn
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sheet Name -->
+                        <div class="mb-4">
+                            <label for="sheetName" class="form-label">Tên Sheet</label>
+                            <select class="form-select" id="sheetName" name="sheetName" required disabled>
+                                <option value="" selected disabled>Nhập URL Google Sheet trước</option>
+                            </select>
+                        </div>
+
+                        <!-- Sheet Range -->
+                        <div class="mb-4">
+                            <label for="sheetRange" class="form-label">Vùng dữ liệu (Tùy chọn)</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="sheetRange" 
+                                   name="sheetRange"
+                                   placeholder="Ví dụ: C23:D34, C:D, 44:46">
+                            <div class="accordion mt-2">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#rangeGuideContent">
+                                            <i class="bi bi-info-circle me-2"></i> Hướng dẫn chọn vùng dữ liệu
+                                        </button>
+                                    </h2>
+                                    <div id="rangeGuideContent" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <p class="mb-2">Có 3 cách chọn vùng dữ liệu:</p>
+                                            <ul class="list-unstyled small">
+                                                <li>
+                                                    <i class="bi bi-1-circle-fill text-primary me-2"></i>
+                                                    <strong>Vùng cụ thể:</strong> Ví dụ "C23:D34" - dịch từ ô C23 đến D34
+                                                </li>
+                                                <li>
+                                                    <i class="bi bi-2-circle-fill text-primary me-2"></i>
+                                                    <strong>Theo cột:</strong> Ví dụ "C:D" - dịch toàn bộ cột C và D
+                                                </li>
+                                                <li>
+                                                    <i class="bi bi-3-circle-fill text-primary me-2"></i>
+                                                    <strong>Theo dòng:</strong> Ví dụ "44:46" - dịch từ dòng 44 đến 46 (tất cả các cột)
+                                                </li>
+                                            </ul>
+                                            <div class="alert alert-info mt-2 mb-0 py-2 small">
+                                                <i class="bi bi-info-circle-fill me-2"></i>
+                                                <strong>Lưu ý:</strong> Nếu để trống, hệ thống sẽ tự động dịch toàn bộ sheet (tối đa 1000 dòng)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Target Language -->
+                        <div class="mb-4">
+                            <label for="targetLang" class="form-label">Ngôn ngữ đích</label>
+                            <select class="form-select" id="targetLang" name="targetLang" required>
+                                <option value="" selected disabled>Chọn ngôn ngữ...</option>
+                                <option value="en">Tiếng Anh</option>
+                                <option value="ja">Tiếng Nhật</option>
+                                <option value="ko">Tiếng Hàn</option>
+                                <option value="zh">Tiếng Trung</option>
+                            </select>
+                        </div>
+
+                        <!-- Domain -->
+                        <div class="mb-4">
+                            <label for="domain" class="form-label">Lĩnh vực</label>
+                            <select class="form-select" id="domain" name="domain" required>
+                                <option value="" selected disabled>Chọn lĩnh vực...</option>
+                                <option value="technical">Kỹ thuật</option>
+                                <option value="general">Chung</option>
+                                <option value="medical">Y tế</option>
+                                <option value="legal">Pháp lý</option>
+                                <option value="business">Kinh doanh</option>
+                            </select>
+                        </div>
+
+                        <!-- AI Model Selection -->
+                        <div class="alert alert-info mb-4">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-robot me-2"></i>
+                                <div>
+                                    <strong>Model:</strong> GPT-4 Mini
+                                    <div class="small text-muted mt-1">
+                                        <div>Input: $0.01/1K tokens</div>
+                                        <div>Output: $0.03/1K tokens</div>
+                                        <div class="mt-1">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Model tối ưu cho dịch thuật, cân bằng giữa chất lượng và chi phí
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg position-relative">
+                                <span class="spinner-border spinner-border-sm d-none me-2"></span>
+                                <span class="button-text">Bắt đầu dịch</span>
+                                <div class="progress position-absolute bottom-0 start-0 w-100 rounded-bottom" style="height: 4px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Progress Bar -->
+                    <div id="translationProgress" class="mt-4 d-none">
+                        <h5>Tiến trình dịch: <span id="progressText">0%</span></h5>
+                        <div class="progress mb-2">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 role="progressbar" 
+                                 style="width: 0%" 
+                                 aria-valuenow="0" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="text-muted small" id="progressDetail">
+                                Đang chuẩn bị...
+                            </div>
+                            <div class="text-end small" id="costEstimate"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/translate.js"></script> 

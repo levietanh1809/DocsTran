@@ -1,0 +1,64 @@
+<div class="container py-5">
+    <h1 class="mb-4">Lịch sử dịch thuật</h1>
+
+    <% if (error) { %>
+        <div class="alert alert-danger" role="alert">
+            <%= error %>
+        </div>
+    <% } %>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Thời gian</th>
+                    <th>Tài liệu</th>
+                    <th>Ngôn ngữ đích</th>
+                    <th>Lĩnh vực</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (translations && translations.length > 0) { %>
+                    <% translations.forEach(function(translation) { %>
+                        <tr>
+                            <td>
+                                <% if (translation.createdAt) { %>
+                                    <%= new Date(translation.createdAt).toLocaleString('vi-VN') %>
+                                <% } else { %>
+                                    N/A
+                                <% } %>
+                            </td>
+                            <td>
+                                <% if (translation.docUrl) { %>
+                                    <a href="<%= translation.docUrl %>" target="_blank">Xem tài liệu</a>
+                                <% } else { %>
+                                    N/A
+                                <% } %>
+                            </td>
+                            <td>
+                                <%= translation.targetLang ? translation.targetLang.toUpperCase() : 'N/A' %>
+                            </td>
+                            <td><%= translation.domain || 'N/A' %></td>
+                            <td>
+                                <% if (translation.status === 'pending') { %>
+                                    <span class="badge bg-warning">Đang chờ</span>
+                                <% } else if (translation.status === 'processing') { %>
+                                    <span class="badge bg-info">Đang xử lý</span>
+                                <% } else if (translation.status === 'completed') { %>
+                                    <span class="badge bg-success">Hoàn thành</span>
+                                <% } else { %>
+                                    <span class="badge bg-danger">Lỗi</span>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="5" class="text-center">Chưa có dự án dịch thuật nào</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div> 

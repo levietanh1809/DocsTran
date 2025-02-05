@@ -1,0 +1,268 @@
+:root {
+    --bs-primary: #28a745;
+    --bs-primary-rgb: 40, 167, 69;
+    --bs-primary-hover: #218838;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+.card {
+    transition: transform 0.2s;
+    border-radius: 15px;
+}
+
+.card:hover {
+    border-color: var(--bs-primary);
+    transform: translateY(-5px);
+}
+
+.btn-primary {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--bs-primary-hover);
+    border-color: var(--bs-primary-hover);
+}
+
+footer {
+    margin-top: auto;
+}
+
+.form-control,
+.form-select,
+.input-group-text {
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+}
+
+.input-group .form-control {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+}
+
+.input-group-text {
+    border-end-end-radius: 0;
+    border-start-end-radius: 0;
+    background-color: #f8f9fa;
+}
+
+.alert {
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.alert-dismissible .btn-close {
+    padding: 0.75rem 1rem;
+}
+
+.bi {
+    font-size: 1.2rem;
+}
+
+.btn .spinner-border {
+    margin-right: 0.5rem;
+}
+
+.btn.processing {
+    overflow: hidden;
+}
+
+.btn .progress {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.btn.processing .progress {
+    opacity: 1;
+}
+
+.btn .progress-bar {
+    transition: width 0.3s ease;
+}
+
+.navbar-dark {
+    background-color: var(--bs-primary) !important;
+}
+
+.progress-bar {
+    background-color: var(--bs-primary);
+}
+
+.nav-link.active {
+    color: var(--bs-primary) !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Alert styles */
+.alert-success {
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+    border-color: var(--bs-primary);
+    color: var(--bs-primary);
+}
+
+/* Badge styles */
+.badge.bg-primary {
+    background-color: var(--bs-primary) !important;
+}
+
+/* Link styles */
+a {
+    color: var(--bs-primary);
+}
+
+a:hover {
+    color: var(--bs-primary-hover);
+}
+
+/* Range input styling */
+.form-text ul li {
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.form-text ul li i {
+    font-size: 0.9rem;
+}
+
+.form-text .alert {
+    border-left: 4px solid var(--bs-info);
+}
+
+#sheetRange::placeholder {
+    color: #adb5bd;
+    font-style: italic;
+}
+
+/* Sheet URL input styling */
+.form-text code {
+    color: var(--bs-primary);
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+}
+
+.form-text ol > li {
+    margin-bottom: 0.75rem;
+}
+
+.form-text ul > li {
+    margin-bottom: 0.25rem;
+}
+
+.form-text .alert-warning {
+    border-left: 4px solid var(--bs-warning);
+}
+
+/* Progress styling */
+.progress {
+    height: 0.5rem;
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+}
+
+.progress-bar {
+    transition: width 0.3s ease;
+    background-color: var(--bs-primary);
+}
+
+.progress-bar.bg-success {
+    transition: background-color 0.3s ease;
+}
+
+#translationProgress {
+    transition: opacity 0.3s ease;
+}
+
+#translationProgress.d-none {
+    opacity: 0;
+}
+
+#progressDetail {
+    color: var(--bs-primary);
+    font-weight: 500;
+}
+
+/* Button progress */
+.btn .progress {
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn .progress-bar {
+    background-color: #fff;
+}
+
+/* Form steps styling */
+.step-badge,
+.step-content,
+#formProgress {
+    display: none !important;
+}
+
+/* Accordion styling */
+.accordion-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.accordion-button:not(.collapsed) {
+    color: var(--bs-primary);
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+}
+
+.accordion-button:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Stats styling */
+#costEstimate {
+    min-width: 280px;
+}
+
+#costEstimate .border-start {
+    border-left-width: 4px !important;
+}
+
+#costEstimate .fw-medium {
+    font-weight: 500;
+}
+
+#costEstimate .bi {
+    font-size: 0.9rem;
+}
+
+#costEstimate .small {
+    font-size: 0.85rem;
+}
+
+/* Progress styling khi hoàn thành */
+#translationProgress.completed {
+    border: 1px solid var(--bs-success);
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: rgba(var(--bs-success-rgb), 0.05);
+}
+
+#translationProgress.completed .progress-bar {
+    background-color: var(--bs-success);
+} 
