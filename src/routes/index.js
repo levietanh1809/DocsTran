@@ -30,12 +30,30 @@ router.post('/api/sheets/list', async (req, res) => {
 });
 
 router.get('/api/translation-progress', (req, res) => {
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
+    res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive'
+    });
 
-    // Store the response object to send updates
-    req.app.locals.progressClient = res;
+    // Gửi event đầu tiên để kiểm tra kết nối
+    res.write(`data: ${JSON.stringify({
+        percent: 0,
+        detail: 'Đang kết nối...'
+    })}\n\n`);
+
+    // Lưu client connection
+    global.progressClient = res;
+
+    // Cleanup khi client disconnect
+    req.on('close', () => {
+        global.progressClient = null;
+    });
+});
+
+// Add health check route
+router.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
 });
 
 module.exports = router; 

@@ -43,27 +43,37 @@ document.getElementById('sheetTranslateForm').addEventListener('submit', async (
         const eventSource = new EventSource('/api/translation-progress');
         
         eventSource.onmessage = (event) => {
-            const progress = JSON.parse(event.data);
-            
-            // Cập nhật cả 2 progress bars
-            [progressBar, mainProgressBar].forEach(bar => {
-                bar.style.width = `${progress.percent}%`;
-                bar.setAttribute('aria-valuenow', progress.percent);
-            });
-
-            // Cập nhật text hiển thị
-            btnText.textContent = `Đang xử lý (${progress.percent}%)`;
-            document.getElementById('progressText').textContent = `${progress.percent}%`;
-            progressDetail.textContent = progress.detail || `Đã dịch ${progress.percent}%`;
-
-            // Thêm class khi hoàn thành
-            if (progress.percent === 100) {
-                eventSource.close();
+            try {
+                const progress = JSON.parse(event.data);
+                console.log('Progress update:', progress); // Debug log
+                
+                // Cập nhật cả 2 progress bars
                 [progressBar, mainProgressBar].forEach(bar => {
-                    bar.classList.add('bg-success');
+                    bar.style.width = `${progress.percent}%`;
+                    bar.setAttribute('aria-valuenow', progress.percent);
                 });
-                progressDetail.textContent = 'Hoàn thành dịch thuật!';
+
+                // Cập nhật text hiển thị
+                btnText.textContent = `Đang xử lý (${progress.percent}%)`;
+                document.getElementById('progressText').textContent = `${progress.percent}%`;
+                progressDetail.textContent = progress.detail || `Đã dịch ${progress.percent}%`;
+
+                // Thêm class khi hoàn thành
+                if (progress.percent === 100) {
+                    eventSource.close();
+                    [progressBar, mainProgressBar].forEach(bar => {
+                        bar.classList.add('bg-success');
+                    });
+                    progressDiv.classList.add('completed');
+                }
+            } catch (error) {
+                console.error('Error parsing progress:', error);
             }
+        };
+
+        eventSource.onerror = (error) => {
+            console.error('EventSource error:', error);
+            eventSource.close();
         };
 
         const response = await fetch('/api/translate-sheet', {

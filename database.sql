@@ -1,54 +1,67 @@
--- Tạo database
-CREATE DATABASE TranslateApp;
+-- Thêm vào đầu file
+IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'TranslateApp')
+BEGIN
+    CREATE DATABASE TranslateApp;
+END
 GO
 
 USE TranslateApp;
 GO
 
--- Tạo bảng Projects (Dự án dịch thuật)
-CREATE TABLE Projects (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    Name NVARCHAR(200) NOT NULL,
-    Description NVARCHAR(500),
-    CreatedAt DATETIME DEFAULT GETDATE(),
-    UpdatedAt DATETIME DEFAULT GETDATE()
-);
+-- Tạo bảng Projects nếu chưa tồn tại
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Projects]') AND type in (N'U'))
+BEGIN
+    CREATE TABLE Projects (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        Name NVARCHAR(200) NOT NULL,
+        Description NVARCHAR(500),
+        CreatedAt DATETIME DEFAULT GETDATE(),
+        UpdatedAt DATETIME DEFAULT GETDATE()
+    );
+    PRINT 'Created table Projects';
+END
 GO
 
--- Tạo bảng TranslationSources (Nguồn dịch: Google Doc hoặc Google Sheet)
-CREATE TABLE TranslationSources (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    ProjectId INT,
-    Type VARCHAR(20) NOT NULL, -- 'google_doc' hoặc 'google_sheet'
-    SourceUrl NVARCHAR(500) NOT NULL, -- URL của Google Doc hoặc Google Sheet
-    SheetRange NVARCHAR(50), -- Chỉ dùng cho Google Sheet (ví dụ: Sheet1!A1:B10)
-    CreatedAt DATETIME DEFAULT GETDATE(),
-    UpdatedAt DATETIME DEFAULT GETDATE(),
-    CONSTRAINT FK_TranslationSources_Projects FOREIGN KEY (ProjectId) REFERENCES Projects(Id),
-    CONSTRAINT CHK_SourceType CHECK (Type IN ('google_doc', 'google_sheet'))
-);
+-- Tạo bảng TranslationSources
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[TranslationSources]') AND type in (N'U'))
+BEGIN
+    CREATE TABLE TranslationSources (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        ProjectId INT,
+        Type VARCHAR(20) NOT NULL,
+        SourceUrl NVARCHAR(500) NOT NULL,
+        SheetRange NVARCHAR(50),
+        CreatedAt DATETIME DEFAULT GETDATE(),
+        UpdatedAt DATETIME DEFAULT GETDATE(),
+        CONSTRAINT FK_TranslationSources_Projects FOREIGN KEY (ProjectId) REFERENCES Projects(Id),
+        CONSTRAINT CHK_SourceType CHECK (Type IN ('google_doc', 'google_sheet'))
+    );
+END
 GO
 
--- Tạo bảng Translations (Các bản dịch)
-CREATE TABLE Translations (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    SourceId INT NOT NULL,
-    SourceText NVARCHAR(MAX) NOT NULL,
-    TranslatedText NVARCHAR(MAX),
-    SourceLang VARCHAR(10) NOT NULL DEFAULT 'vi',
-    TargetLang VARCHAR(10) NOT NULL,
-    Domain VARCHAR(50) NOT NULL DEFAULT 'general',
-    Status VARCHAR(20) DEFAULT 'pending',
-    ErrorMessage NVARCHAR(MAX),
-    TranslatedAt DATETIME,
-    CreatedAt DATETIME DEFAULT GETDATE(),
-    UpdatedAt DATETIME DEFAULT GETDATE(),
-    CONSTRAINT FK_Translations_Sources FOREIGN KEY (SourceId) REFERENCES TranslationSources(Id),
-    CONSTRAINT CHK_SourceLang CHECK (SourceLang IN ('en', 'vi', 'ja', 'ko', 'zh')),
-    CONSTRAINT CHK_TargetLang CHECK (TargetLang IN ('en', 'vi', 'ja', 'ko', 'zh')),
-    CONSTRAINT CHK_Domain CHECK (Domain IN ('general', 'technical', 'medical', 'legal', 'business')),
-    CONSTRAINT CHK_Status CHECK (Status IN ('pending', 'processing', 'completed', 'failed'))
-);
+-- Tạo bảng Translations
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Translations]') AND type in (N'U'))
+BEGIN
+    CREATE TABLE Translations (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        SourceId INT NOT NULL,
+        SourceText NVARCHAR(MAX) NOT NULL,
+        TranslatedText NVARCHAR(MAX),
+        SourceLang VARCHAR(10) NOT NULL DEFAULT 'vi',
+        TargetLang VARCHAR(10) NOT NULL,
+        Domain VARCHAR(50) NOT NULL DEFAULT 'general',
+        Status VARCHAR(20) DEFAULT 'pending',
+        ErrorMessage NVARCHAR(MAX),
+        TranslatedAt DATETIME,
+        CreatedAt DATETIME DEFAULT GETDATE(),
+        UpdatedAt DATETIME DEFAULT GETDATE(),
+        CONSTRAINT FK_Translations_Sources FOREIGN KEY (SourceId) REFERENCES TranslationSources(Id),
+        CONSTRAINT CHK_SourceLang CHECK (SourceLang IN ('en', 'vi', 'ja', 'ko', 'zh')),
+        CONSTRAINT CHK_TargetLang CHECK (TargetLang IN ('en', 'vi', 'ja', 'ko', 'zh')),
+        CONSTRAINT CHK_Domain CHECK (Domain IN ('general', 'technical', 'medical', 'legal', 'business')),
+        CONSTRAINT CHK_Status CHECK (Status IN ('pending', 'processing', 'completed', 'failed'))
+    );
+END
 GO
 
 -- Tạo bảng TranslationHistory (Lịch sử dịch)

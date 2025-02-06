@@ -14,13 +14,21 @@ const GOOGLE_RATE_LIMIT = 60;    // Số request/phút cho Google Sheets
 // Helper functions
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-// Thêm hàm updateProgress
 function updateProgress(percent, detail) {
+    // Đảm bảo percent là số nguyên từ 0-100
+    percent = Math.min(100, Math.max(0, Math.round(percent)));
+    
     if (global.progressClient) {
-        global.progressClient.write(`data: ${JSON.stringify({
-            percent,
-            detail: detail || `Đã dịch ${percent}%`
-        })}\n\n`);
+        try {
+            global.progressClient.write(`data: ${JSON.stringify({
+                percent,
+                detail: detail || `Đã dịch ${percent}%`
+            })}\n\n`);
+        } catch (error) {
+            console.error('Error sending progress:', error);
+        }
+    } else {
+        console.warn('No progress client connected');
     }
 }
 
@@ -119,6 +127,9 @@ class TranslateController {
 
     async handleSheetTranslation(req, res) {
         try {
+            // Reset progress khi bắt đầu
+            updateProgress(0, 'Đang khởi tạo...');
+            
             console.log('1. Request body:', req.body);
             const { projectName, sheetUrl, sheetName, sheetRange, targetLang, domain, model } = req.body;
 
@@ -281,10 +292,7 @@ class TranslateController {
                 const translationProgress = Math.round((batchIndex + 1) * translationWeight / totalTranslationBatches);
                 updateProgress(translationProgress, `Đang dịch: ${translationProgress}%`);
 
-                // Giảm delay giữa các batch
-                if (batchIndex < batches.length - 1) {
-                    await delay(BATCH_DELAY);
-                }
+                await delay(BATCH_DELAY);
             }
 
             // Cập nhật Google Sheet theo batch
@@ -327,6 +335,8 @@ class TranslateController {
 
         } catch (error) {
             console.error('Translation error:', error);
+            // Gửi thông báo lỗi qua progress
+            updateProgress(0, `Lỗi: ${error.message}`);
             res.status(500).json({
                 success: false,
                 error: error.message

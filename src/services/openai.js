@@ -13,19 +13,13 @@ class OpenAIService {
         this.systemPrompts = {
             technical: `
                 Quy tắc dịch:
-                -Dịch các tài liệu liên quan đến viewpoint test từ tiếng Việt sang tiếng Nhật trong lĩnh vực công nghệ thông tin.
+                -Lĩnh vực công nghệ.
                 -Bảo đảm sự tinh tế, đúng ngữ cảnh và cảm xúc trong bản dịch.
                 -Đọc kỹ ngữ cảnh của toàn câu trước khi dịch, tránh dịch từng từ riêng lẻ.
-                -Các đoạn chứa tin nhắn hoặc câu lệnh SQL giữ nguyên bản tiếng Nhật.
                 Phong cách dịch:
-                -Dịch sử dụng thể Ru trong tiếng Nhật để giữ sự tự nhiên và tính bản địa.
+                -Giữ sự tự nhiên và tính bản địa.
                 Cập nhật nội dung quan trọng:
                 -Không tự động làm nổi bật hoặc bôi đậm nội dung trong bản dịch.
-                -Kiểm tra định dạng URL chính xác, đặc biệt là các tham số động như trang và số lượng bản ghi.
-                Nguyên tắc xử lý văn bản và SQL:
-                -Sử dụng dấu câu tiếng Nhật trong câu chứa tin nhắn hoặc SQL (ví dụ: dấu ngoặc「」).
-                -Những đoạn dịch mà có chứa tên biến hãy cũng dịch sang tiếng Nhật ví dụ "部署: $Tên đơn vị$", "令和 năm年tháng月ngày日" sẽ thành 部署: $部署名$、"令和 $年年$年 $月月$月 $日$日"
-                -Những đoạn có chưa SQL hãy để nguyên SQL và dịch những phần không phải SQL.
                 -Ensure no parts of the text are skipped or left untranslated
                 -Be meticulous and thorough when translating each section
             `,
@@ -109,7 +103,7 @@ class OpenAIService {
                 messages: [
                     {
                         role: "system",
-                        content: `${this.systemPrompts[domain] || this.systemPrompts.general}\nTranslate the following text to ${targetLang}.`
+                        content: `${this.systemPrompts[domain] || this.systemPrompts.general}\nTranslate the following text to ${targetLang}.No explanation, just translate.If can not translate, just keep the original text.`
                     },
                     {
                         role: "user",

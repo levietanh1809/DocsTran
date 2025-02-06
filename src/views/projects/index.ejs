@@ -1,0 +1,30 @@
+<!-- Modal -->
+<div class="modal fade" id="helpModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Hướng dẫn cấu hình Google Sheets</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info">
+          <p><strong>Bước 1:</strong> Tạo Google Sheet mới</p>
+          <p><strong>Bước 2:</strong> Chia sẻ quyền truy cập cho service account:</p>
+          <ul>
+            <li>Email: <%= process.env.GOOGLE_CLIENT_EMAIL %></li>
+            <li>Quyền: Editor</li>
+          </ul>
+          <p><strong>Bước 3:</strong> Sao chép URL của Google Sheet và dán vào form</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Button to show modal -->
+<button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#helpModal">
+  <i class="bi bi-question-circle"></i> Hướng dẫn
+</button> 
