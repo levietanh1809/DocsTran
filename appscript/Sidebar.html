@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      padding: 10px;
+    }
+    .form-label {
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+    #status {
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="alert alert-info mb-3">
+    <small>
+      <i class="bi bi-info-circle me-1"></i>
+      Nếu gặp lỗi quyền truy cập, vui lòng:
+      <ol class="mb-0 ps-3">
+        <li>Refresh lại trang</li>
+        <li>Cấp quyền khi được yêu cầu</li>
+        <li>Thử lại thao tác dịch</li>
+      </ol>
+    </small>
+  </div>
+
+  <form id="translateForm">
+    <!-- API Key -->
+    <div class="mb-3">
+      <label class="form-label">OpenAI API Key</label>
+      <div class="input-group">
+        <input type="password" class="form-control" id="apiKey" required>
+        <button type="button" class="btn btn-outline-secondary" onclick="toggleApiKey()">
+          <i class="bi bi-eye"></i>
+        </button>
+      </div>
+      <div class="form-text">Nhập API key của OpenAI</div>
+    </div>
+
+    <!-- Selected Range -->
+    <div class="mb-3">
+      <label class="form-label">Vùng dữ liệu</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="selectedRange" required readonly>
+        <button type="button" class="btn btn-outline-secondary" onclick="updateSelectedRange()">
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
+      </div>
+      <div class="form-text">Bôi đen vùng cần dịch trên sheet</div>
+    </div>
+
+    <!-- Target Language -->
+    <div class="mb-3">
+      <label class="form-label">Ngôn ngữ đích</label>
+      <select class="form-select" id="targetLang" required>
+        <option value="" selected disabled>Chọn ngôn ngữ...</option>
+        <option value="en">Tiếng Anh</option>
+        <option value="ja">Tiếng Nhật</option>
+        <option value="ko">Tiếng Hàn</option>
+        <option value="zh">Tiếng Trung</option>
+      </select>
+    </div>
+
+    <!-- Domain -->
+    <div class="mb-3">
+      <label class="form-label">Lĩnh vực</label>
+      <select class="form-select" id="domain" required>
+        <option value="" selected disabled>Chọn lĩnh vực...</option>
+        <option value="technical">Kỹ thuật</option>
+        <option value="general">Chung</option>
+      </select>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary w-100" id="submitBtn">
+      <span class="spinner-border spinner-border-sm d-none" id="spinner"></span>
+      <span id="btnText">Dịch vùng đã chọn</span>
+    </button>
+  </form>
+
+  <div id="status" class="text-muted"></div>
+
+  <script>
+    let lastCheck = 0;
+    const CHECK_INTERVAL = 300; // 300ms
+
+    // Cập nhật vùng được chọn khi form load
+    updateSelectedRange();
+
+    // Theo dõi thay đổi selection
+    document.addEventListener('mousemove', debounceUpdateRange);
+    document.addEventListener('mouseup', updateSelectedRange);
+    document.addEventListener('keyup', debounceUpdateRange);
+    window.addEventListener('focus', updateSelectedRange);
+
+    // Debounce function để tránh gọi quá nhiều
+    function debounceUpdateRange() {
+      const now = Date.now();
+      if (now - lastCheck >= CHECK_INTERVAL) {
+        lastCheck = now;
+        updateSelectedRange();
+      }
+    }
+
+    // Cập nhật vùng được chọn
+    function updateSelectedRange() {
+      google.script.run
+        .withSuccessHandler(updateRangeInput)
+        .getSelectedRange();
+    }
+
+    // Cập nhật giá trị input
+    function updateRangeInput(range) {
+      const input = document.getElementById('selectedRange');
+      if (range && range.a1Notation) {
+        if (input.value !== range.a1Notation) { // Chỉ cập nhật nếu giá trị thay đổi
+          input.value = range.a1Notation;
+          document.getElementById('submitBtn').disabled = false;
+        }
+      } else {
+        input.value = '';
+        document.getElementById('submitBtn').disabled = true;
+      }
+    }
+
+    // Toggle hiển thị API key
+    function toggleApiKey() {
+      const input = document.getElementById('apiKey');
+      const type = input.type === 'password' ? 'text' : 'password';
+      input.type = type;
+    }
+
+    // Submit form
+    document.getElementById('translateForm').onsubmit = function(e) {
+      e.preventDefault();
+      
+      // UI elements
+      const submitBtn = document.getElementById('submitBtn');
+      const spinner = document.getElementById('spinner');
+      const btnText = document.getElementById('btnText');
+      const status = document.getElementById('status');
+      
+      // Disable form
+      submitBtn.disabled = true;
+      spinner.classList.remove('d-none');
+      btnText.textContent = 'Đang dịch...';
+      
+      // Call server function
+      google.script.run
+        .withSuccessHandler(function(result) {
+          // Enable form
+          submitBtn.disabled = false;
+          spinner.classList.add('d-none');
+          btnText.textContent = 'Dịch vùng đã chọn';
+          
+          // Show success message
+          status.className = 'text-success';
+          status.textContent = result.message;
+        })
+        .withFailureHandler(function(error) {
+          // Enable form
+          submitBtn.disabled = false;
+          spinner.classList.add('d-none');
+          btnText.textContent = 'Dịch vùng đã chọn';
+          
+          // Show error message
+          status.className = 'text-danger';
+          status.textContent = 'Lỗi: ' + error.message;
+        })
+        .translateSelectedRange({
+          apiKey: document.getElementById('apiKey').value,
+          targetLang: document.getElementById('targetLang').value,
+          domain: document.getElementById('domain').value
+        });
+    };
+  </script>
+</body>
+</html> 
