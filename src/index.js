@@ -2,18 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
-const { connectDB } = require('./config/database');
 const app = express();
-
-// Kết nối database
-(async () => {
-    try {
-        await connectDB();
-    } catch (error) {
-        console.error('Không thể kết nối database:', error);
-        process.exit(1);
-    }
-})();
 
 // Cấu hình middleware
 app.use(express.json());

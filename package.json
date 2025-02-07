@@ -19,7 +19,6 @@
     "express-ejs-layouts": "^2.5.1",
     "google-auth-library": "^9.15.1",
     "googleapis": "^144.0.0",
-    "mssql": "^9.1.1",
     "openai": "^4.82.0"
   },
   "devDependencies": {

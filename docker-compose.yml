@@ -7,16 +7,9 @@ services:
       - "8081:3000"
     environment:
       - NODE_ENV=production
-      - DB_SERVER=host.docker.internal
-      - DB_DATABASE=TranslateApp
-      - DB_USER=vanh
-      - DB_PASSWORD=Love_189
-      - DB_PORT=1433
       - GOOGLE_CLIENT_EMAIL=${GOOGLE_CLIENT_EMAIL}
       - GOOGLE_PRIVATE_KEY=${GOOGLE_PRIVATE_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     volumes:
       - ./logs:/app/logs
     networks:

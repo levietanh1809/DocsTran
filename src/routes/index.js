@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const translateController = require('../controllers/translateController');
-const validateGoogleDoc = require('../middlewares/validateGoogleDoc');
 const validateGoogleSheet = require('../middlewares/validateGoogleSheet');
 const googleSheets = require('../services/googleSheets');
 
+// Trang chủ
 router.get('/', translateController.showTranslatePage);
-router.post('/translate', validateGoogleDoc, translateController.handleTranslate);
-router.get('/translations', translateController.getTranslations);
+
+// API endpoints
 router.post('/api/translate-sheet', validateGoogleSheet, translateController.handleSheetTranslation);
 
 router.post('/api/sheets/list', async (req, res) => {
@@ -51,7 +51,7 @@ router.get('/api/translation-progress', (req, res) => {
     });
 });
 
-// Add health check route
+// Health check
 router.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok' });
 });

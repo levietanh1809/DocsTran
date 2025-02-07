@@ -70,6 +70,9 @@ class OpenAIService {
         this.requestQueue = [];
         this.isProcessing = false;
         this.MAX_CONCURRENT_REQUESTS = 5; // Số request đồng thời tối đa
+
+        // Cache cho kết quả dịch
+        this.translationCache = new Map();
     }
 
     // Lấy danh sách models và giá
@@ -92,6 +95,24 @@ class OpenAIService {
     }
 
     async translate(text, targetLang, domain) {
+        // Tạo cache key
+        const cacheKey = `${text}_${targetLang}_${domain}`;
+        
+        // Kiểm tra cache
+        if (this.translationCache.has(cacheKey)) {
+            return this.translationCache.get(cacheKey);
+        }
+
+        // Thực hiện dịch nếu chưa có trong cache
+        const result = await this._translate(text, targetLang, domain);
+        
+        // Lưu vào cache
+        this.translationCache.set(cacheKey, result);
+        
+        return result;
+    }
+
+    async _translate(text, targetLang, domain) {
         try {
             // Bỏ qua dịch nếu text trống
             if (!text || text.trim() === '') {
