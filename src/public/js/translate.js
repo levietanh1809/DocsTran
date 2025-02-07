@@ -85,80 +85,16 @@ document.getElementById('sheetTranslateForm').addEventListener('submit', async (
         const result = await response.json();
         
         if (response.ok && result.success) {
-            showAlert('success', result.message);
-            
-            // Hiển thị thông tin chi phí và thống kê
-            const costEstimate = document.getElementById('costEstimate');
-            if (costEstimate && result.stats) {
-                // Định dạng số với dấu phẩy ngăn cách hàng nghìn
-                const formatNumber = (num) => num.toLocaleString();
-                
-                costEstimate.innerHTML = `
-                    <div class="border-start border-success ps-3">
-                        <div class="text-success fw-bold mb-2">
-                            <i class="bi bi-check-circle-fill me-1"></i>
-                            Hoàn thành dịch thuật!
-                        </div>
-                        <div class="text-muted">
-                            <div class="mb-1">
-                                <i class="bi bi-grid me-2"></i>
-                                <span class="fw-medium">Số ô đã dịch:</span> ${formatNumber(result.stats.totalCells)}
-                            </div>
-                            <div class="mb-1">
-                                <i class="bi bi-text-paragraph me-2"></i>
-                                <span class="fw-medium">Tổng ký tự:</span> ${formatNumber(result.stats.totalChars)}
-                            </div>
-                            <div class="mb-1">
-                                <i class="bi bi-robot me-2"></i>
-                                <span class="fw-medium">Model:</span> ${result.stats.model}
-                            </div>
-                            <div class="mb-2">
-                                <i class="bi bi-currency-dollar me-2"></i>
-                                <span class="fw-medium">Tổng chi phí:</span> ${result.stats.estimatedCost}
-                            </div>
-                            <div class="small text-muted border-top pt-2">
-                                <div>Input (${formatNumber(result.stats.details.inputTokens)} tokens): ${result.stats.details.inputCost}</div>
-                                <div>Output (${formatNumber(result.stats.details.outputTokens)} tokens): ${result.stats.details.outputCost}</div>
-                                <div class="mt-1">
-                                    <i class="bi bi-info-circle-fill me-1"></i>
-                                    Giá: ${result.stats.details.inputRate} (input), ${result.stats.details.outputRate} (output)
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                // Thêm class để hiển thị box hoàn thành
-                const progressDiv = document.getElementById('translationProgress');
-                progressDiv.classList.add('completed');
-            }
-
-            // Cập nhật trạng thái hoàn thành
-            const progressDetail = document.getElementById('progressDetail');
-            progressDetail.innerHTML = `
-                <i class="bi bi-check-circle-fill text-success me-1"></i>
-                Đã hoàn thành dịch thuật!
-            `;
-            
-            // Reset button state
-            const submitBtn = document.querySelector('button[type="submit"]');
-            const spinner = submitBtn.querySelector('.spinner-border');
-            const btnText = submitBtn.querySelector('.button-text');
-            
-            submitBtn.disabled = false;
-            spinner.classList.add('d-none');
-            btnText.textContent = 'Bắt đầu dịch';
-            submitBtn.classList.remove('processing');
-
+            handleTranslationSuccess(result);
         } else {
-            showAlert('danger', result.error || 'Có lỗi xảy ra');
+            showError(result.error || 'Có lỗi xảy ra');
             // Reset UI khi có lỗi
             resetUI();
         }
 
     } catch (error) {
         console.error('Request error:', error);
-        showAlert('danger', 'Không thể kết nối đến server');
+        showError('Không thể kết nối đến server');
     }
 });
 
@@ -454,4 +390,110 @@ if (rangeInput) {
         const errorMessage = validateRange(this.value);
         this.setCustomValidity(errorMessage);
     });
-} 
+}
+
+// Thêm hàm format số
+function formatNumber(num) {
+    return new Intl.NumberFormat().format(num);
+}
+
+// Cập nhật hàm xử lý response thành công
+function handleTranslationSuccess(result) {
+    // Ẩn progress
+    const progressDiv = document.getElementById('translationProgress');
+    progressDiv.classList.add('d-none');
+
+    // Hiển thị thông tin thành công
+    const successAlert = document.getElementById('successAlert');
+    successAlert.classList.remove('d-none', 'alert-danger');
+    successAlert.classList.add('alert-success');
+    successAlert.innerHTML = `
+        <div class="border-start border-success ps-3">
+            <div class="text-success fw-bold mb-2">
+                <i class="bi bi-check-circle-fill me-1"></i>
+                Hoàn thành dịch thuật!
+            </div>
+            <div class="text-muted">
+                <div class="mb-1">
+                    <i class="bi bi-grid me-2"></i>
+                    <span class="fw-medium">Số ô đã dịch:</span> ${formatNumber(result.stats.totalCells)}
+                </div>
+                <div class="mb-1">
+                    <i class="bi bi-text-paragraph me-2"></i>
+                    <span class="fw-medium">Tổng ký tự:</span> ${formatNumber(result.stats.totalChars)}
+                </div>
+                <div class="mb-1">
+                    <i class="bi bi-robot me-2"></i>
+                    <span class="fw-medium">Model:</span> ${result.stats.model}
+                </div>
+                <div class="mb-2">
+                    <i class="bi bi-currency-dollar me-2"></i>
+                    <span class="fw-medium">Tổng chi phí:</span> ${result.stats.estimatedCost}
+                </div>
+                <div class="small text-muted border-top pt-2">
+                    <div>Input (${formatNumber(result.stats.details.inputTokens)} tokens): ${result.stats.details.inputCost}</div>
+                    <div>Output (${formatNumber(result.stats.details.outputTokens)} tokens): ${result.stats.details.outputCost}</div>
+                    <div class="mt-1">
+                        <i class="bi bi-info-circle-fill me-1"></i>
+                        Giá: ${result.stats.details.inputRate} (input), ${result.stats.details.outputRate} (output)
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Scroll to success message
+    successAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    
+    // Chỉ reset button state, không reset form
+    const submitBtn = document.querySelector('button[type="submit"]');
+    const spinner = submitBtn.querySelector('.spinner-border');
+    const btnText = submitBtn.querySelector('.button-text');
+    
+    submitBtn.disabled = false;
+    spinner.classList.add('d-none');
+    btnText.textContent = 'Bắt đầu dịch';
+    submitBtn.classList.remove('processing');
+}
+
+// Toggle API key visibility
+function toggleApiKeyVisibility(button) {
+    const input = document.getElementById('apiKey');
+    const icon = button.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+    }
+}
+
+// Validate API key format
+document.getElementById('apiKey').addEventListener('input', function() {
+    if (this.value && !this.value.match(/^sk-[a-zA-Z0-9]{32,}$/)) {
+        this.setCustomValidity('API key không hợp lệ');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+
+// Update form submit to include API key from settings
+document.getElementById('sheetTranslateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    // ... existing validation code ...
+
+    const formData = {
+        sheetUrl: form.sheetUrl.value,
+        sheetName: form.sheetName.value,
+        sheetRange: form.sheetRange.value,
+        targetLang: form.targetLang.value,
+        domain: form.domain.value,
+        apiKey: localStorage.getItem('openai_api_key') // Get API key from settings
+    };
+
+    // ... rest of the submit handler
+}); 

@@ -24732,7 +24732,43 @@ Các log này sẽ giúp:
 
 _**User**_
 
-Khi dịch xong hãy show ra thông tin của lần dịch này. giá, số ký tự,....
+Hãy thêm mô tả sau khi dịch xong.
+
+     <div class="border-start border-success ps-3">
+                        <div class="text-success fw-bold mb-2">
+                            <i class="bi bi-check-circle-fill me-1"></i>
+                            Hoàn thành dịch thuật!
+                        </div>
+                        <div class="text-muted">
+                            <div class="mb-1">
+                                <i class="bi bi-grid me-2"></i>
+                                <span class="fw-medium">Số ô đã dịch:</span> ${formatNumber(result.stats.totalCells)}
+                            </div>
+                            <div class="mb-1">
+                                <i class="bi bi-text-paragraph me-2"></i>
+                                <span class="fw-medium">Tổng ký tự:</span> ${formatNumber(result.stats.totalChars)}
+                            </div>
+                            <div class="mb-1">
+                                <i class="bi bi-robot me-2"></i>
+                                <span class="fw-medium">Model:</span> ${result.stats.model}
+                            </div>
+                            <div class="mb-2">
+                                <i class="bi bi-currency-dollar me-2"></i>
+                                <span class="fw-medium">Tổng chi phí:</span> ${result.stats.estimatedCost}
+                            </div>
+                            <div class="small text-muted border-top pt-2">
+                                <div>Input (${formatNumber(result.stats.details.inputTokens)} tokens): ${result.stats.details.inputCost}</div>
+                                <div>Output (${formatNumber(result.stats.details.outputTokens)} tokens): ${result.stats.details.outputCost}</div>
+                                <div class="mt-1">
+                                    <i class="bi bi-info-circle-fill me-1"></i>
+                                    Giá: ${result.stats.details.inputRate} (input), ${result.stats.details.outputRate} (output)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+theo dạng như thế này.Không load lại trang 
 
 ---
 
@@ -24740,37 +24776,42 @@ _**Assistant**_
 
 
 
-Tôi sẽ thêm tính năng hiển thị thông tin chi tiết sau khi dịch. Đầu tiên cập nhật translateController.js:
+Tôi sẽ cập nhật code để hiển thị thông tin chi tiết sau khi dịch xong:
+
+1. Sửa lại translateController.js để trả về thêm thông tin thống kê:
 
 ````javascript:src/controllers/translateController.js
-// Thêm hàm tính toán thống kê
-async function calculateStats(data, translatedData) {
-    let stats = {
-        totalCells: 0,
-        totalChars: 0,
-        translatedChars: 0,
-        estimatedCost: 0
-    };
+// Thêm hàm tính thống kê
+function calculateStats(data, translatedData) {
+    let totalChars = 0;
+    let totalCells = 0;
 
-    // Tính toán số ký tự và chi phí
-    for (let i = 0; i < data.length; i++) {
-        for (let j = 0; j < data[i].length; j++) {
-            const sourceText = data[i][j]?.toString() || '';
-            const translatedText = translatedData[i][j]?.toString() || '';
-            
-            if (sourceText.trim()) {
-                stats.totalCells++;
-                stats.totalChars += sourceText.length;
-                stats.translatedChars += translatedText.length;
-                
-                // Tính chi phí dựa trên số token (ước tính 4 ký tự = 1 token)
-                const estimatedTokens = Math.ceil((sourceText.length + translatedText.length) / 4);
-                stats.estimatedCost += (estimatedTokens / 1000) * 0.03; // $0.03 per 1K tokens
+    translatedData.forEach(row => {
+        row.forEach(cell => {
+            if (cell && cell.trim()) {
+                totalCells++;
+                totalChars += cell.length;
             }
-        }
-    }
+        });
+    });
 
-    return stats;
+    // Tính chi phí dựa trên OpenAI API
+    const pricing = openai.calculatePrice(totalChars);
+
+    return {
+        totalCells,
+        totalChars,
+        model: pricing.model,
+        estimatedCost: `$${pricing.totalCost.toFixed(4)}`,
+        details: {
+            inputTokens: pricing.details.inputTokens,
+            outputTokens: pricing.details.outputTokens,
+            inputCost: `$${pricing.inputCost.toFixed(4)}`,
+            outputCost: `$${pricing.outputCost.toFixed(4)}`,
+            inputRate: pricing.details.inputRate,
+            outputRate: pricing.details.outputRate
+        }
+    };
 }
 
 class TranslateController {
@@ -24788,17 +24829,12 @@ class TranslateController {
             await googleSheets.updateSheet(sheetId, fullRange, translatedData);
 
             // Tính toán thống kê
-            const stats = await calculateStats(data, translatedData);
+            const stats = calculateStats(data, translatedData);
 
             res.json({
                 success: true,
                 message: 'Dịch thành công!',
-                stats: {
-                    totalCells: stats.totalCells,
-                    totalChars: stats.totalChars,
-                    translatedChars: stats.translatedChars,
-                    estimatedCost: `$${stats.estimatedCost.toFixed(4)}`
-                }
+                stats
             });
 
         } catch (error) {
@@ -24812,137 +24848,199 @@ class TranslateController {
 }
 ````
 
-Sau đó cập nhật file translate.js ở client để hiển thị thông tin:
+2. Cập nhật translate.js ở client để hiển thị kết quả:
 
 ````javascript:src/public/js/translate.js
-// Trong hàm xử lý response thành công
-function handleTranslationSuccess(response) {
-    if (response.stats) {
-        const statsHtml = `
-            <div class="alert alert-info mt-3">
-                <h5>Thông tin dịch thuật:</h5>
-                <ul class="mb-0">
-                    <li>Số ô đã dịch: ${response.stats.totalCells}</li>
-                    <li>Tổng ký tự gốc: ${response.stats.totalChars}</li>
-                    <li>Tổng ký tự đã dịch: ${response.stats.translatedChars}</li>
-                    <li>Chi phí ước tính: ${response.stats.estimatedCost}</li>
-                </ul>
-            </div>
-        `;
-        document.getElementById('translationProgress').insertAdjacentHTML('beforeend', statsHtml);
-    }
-    
-    // ... existing success handling code ...
+// Thêm hàm format số
+function formatNumber(num) {
+    return new Intl.NumberFormat().format(num);
 }
+
+// Cập nhật hàm xử lý response thành công
+function handleTranslationSuccess(result) {
+    const successAlert = document.getElementById('successAlert');
+    successAlert.innerHTML = `
+        <div class="border-start border-success ps-3">
+            <div class="text-success fw-bold mb-2">
+                <i class="bi bi-check-circle-fill me-1"></i>
+                Hoàn thành dịch thuật!
+            </div>
+            <div class="text-muted">
+                <div class="mb-1">
+                    <i class="bi bi-grid me-2"></i>
+                    <span class="fw-medium">Số ô đã dịch:</span> ${formatNumber(result.stats.totalCells)}
+                </div>
+                <div class="mb-1">
+                    <i class="bi bi-text-paragraph me-2"></i>
+                    <span class="fw-medium">Tổng ký tự:</span> ${formatNumber(result.stats.totalChars)}
+                </div>
+                <div class="mb-1">
+                    <i class="bi bi-robot me-2"></i>
+                    <span class="fw-medium">Model:</span> ${result.stats.model}
+                </div>
+                <div class="mb-2">
+                    <i class="bi bi-currency-dollar me-2"></i>
+                    <span class="fw-medium">Tổng chi phí:</span> ${result.stats.estimatedCost}
+                </div>
+                <div class="small text-muted border-top pt-2">
+                    <div>Input (${formatNumber(result.stats.details.inputTokens)} tokens): ${result.stats.details.inputCost}</div>
+                    <div>Output (${formatNumber(result.stats.details.outputTokens)} tokens): ${result.stats.details.outputCost}</div>
+                    <div class="mt-1">
+                        <i class="bi bi-info-circle-fill me-1"></i>
+                        Giá: ${result.stats.details.inputRate} (input), ${result.stats.details.outputRate} (output)
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    successAlert.classList.remove('d-none');
+    
+    // Reset form và progress
+    document.getElementById('translationProgress').classList.add('d-none');
+    document.getElementById('sheetTranslateForm').reset();
+}
+
+// Cập nhật phần xử lý submit form
+document.getElementById('sheetTranslateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    // ... existing validation code ...
+
+    try {
+        const response = await fetch('/api/translate-sheet', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            handleTranslationSuccess(result);
+        } else {
+            showError(result.error);
+        }
+    } catch (error) {
+        showError(error.message);
+    }
+});
 ````
 
 Những thay đổi này sẽ:
-1. Tính toán số ô đã dịch
-2. Đếm số ký tự gốc và đã dịch
-3. Ước tính chi phí dựa trên số token
-4. Hiển thị thông tin trong một alert sau khi dịch xong
+1. Tính toán thống kê về số lượng ô và ký tự đã dịch
+2. Tính toán chi phí dựa trên model OpenAI
+3. Hiển thị thông tin chi tiết sau khi dịch xong
+4. Không reload trang, chỉ cập nhật UI
+5. Format số để dễ đọc
 
 ---
 
 _**User**_
 
-Check lại logic 1 lượt. Tôi đã dịch được nhưng không hiển thị được thông tin của bản dihcj
+Sao yooi không thấy thông tin đã dịch xong
 
 ---
 
 _**Assistant**_
 
-Tôi thấy vấn đề là chúng ta đang gọi `handleTranslationSuccess` sau khi đã reset UI. Hãy sửa lại file translate.js:
+
+
+Có vẻ như chúng ta cần thêm phần HTML cho alert thành công trong file translate.ejs. Hãy cập nhật file:
+
+````html:src/views/translate.ejs
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">Dịch thuật từ Google Sheet</h1>
+                    
+                    <!-- Thêm div để hiển thị kết quả thành công -->
+                    <div id="successAlert" class="alert d-none mb-4"></div>
+
+                    <!-- Progress bar -->
+                    <div id="translationProgress" class="d-none mb-4">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="flex-grow-1">
+                                <div class="progress" style="height: 20px;">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                         role="progressbar" 
+                                         style="width: 0%" 
+                                         aria-valuenow="0" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                        <span id="progressText">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="progressDetail" class="text-muted small">
+                            Đang chuẩn bị...
+                        </div>
+                    </div>
+
+                    <!-- Form dịch -->
+                    <form id="sheetTranslateForm" class="needs-validation" novalidate>
+                        <!-- ... existing form fields ... -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/translate.js"></script>
+````
+
+Và sửa lại hàm handleTranslationSuccess trong translate.js:
 
 ````javascript:src/public/js/translate.js
-document.getElementById('sheetTranslateForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    // ... existing validation code ...
+function handleTranslationSuccess(result) {
+    // Ẩn progress
+    const progressDiv = document.getElementById('translationProgress');
+    progressDiv.classList.add('d-none');
 
-    try {
-        const formData = new FormData(e.target);
-        const response = await fetch('/api/translate-sheet', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(Object.fromEntries(formData))
-        });
-
-        const result = await response.json();
-        
-        if (result.success) {
-            // Hiển thị thông tin thống kê trước
-            if (result.stats) {
-                const statsHtml = `
-                    <div class="alert alert-info mt-3">
-                        <h5>Thông tin dịch thuật:</h5>
-                        <ul class="mb-0">
-                            <li>Số ô đã dịch: ${result.stats.totalCells.toLocaleString()}</li>
-                            <li>Tổng ký tự gốc: ${result.stats.totalChars.toLocaleString()}</li>
-                            <li>Tổng ký tự đã dịch: ${result.stats.translatedChars.toLocaleString()}</li>
-                            <li>Chi phí ước tính: ${result.stats.estimatedCost}</li>
-                        </ul>
+    // Hiển thị thông tin thành công
+    const successAlert = document.getElementById('successAlert');
+    successAlert.classList.remove('d-none', 'alert-danger');
+    successAlert.classList.add('alert-success');
+    successAlert.innerHTML = `
+        <div class="border-start border-success ps-3">
+            <div class="text-success fw-bold mb-2">
+                <i class="bi bi-check-circle-fill me-1"></i>
+                Hoàn thành dịch thuật!
+            </div>
+            <div class="text-muted">
+                <div class="mb-1">
+                    <i class="bi bi-grid me-2"></i>
+                    <span class="fw-medium">Số ô đã dịch:</span> ${formatNumber(result.stats.totalCells)}
+                </div>
+                <div class="mb-1">
+                    <i class="bi bi-text-paragraph me-2"></i>
+                    <span class="fw-medium">Tổng ký tự:</span> ${formatNumber(result.stats.totalChars)}
+                </div>
+                <div class="mb-1">
+                    <i class="bi bi-robot me-2"></i>
+                    <span class="fw-medium">Model:</span> ${result.stats.model}
+                </div>
+                <div class="mb-2">
+                    <i class="bi bi-currency-dollar me-2"></i>
+                    <span class="fw-medium">Tổng chi phí:</span> ${result.stats.estimatedCost}
+                </div>
+                <div class="small text-muted border-top pt-2">
+                    <div>Input (${formatNumber(result.stats.details.inputTokens)} tokens): ${result.stats.details.inputCost}</div>
+                    <div>Output (${formatNumber(result.stats.details.outputTokens)} tokens): ${result.stats.details.outputCost}</div>
+                    <div class="mt-1">
+                        <i class="bi bi-info-circle-fill me-1"></i>
+                        Giá: ${result.stats.details.inputRate} (input), ${result.stats.details.outputRate} (output)
                     </div>
-                `;
-                const progressDiv = document.getElementById('translationProgress');
-                progressDiv.insertAdjacentHTML('beforeend', statsHtml);
-            }
-
-            // Sau đó cập nhật UI thành công
-            const progressBar = document.querySelector('.progress-bar');
-            progressBar.style.width = '100%';
-            progressBar.textContent = '100%';
-            
-            const progressDetail = document.getElementById('progressDetail');
-            progressDetail.innerHTML = `
-                <i class="bi bi-check-circle-fill text-success me-1"></i>
-                Đã hoàn thành dịch thuật!
-            `;
-            
-            // Reset button state
-            const submitBtn = document.querySelector('button[type="submit"]');
-            const spinner = submitBtn.querySelector('.spinner-border');
-            const btnText = submitBtn.querySelector('.button-text');
-            
-            submitBtn.disabled = false;
-            spinner.classList.add('d-none');
-            btnText.textContent = 'Bắt đầu dịch';
-            submitBtn.classList.remove('processing');
-
-            showAlert('success', result.message);
-        } else {
-            showAlert('danger', result.error || 'Có lỗi xảy ra');
-            resetUI();
-        }
-
-    } catch (error) {
-        console.error('Request error:', error);
-        showAlert('danger', 'Không thể kết nối đến server');
-        resetUI();
-    }
-});
-
-// Helper functions
-function showAlert(type, message) {
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-    alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+        </div>
     `;
-    
-    const container = document.querySelector('.container');
-    container.insertBefore(alertDiv, container.firstChild);
-    
-    // Auto dismiss after 5s
-    setTimeout(() => {
-        alertDiv.remove();
-    }, 5000);
-}
 
-function resetUI() {
+    // Reset form
+    document.getElementById('sheetTranslateForm').reset();
+    
+    // Reset button state
     const submitBtn = document.querySelector('button[type="submit"]');
     const spinner = submitBtn.querySelector('.spinner-border');
     const btnText = submitBtn.querySelector('.button-text');
@@ -24951,29 +25049,1155 @@ function resetUI() {
     spinner.classList.add('d-none');
     btnText.textContent = 'Bắt đầu dịch';
     submitBtn.classList.remove('processing');
-    
-    const progressBar = document.querySelector('.progress-bar');
-    progressBar.style.width = '0%';
-    progressBar.textContent = '0%';
-    
-    document.getElementById('progressDetail').textContent = '';
 }
 ````
 
 Những thay đổi chính:
-1. Bỏ hàm `handleTranslationSuccess` riêng biệt
-2. Hiển thị thông tin thống kê ngay sau khi nhận response thành công
-3. Format số với `toLocaleString()` để dễ đọc
-4. Đảm bảo thứ tự hiển thị: thống kê -> cập nhật UI -> thông báo thành công
-5. Thêm timeout để tự động ẩn alert sau 5s
-
-Bây giờ thông tin thống kê sẽ được hiển thị trước khi reset UI và sẽ không bị mất.
+1. Thêm div successAlert vào template
+2. Cập nhật hàm handleTranslationSuccess để:
+   - Ẩn progress bar
+   - Hiển thị thông tin thành công
+   - Reset form và button state
+3. Thêm các class Bootstrap để styling đẹp hơn
 
 ---
 
 _**User**_
 
-Ngoài ra phần tiến trình đã dịch số phần trăm. hãy để dạng số nguyên thôi
+Hãy cho hiển thị ở cuối. Giữ nguyên state các ô đã nhập. Tôi đang thấy bị clear hết lại
+
+---
+
+_**Assistant**_
+
+
+
+Tôi sẽ sửa lại hàm handleTranslationSuccess để giữ nguyên form và hiển thị kết quả ở cuối:
+
+````javascript:src/public/js/translate.js
+function handleTranslationSuccess(result) {
+    // Ẩn progress
+    const progressDiv = document.getElementById('translationProgress');
+    progressDiv.classList.add('d-none');
+
+    // Hiển thị thông tin thành công
+    const successAlert = document.getElementById('successAlert');
+    successAlert.classList.remove('d-none', 'alert-danger');
+    successAlert.classList.add('alert-success');
+    successAlert.innerHTML = `
+        <div class="border-start border-success ps-3">
+            <div class="text-success fw-bold mb-2">
+                <i class="bi bi-check-circle-fill me-1"></i>
+                Hoàn thành dịch thuật!
+            </div>
+            <div class="text-muted">
+                <div class="mb-1">
+                    <i class="bi bi-grid me-2"></i>
+                    <span class="fw-medium">Số ô đã dịch:</span> ${formatNumber(result.stats.totalCells)}
+                </div>
+                <div class="mb-1">
+                    <i class="bi bi-text-paragraph me-2"></i>
+                    <span class="fw-medium">Tổng ký tự:</span> ${formatNumber(result.stats.totalChars)}
+                </div>
+                <div class="mb-1">
+                    <i class="bi bi-robot me-2"></i>
+                    <span class="fw-medium">Model:</span> ${result.stats.model}
+                </div>
+                <div class="mb-2">
+                    <i class="bi bi-currency-dollar me-2"></i>
+                    <span class="fw-medium">Tổng chi phí:</span> ${result.stats.estimatedCost}
+                </div>
+                <div class="small text-muted border-top pt-2">
+                    <div>Input (${formatNumber(result.stats.details.inputTokens)} tokens): ${result.stats.details.inputCost}</div>
+                    <div>Output (${formatNumber(result.stats.details.outputTokens)} tokens): ${result.stats.details.outputCost}</div>
+                    <div class="mt-1">
+                        <i class="bi bi-info-circle-fill me-1"></i>
+                        Giá: ${result.stats.details.inputRate} (input), ${result.stats.details.outputRate} (output)
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Scroll to success message
+    successAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    
+    // Chỉ reset button state, không reset form
+    const submitBtn = document.querySelector('button[type="submit"]');
+    const spinner = submitBtn.querySelector('.spinner-border');
+    const btnText = submitBtn.querySelector('.button-text');
+    
+    submitBtn.disabled = false;
+    spinner.classList.add('d-none');
+    btnText.textContent = 'Bắt đầu dịch';
+    submitBtn.classList.remove('processing');
+}
+````
+
+Và cập nhật lại vị trí hiển thị alert trong translate.ejs:
+
+````html:src/views/translate.ejs
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">Dịch thuật từ Google Sheet</h1>
+
+                    <!-- Form dịch -->
+                    <form id="sheetTranslateForm" class="needs-validation" novalidate>
+                        <!-- ... existing form fields ... -->
+                    </form>
+
+                    <!-- Progress bar -->
+                    <div id="translationProgress" class="d-none my-4">
+                        <!-- ... progress bar content ... -->
+                    </div>
+
+                    <!-- Kết quả thành công - moved to bottom -->
+                    <div id="successAlert" class="alert d-none mt-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+````
+
+Những thay đổi chính:
+1. Bỏ `document.getElementById('sheetTranslateForm').reset()`
+2. Di chuyển successAlert xuống cuối form
+3. Thêm scroll tự động đến kết quả
+4. Chỉ reset trạng thái button, giữ nguyên giá trị form
+
+---
+
+_**User**_
+
+Tôi muốn có phần setting. Có thể nhập OPEN API key của cá nhân. Nếu không nhập sẽ sử dụng trong env
+
+---
+
+_**Assistant**_
+
+Tôi sẽ thêm phần settings vào form dịch:
+
+1. Thêm UI settings vào translate.ejs:
+
+````html:src/views/translate.ejs
+<!-- Settings Accordion -->
+<div class="accordion mb-4">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#settingsContent">
+                <i class="bi bi-gear me-2"></i> Cài đặt nâng cao
+            </button>
+        </h2>
+        <div id="settingsContent" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <div class="mb-3">
+                    <label for="apiKey" class="form-label">
+                        OpenAI API Key 
+                        <i class="bi bi-info-circle" 
+                           data-bs-toggle="tooltip" 
+                           title="Nếu không nhập, hệ thống sẽ sử dụng API key mặc định"></i>
+                    </label>
+                    <div class="input-group">
+                        <input type="password" 
+                               class="form-control" 
+                               id="apiKey" 
+                               name="apiKey"
+                               placeholder="sk-..." 
+                               pattern="^sk-[a-zA-Z0-9]{32,}$">
+                        <button class="btn btn-outline-secondary" 
+                                type="button" 
+                                onclick="toggleApiKeyVisibility(this)">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                    <div class="form-text">
+                        Nhập API key của bạn để sử dụng tài khoản OpenAI riêng
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+````
+
+2. Thêm xử lý trong translate.js:
+
+````javascript:src/public/js/translate.js
+// Toggle API key visibility
+function toggleApiKeyVisibility(button) {
+    const input = document.getElementById('apiKey');
+    const icon = button.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+    }
+}
+
+// Validate API key format
+document.getElementById('apiKey').addEventListener('input', function() {
+    if (this.value && !this.value.match(/^sk-[a-zA-Z0-9]{32,}$/)) {
+        this.setCustomValidity('API key không hợp lệ');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+
+// Update form submit to include API key
+document.getElementById('sheetTranslateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    // ... existing validation code ...
+
+    const formData = {
+        sheetUrl: form.sheetUrl.value,
+        sheetName: form.sheetName.value,
+        sheetRange: form.sheetRange.value,
+        targetLang: form.targetLang.value,
+        domain: form.domain.value,
+        apiKey: form.apiKey.value || null // Include API key if provided
+    };
+
+    // ... rest of the submit handler
+});
+````
+
+3. Cập nhật translateController.js để xử lý API key:
+
+````javascript:src/controllers/translateController.js
+async handleSheetTranslation(req, res) {
+    try {
+        const { sheetUrl, sheetName, sheetRange, targetLang, domain, apiKey } = req.body;
+        
+        // ... existing validation code ...
+
+        // Khởi tạo OpenAI service với custom API key nếu có
+        const translationService = apiKey ? 
+            new OpenAIService(apiKey) : 
+            openai;
+
+        // Get sheet data
+        const data = await googleSheets.readSheet(sheetId, fullRange);
+        
+        // Start translation với service tương ứng
+        const translatedData = await translateData(data, targetLang, domain, translationService);
+        
+        // ... rest of the handler
+    } catch (error) {
+        console.error('Translation error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+}
+````
+
+4. Cập nhật OpenAIService để hỗ trợ custom API key:
+
+````javascript:src/services/openai.js
+class OpenAIService {
+    constructor(apiKey = null) {
+        const key = apiKey || process.env.OPENAI_API_KEY;
+        if (!key) {
+            throw new Error('OPENAI_API_KEY is not configured');
+        }
+        this.client = new OpenAI({
+            apiKey: key
+        });
+        // ... rest of constructor
+    }
+    // ... rest of class
+}
+````
+
+Những thay đổi này sẽ:
+1. Thêm section cài đặt có thể mở rộng/thu gọn
+2. Cho phép nhập custom API key với validation
+3. Có thể ẩn/hiện API key
+4. Sử dụng API key của user nếu được cung cấp
+5. Fallback về API key trong .env nếu không có custom key
+
+---
+
+_**User**_
+
+fix
+
+---
+
+_**Assistant**_
+
+
+
+Lỗi xảy ra vì chúng ta đang import sai module. Chúng ta đang sử dụng OpenAIService từ file openai.js. Hãy sửa lại file translateController.js:
+
+````javascript:src/controllers/translateController.js
+const googleSheets = require('../services/googleSheets');
+const openai = require('../services/openai');
+const OpenAIService = require('../services/openai').OpenAIService; // Import class OpenAIService
+
+// Constants
+const RETRY_DELAY_MS = 20000; // 20s cho rate limit retry
+const MAX_RETRIES = 5;
+const BATCH_SIZE = 10;
+const BATCH_DELAY = 1000;
+
+// Helper functions
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+// ... rest of the code ...
+````
+
+Và cập nhật file openai.js để export cả class:
+
+````javascript:src/services/openai.js
+const { OpenAI } = require('openai');
+
+class OpenAIService {
+    // ... existing code ...
+}
+
+// Export cả instance mặc định và class
+module.exports = new OpenAIService();
+module.exports.OpenAIService = OpenAIService;
+````
+
+Những thay đổi chính:
+1. Sửa cách import OpenAIService từ file openai.js
+2. Export thêm class OpenAIService để có thể tạo instance mới
+3. Giữ nguyên export instance mặc định cho các trường hợp không cần custom API key
+
+---
+
+_**User**_
+
+Hãy cho phần setting ở phía bên trên header
+
+---
+
+_**Assistant**_
+
+
+
+Tôi sẽ thêm nút setting vào navbar và tạo modal settings:
+
+````html:src/views/layouts/main.ejs
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/">DocTrans</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <button class="btn btn-link nav-link" data-bs-toggle="modal" data-bs-target="#settingsModal">
+                        <i class="bi bi-gear-fill me-1"></i>
+                        Cài đặt
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Settings Modal -->
+<div class="modal fade" id="settingsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-gear me-2"></i>
+                    Cài đặt hệ thống
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="settingsForm">
+                    <div class="mb-3">
+                        <label for="apiKey" class="form-label">
+                            OpenAI API Key
+                            <i class="bi bi-info-circle" 
+                               data-bs-toggle="tooltip" 
+                               title="Nếu không nhập, hệ thống sẽ sử dụng API key mặc định"></i>
+                        </label>
+                        <div class="input-group">
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="apiKey" 
+                                   name="apiKey"
+                                   placeholder="sk-..." 
+                                   pattern="^sk-[a-zA-Z0-9]{32,}$">
+                            <button class="btn btn-outline-secondary" 
+                                    type="button" 
+                                    onclick="toggleApiKeyVisibility(this)">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <div class="form-text">
+                            API key sẽ được lưu trong trình duyệt của bạn
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" onclick="saveSettings()">Lưu cài đặt</button>
+            </div>
+        </div>
+    </div>
+</div>
+````
+
+Thêm script để xử lý settings:
+
+````javascript:src/public/js/settings.js
+// Load settings khi trang được load
+document.addEventListener('DOMContentLoaded', function() {
+    loadSettings();
+});
+
+// Load settings từ localStorage
+function loadSettings() {
+    const apiKey = localStorage.getItem('openai_api_key');
+    if (apiKey) {
+        document.getElementById('apiKey').value = apiKey;
+    }
+}
+
+// Lưu settings vào localStorage
+function saveSettings() {
+    const apiKey = document.getElementById('apiKey').value;
+    
+    // Validate API key nếu có nhập
+    if (apiKey && !apiKey.match(/^sk-[a-zA-Z0-9]{32,}$/)) {
+        showAlert('danger', 'API key không hợp lệ');
+        return;
+    }
+
+    // Lưu vào localStorage
+    localStorage.setItem('openai_api_key', apiKey);
+    
+    // Đóng modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
+    modal.hide();
+    
+    // Hiển thị thông báo
+    showAlert('success', 'Đã lưu cài đặt thành công');
+}
+
+// Toggle API key visibility
+function toggleApiKeyVisibility(button) {
+    const input = document.getElementById('apiKey');
+    const icon = button.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+    }
+}
+````
+
+Và cập nhật translate.js để sử dụng API key từ settings:
+
+````javascript:src/public/js/translate.js
+// Update form submit to include API key from settings
+document.getElementById('sheetTranslateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    // ... existing validation code ...
+
+    const formData = {
+        sheetUrl: form.sheetUrl.value,
+        sheetName: form.sheetName.value,
+        sheetRange: form.sheetRange.value,
+        targetLang: form.targetLang.value,
+        domain: form.domain.value,
+        apiKey: localStorage.getItem('openai_api_key') // Get API key from settings
+    };
+
+    // ... rest of the submit handler
+});
+````
+
+Đừng quên thêm script vào main.ejs:
+
+````html:src/views/layouts/main.ejs
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/settings.js"></script>
+<%- typeof script !== 'undefined' ? script : '' %>
+````
+
+---
+
+_**User**_
+
+Hãy bỏ phần cài đặt nâng cao ở trong form đi. Sử dụng ở header rồi mà
+
+---
+
+_**Assistant**_
+
+
+
+Tôi sẽ xóa phần cài đặt nâng cao trong form dịch:
+
+````html:src/views/translate.ejs
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">Dịch thuật từ Google Sheet</h1>
+                    
+                    <% if (error) { %>
+                        <div class="alert alert-danger" role="alert"><%= error %></div>
+                    <% } %>
+                    <% if (success) { %>
+                        <div class="alert alert-success" role="alert"><%= success %></div>
+                    <% } %>
+
+                    <!-- Form dịch -->
+                    <form id="sheetTranslateForm" class="needs-validation" novalidate>
+                        <!-- Project Name -->
+                        <div class="mb-4">
+                            <!-- ... existing project name field ... -->
+                        </div>
+
+                        <!-- Google Sheet URL -->
+                        <div class="mb-4">
+                            <!-- ... existing sheet URL field ... -->
+                        </div>
+
+                        <!-- Sheet Name -->
+                        <div class="mb-4">
+                            <!-- ... existing sheet name field ... -->
+                        </div>
+
+                        <!-- Range -->
+                        <div class="mb-4">
+                            <!-- ... existing range field ... -->
+                        </div>
+
+                        <!-- Target Language -->
+                        <div class="mb-4">
+                            <!-- ... existing target language field ... -->
+                        </div>
+
+                        <!-- Domain -->
+                        <div class="mb-4">
+                            <!-- ... existing domain field ... -->
+                        </div>
+
+                        <!-- AI Model Selection -->
+                        <div class="alert alert-info mb-4">
+                            <!-- ... existing model info ... -->
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <!-- ... existing submit button ... -->
+                        </div>
+                    </form>
+
+                    <!-- Progress bar -->
+                    <div id="translationProgress" class="d-none my-4">
+                        <!-- ... existing progress bar ... -->
+                    </div>
+
+                    <!-- Kết quả thành công -->
+                    <div id="successAlert" class="alert d-none mt-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+````
+
+Xóa phần accordion settings nâng cao vì đã có trong modal settings ở header.
+
+---
+
+_**User**_
+
+Làm rõ icon cài đặt lên. Bỏ từ cài đặt bên cạnh icon
+
+---
+
+_**Assistant**_
+
+
+
+Tôi sẽ sửa lại nút cài đặt trong navbar để chỉ hiển thị icon và thêm tooltip:
+
+````html:src/views/layouts/main.ejs
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/">DocTrans</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <button class="btn btn-link nav-link" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#settingsModal"
+                            data-bs-toggle="tooltip"
+                            title="Cài đặt hệ thống">
+                        <i class="bi bi-gear-fill fs-5"></i>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+````
+
+Những thay đổi:
+1. Bỏ text "Cài đặt" bên cạnh icon
+2. Thêm tooltip khi hover vào icon
+3. Tăng kích thước icon (fs-5)
+4. Giữ nguyên phần modal settings
+
+---
+
+_**User**_
+
+Thông báo của hệ thống đang nằm dưới header, Hãy để thông báo nằm trên và thay đổi màu sao cho dễ phân biệt
+
+---
+
+_**Assistant**_
+
+
+
+Tôi sẽ tạo một container cho thông báo ở trên header và cập nhật CSS:
+
+1. Thêm div cho thông báo vào main.ejs:
+
+````html:src/views/layouts/main.ejs
+<body>
+    <!-- Global Alert Container -->
+    <div id="alertContainer" class="position-fixed top-0 start-0 end-0 p-3" style="z-index: 1080;">
+        <div class="container">
+            <div id="globalAlerts"></div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <!-- ... existing navbar code ... -->
+    </nav>
+````
+
+2. Cập nhật hàm showAlert trong settings.js:
+
+````javascript:src/public/js/settings.js
+function showAlert(type, message) {
+    const alertsContainer = document.getElementById('globalAlerts');
+    
+    // Tạo alert mới
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show d-flex align-items-center shadow-sm`;
+    
+    // Thêm icon tương ứng với loại alert
+    let icon = 'info-circle';
+    switch(type) {
+        case 'success':
+            icon = 'check-circle';
+            break;
+        case 'danger':
+            icon = 'exclamation-circle';
+            break;
+        case 'warning':
+            icon = 'exclamation-triangle';
+            break;
+    }
+    
+    alertDiv.innerHTML = `
+        <div class="d-flex w-100 align-items-center">
+            <i class="bi bi-${icon} me-2 fs-5"></i>
+            <div class="flex-grow-1">${message}</div>
+            <button type="button" class="btn-close ms-3" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    // Thêm vào container
+    alertsContainer.appendChild(alertDiv);
+    
+    // Auto hide sau 5 giây
+    setTimeout(() => {
+        alertDiv.classList.remove('show');
+        setTimeout(() => alertDiv.remove(), 150);
+    }, 5000);
+}
+````
+
+3. Thêm CSS cho alerts vào style.css:
+
+````css:src/public/css/style.css
+/* Alert styles */
+#alertContainer {
+    pointer-events: none; /* Cho phép click xuyên qua container */
+}
+
+#globalAlerts {
+    pointer-events: auto; /* Cho phép tương tác với alerts */
+}
+
+#globalAlerts .alert {
+    max-width: 600px;
+    margin: 0 auto 0.5rem;
+    border: none;
+    border-left: 4px solid;
+}
+
+/* Alert colors */
+.alert-success {
+    background-color: #d4edda;
+    border-left-color: #28a745 !important;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-left-color: #dc3545 !important;
+    color: #721c24;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-left-color: #ffc107 !important;
+    color: #856404;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border-left-color: #17a2b8 !important;
+    color: #0c5460;
+}
+
+/* Alert animation */
+.alert.fade {
+    transition: opacity 0.15s linear;
+}
+
+.alert.fade:not(.show) {
+    opacity: 0;
+}
+````
+
+Những thay đổi chính:
+1. Thông báo hiển thị ở vị trí cố định phía trên cùng
+2. Thêm icon và màu sắc tương ứng với loại thông báo
+3. Thêm hiệu ứng shadow và border-left để dễ phân biệt
+4. Thông báo tự động biến mất sau 5 giây
+5. Có thể đóng thông báo bằng nút close
+6. Thông báo được căn giữa và có độ rộng tối đa
+
+---
+
+_**User**_
+
+Nút X trong thông báo đang bị lệch hãy  căn chỉnh lại
+
+---
+
+_**Assistant**_
+
+
+
+Tôi sẽ điều chỉnh lại CSS cho nút đóng (X) trong alert:
+
+````css:src/public/css/style.css
+/* Alert styles */
+#alertContainer {
+    pointer-events: none;
+}
+
+#globalAlerts {
+    pointer-events: auto;
+}
+
+#globalAlerts .alert {
+    max-width: 600px;
+    margin: 0 auto 0.5rem;
+    border: none;
+    border-left: 4px solid;
+    padding: 0.75rem 1rem; /* Thêm padding chuẩn */
+}
+
+#globalAlerts .alert .btn-close {
+    padding: 1rem;  /* Padding cho nút close */
+    margin: -0.5rem -0.5rem -0.5rem auto; /* Căn chỉnh vị trí */
+    position: relative; /* Để có thể điều chỉnh vị trí chính xác */
+    top: -2px; /* Điều chỉnh vị trí dọc */
+}
+
+#globalAlerts .alert .d-flex {
+    align-items: center;
+    gap: 0.75rem; /* Khoảng cách giữa các phần tử */
+}
+
+#globalAlerts .alert i {
+    font-size: 1.2rem;
+    flex-shrink: 0; /* Không cho phép icon co lại */
+}
+
+/* Alert colors */
+.alert-success {
+    background-color: #d4edda;
+    border-left-color: #28a745 !important;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-left-color: #dc3545 !important;
+    color: #721c24;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border-left-color: #ffc107 !important;
+    color: #856404;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border-left-color: #17a2b8 !important;
+    color: #0c5460;
+}
+
+/* Alert animation */
+.alert.fade {
+    transition: opacity 0.15s linear;
+}
+
+.alert.fade:not(.show) {
+    opacity: 0;
+}
+````
+
+Những thay đổi chính:
+1. Thêm padding chuẩn cho alert
+2. Điều chỉnh vị trí và padding cho nút close
+3. Sử dụng gap để tạo khoảng cách đều giữa các phần tử
+4. Thêm flex-shrink: 0 cho icon để đảm bảo kích thước không bị thay đổi
+5. Điều chỉnh vị trí dọc của nút close bằng top: -2px
+
+---
+
+_**User**_
+
+Tôi nhập OPEN API key sai tại sao vẫn dịch được
+
+---
+
+_**Assistant**_
+
+
+
+Đúng rồi, chúng ta cần validate API key khi gọi API dịch. Tôi sẽ sửa lại:
+
+1. Sửa file openai.js để validate API key khi khởi tạo:
+
+````javascript:src/services/openai.js
+class OpenAIService {
+    constructor(apiKey = null) {
+        const key = apiKey || process.env.OPENAI_API_KEY;
+        
+        // Validate API key format
+        if (key && !key.match(/^sk-[a-zA-Z0-9]{32,}$/)) {
+            throw new Error('OpenAI API key không hợp lệ');
+        }
+        
+        if (!key) {
+            throw new Error('OPENAI_API_KEY is not configured');
+        }
+
+        this.client = new OpenAI({
+            apiKey: key
+        });
+        
+        // ... rest of constructor
+    }
+    // ... rest of class
+}
+````
+
+2. Sửa lại translateController.js để xử lý lỗi API key:
+
+````javascript:src/controllers/translateController.js
+async handleSheetTranslation(req, res) {
+    try {
+        const { sheetUrl, sheetName, sheetRange, targetLang, domain, apiKey } = req.body;
+        
+        // Validate input
+        if (!sheetUrl || !sheetName || !targetLang || !domain) {
+            throw new Error('Thiếu thông tin cần thiết');
+        }
+
+        // Extract sheet ID
+        const sheetId = sheetUrl.match(/\/d\/(.*?)(\/|$)/)?.[1];
+        if (!sheetId) {
+            throw new Error('URL Google Sheet không hợp lệ');
+        }
+
+        // Khởi tạo OpenAI service với custom API key nếu có
+        let translationService;
+        try {
+            translationService = apiKey ? new OpenAIService(apiKey) : openai;
+        } catch (error) {
+            throw new Error(`Lỗi API key: ${error.message}`);
+        }
+
+        // ... rest of the code
+    } catch (error) {
+        console.error('Translation error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+}
+````
+
+3. Cập nhật settings.js để validate kỹ hơn:
+
+````javascript:src/public/js/settings.js
+function saveSettings() {
+    const apiKey = document.getElementById('apiKey').value;
+    
+    // Validate API key nếu có nhập
+    if (apiKey) {
+        if (!apiKey.match(/^sk-[a-zA-Z0-9]{32,}$/)) {
+            showAlert('danger', 'API key không hợp lệ. API key phải bắt đầu bằng "sk-" và có ít nhất 32 ký tự.');
+            return;
+        }
+        
+        // Test API key
+        fetch('/api/validate-key', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ apiKey })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                localStorage.setItem('openai_api_key', apiKey);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
+                modal.hide();
+                showAlert('success', 'Đã lưu cài đặt thành công');
+            } else {
+                showAlert('danger', data.error || 'API key không hợp lệ');
+            }
+        })
+        .catch(err => {
+            showAlert('danger', 'Không thể kiểm tra API key');
+        });
+    } else {
+        // Xóa API key khỏi localStorage nếu không nhập
+        localStorage.removeItem('openai_api_key');
+        const modal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
+        modal.hide();
+        showAlert('success', 'Đã xóa API key, hệ thống sẽ sử dụng API key mặc định');
+    }
+}
+````
+
+Những thay đổi này sẽ:
+1. Validate format API key khi khởi tạo OpenAI service
+2. Kiểm tra API key khi lưu settings
+3. Hiển thị thông báo lỗi chi tiết hơn
+4. Ngăn chặn việc sử dụng API key không hợp lệ
+
+---
+
+_**User**_
+
+FIx
+
+---
+
+_**Assistant**_
+
+
+
+Lỗi xảy ra vì API key trong .env không đúng định dạng. Tôi sẽ sửa lại phần validate trong OpenAIService:
+
+````javascript:src/services/openai.js
+class OpenAIService {
+    constructor(apiKey = null) {
+        const key = apiKey || process.env.OPENAI_API_KEY;
+        
+        if (!key) {
+            throw new Error('OPENAI_API_KEY is not configured');
+        }
+
+        // Chỉ validate format khi là custom API key
+        if (apiKey && !apiKey.match(/^sk-[a-zA-Z0-9]{32,}$/)) {
+            throw new Error('OpenAI API key không hợp lệ');
+        }
+
+        this.client = new OpenAI({
+            apiKey: key
+        });
+        
+        // ... rest of constructor
+    }
+    // ... rest of class
+}
+````
+
+Thay đổi chính:
+1. Di chuyển check null key lên trước
+2. Chỉ validate format khi là custom API key (từ user)
+3. Giữ nguyên API key từ .env không cần validate format
+
+Điều này sẽ cho phép:
+- API key từ .env có thể có format khác
+- Chỉ validate format chặt chẽ với API key do user nhập
+- Vẫn đảm bảo có API key để khởi tạo OpenAI client
+
+---
+
+_**User**_
+
+Nhập API key đúng tại sao vẫn báo lỗi
+
+---
+
+_**Assistant**_
+
+
+
+Lỗi có thể xảy ra vì chúng ta chưa có route để validate API key. Hãy thêm route để kiểm tra API key:
+
+1. Thêm route mới vào routes/index.js:
+
+````javascript:src/routes/index.js
+const express = require('express');
+const router = express.Router();
+const translateController = require('../controllers/translateController');
+const validateGoogleSheet = require('../middlewares/validateGoogleSheet');
+const googleSheets = require('../services/googleSheets');
+const { OpenAIService } = require('../services/openai');
+
+// ... existing routes ...
+
+// API validate OpenAI key
+router.post('/api/validate-key', async (req, res) => {
+    try {
+        const { apiKey } = req.body;
+        
+        // Thử khởi tạo service với API key mới
+        try {
+            const service = new OpenAIService(apiKey);
+            // Thử gọi một request đơn giản để kiểm tra key
+            await service.translate('test', 'en', 'general');
+            res.json({ success: true });
+        } catch (error) {
+            res.json({ 
+                success: false, 
+                error: 'API key không hợp lệ hoặc đã hết hạn'
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+module.exports = router;
+````
+
+2. Cập nhật settings.js để xử lý lỗi tốt hơn:
+
+````javascript:src/public/js/settings.js
+function saveSettings() {
+    const apiKey = document.getElementById('apiKey').value;
+    
+    // Validate API key nếu có nhập
+    if (apiKey) {
+        if (!apiKey.match(/^sk-[a-zA-Z0-9]{32,}$/)) {
+            showAlert('danger', 'API key không hợp lệ. API key phải bắt đầu bằng "sk-" và có ít nhất 32 ký tự.');
+            return;
+        }
+        
+        // Test API key
+        showAlert('info', 'Đang kiểm tra API key...');
+        
+        fetch('/api/validate-key', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ apiKey })
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Network response was not ok');
+            return res.json();
+        })
+        .then(data => {
+            if (data.success) {
+                localStorage.setItem('openai_api_key', apiKey);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
+                modal.hide();
+                showAlert('success', 'Đã lưu API key thành công');
+            } else {
+                showAlert('danger', data.error || 'API key không hợp lệ');
+            }
+        })
+        .catch(err => {
+            console.error('Validate key error:', err);
+            showAlert('danger', 'Không thể kiểm tra API key. Vui lòng thử lại sau.');
+        });
+    } else {
+        // Xóa API key khỏi localStorage nếu không nhập
+        localStorage.removeItem('openai_api_key');
+        const modal = bootstrap.Modal.getInstance(document.getElementById('settingsModal'));
+        modal.hide();
+        showAlert('success', 'Đã xóa API key, hệ thống sẽ sử dụng API key mặc định');
+    }
+}
+````
+
+Những thay đổi chính:
+1. Thêm route để validate API key
+2. Thực hiện test translate đơn giản để kiểm tra key
+3. Hiển thị thông báo đang kiểm tra
+4. Xử lý lỗi chi tiết hơn
+5. Log lỗi để debug
+
+---
+
+_**User**_
+
+Hãy test với api key này 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
 
 ---
 

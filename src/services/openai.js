@@ -1,12 +1,20 @@
 const { OpenAI } = require('openai');
 
 class OpenAIService {
-    constructor() {
-        if (!process.env.OPENAI_API_KEY) {
+    constructor(apiKey = null) {
+        const key = apiKey || process.env.OPENAI_API_KEY;
+        
+        if (!key) {
             throw new Error('OPENAI_API_KEY is not configured');
         }
+
+        // Chỉ validate format khi là custom API key
+        if (apiKey && !apiKey.match(/^sk-[a-zA-Z0-9_-]{32,}$/)) {
+            throw new Error('OpenAI API key không hợp lệ');
+        }
+
         this.client = new OpenAI({
-            apiKey: process.env.OPENAI_API_KEY
+            apiKey: key
         });
         
         // Thêm system prompt cho từng loại domain
@@ -169,4 +177,6 @@ class OpenAIService {
     }
 }
 
-module.exports = new OpenAIService(); 
+// Export cả instance mặc định và class
+module.exports = new OpenAIService();
+module.exports.OpenAIService = OpenAIService; 

@@ -1,5 +1,6 @@
 const googleSheets = require('../services/googleSheets');
 const openai = require('../services/openai');
+const OpenAIService = require('../services/openai').OpenAIService;
 
 // Constants
 const RETRY_DELAY_MS = 20000; // 20s cho rate limit retry
@@ -26,7 +27,7 @@ function updateProgress(percent, detail) {
 }
 
 // Tách hàm translateData ra khỏi class để tránh vấn đề về context
-async function translateData(data, targetLang, domain) {
+async function translateData(data, targetLang, domain, translationService) {
     const total = data.length;
     let completed = 0;
 
@@ -41,7 +42,7 @@ async function translateData(data, targetLang, domain) {
             if (!cell || cell.toString().trim() === '') {
                 return '';
             }
-            return await openai.translate(cell.toString().trim(), targetLang, domain);
+            return await translationService.translate(cell.toString().trim(), targetLang, domain);
         });
 
         // Xử lý song song theo batch
@@ -66,6 +67,39 @@ async function translateData(data, targetLang, domain) {
     return translatedData;
 }
 
+// Thêm hàm tính thống kê
+function calculateStats(data, translatedData) {
+    let totalChars = 0;
+    let totalCells = 0;
+
+    translatedData.forEach(row => {
+        row.forEach(cell => {
+            if (cell && cell.trim()) {
+                totalCells++;
+                totalChars += cell.length;
+            }
+        });
+    });
+
+    // Tính chi phí dựa trên OpenAI API
+    const pricing = openai.calculatePrice(totalChars);
+
+    return {
+        totalCells,
+        totalChars,
+        model: pricing.model,
+        estimatedCost: `$${pricing.totalCost.toFixed(4)}`,
+        details: {
+            inputTokens: pricing.details.inputTokens,
+            outputTokens: pricing.details.outputTokens,
+            inputCost: `$${pricing.inputCost.toFixed(4)}`,
+            outputCost: `$${pricing.outputCost.toFixed(4)}`,
+            inputRate: pricing.details.inputRate,
+            outputRate: pricing.details.outputRate
+        }
+    };
+}
+
 class TranslateController {
     // GET /
     showTranslatePage(req, res) {
@@ -79,7 +113,7 @@ class TranslateController {
     // POST /api/translate-sheet
     async handleSheetTranslation(req, res) {
         try {
-            const { sheetUrl, sheetName, sheetRange, targetLang, domain } = req.body;
+            const { sheetUrl, sheetName, sheetRange, targetLang, domain, apiKey } = req.body;
             
             // Validate input
             if (!sheetUrl || !sheetName || !targetLang || !domain) {
@@ -95,18 +129,30 @@ class TranslateController {
             // Tạo range với tên sheet
             const fullRange = `${sheetName}!${sheetRange}`;
 
+            // Khởi tạo OpenAI service với custom API key nếu có
+            let translationService;
+            try {
+                translationService = apiKey ? new OpenAIService(apiKey) : openai;
+            } catch (error) {
+                throw new Error(`Lỗi API key: ${error.message}`);
+            }
+
             // Get sheet data
             const data = await googleSheets.readSheet(sheetId, fullRange);
             
-            // Start translation
-            const translatedData = await translateData(data, targetLang, domain);
+            // Start translation với service tương ứng
+            const translatedData = await translateData(data, targetLang, domain, translationService);
             
             // Update sheet với range đầy đủ
             await googleSheets.updateSheet(sheetId, fullRange, translatedData);
 
+            // Tính toán thống kê
+            const stats = calculateStats(data, translatedData);
+
             res.json({
                 success: true,
-                message: 'Dịch thành công!'
+                message: 'Dịch thành công!',
+                stats
             });
 
         } catch (error) {
