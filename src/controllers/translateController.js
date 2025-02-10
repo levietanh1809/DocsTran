@@ -3,10 +3,10 @@ const openai = require('../services/openai');
 const OpenAIService = require('../services/openai').OpenAIService;
 
 // Constants
-const RETRY_DELAY_MS = 20000; // 20s cho rate limit retry
-const MAX_RETRIES = 5;
-const BATCH_SIZE = 10;
-const BATCH_DELAY = 1000;
+const RETRY_DELAY_MS = 10000; // Giảm xuống 10s
+const MAX_RETRIES = 3;  // Giảm số lần retry
+const BATCH_SIZE = 20;  // Tăng batch size
+const BATCH_DELAY = 500; // Giảm delay giữa các batch
 const OPENAI_RATE_LIMIT = 20;    // Số request/phút cho OpenAI
 const GOOGLE_RATE_LIMIT = 60;    // Số request/phút cho Google Sheets
 
@@ -16,10 +16,13 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 function updateProgress(percent, detail) {
     if (global.progressClient) {
         try {
-            global.progressClient.write(`data: ${JSON.stringify({
+            const progress = {
                 percent: Math.min(100, Math.max(0, Math.round(percent))),
-                detail: detail || `Đã dịch ${Math.min(100, Math.max(0, Math.round(percent)))}%`
-            })}\n\n`);
+                detail: detail || `Đang xử lý...`,
+                status: percent >= 100 ? 'completed' : 'processing'
+            };
+
+            global.progressClient.write(`data: ${JSON.stringify(progress)}\n\n`);
         } catch (error) {
             console.error('Error sending progress:', error);
         }
@@ -30,37 +33,56 @@ function updateProgress(percent, detail) {
 async function translateData(data, targetLang, domain, translationService) {
     const total = data.length;
     let completed = 0;
-
-    // Xử lý theo batch để tránh quá tải
-    const CONCURRENT_BATCH = 5; // Số lượng cell xử lý đồng thời
     const translatedData = [];
 
-    // Xử lý từng row
-    for (const row of data) {
-        // Tạo mảng promises cho các cell trong row
-        const cellPromises = row.map(async (cell) => {
-            if (!cell || cell.toString().trim() === '') {
-                return '';
-            }
-            return await translationService.translate(cell.toString().trim(), targetLang, domain);
-        });
+    // Nếu chỉ có 1 cell
+    if (data.length === 1 && data[0].length === 1) {
+        const cell = data[0][0];
+        updateProgress(50, 'Đang dịch...');
+        const translated = cell?.toString().trim() 
+            ? await translationService.translate(cell.toString().trim(), targetLang, domain)
+            : '';
+        updateProgress(100, 'Hoàn thành!');
+        return [[translated]];
+    }
 
-        // Xử lý song song theo batch
-        const translatedRow = [];
-        for (let i = 0; i < cellPromises.length; i += CONCURRENT_BATCH) {
-            const batch = cellPromises.slice(i, i + CONCURRENT_BATCH);
-            const results = await Promise.all(batch);
-            translatedRow.push(...results);
-        }
+    // Xử lý theo batch với kích thước động
+    const batchSize = Math.min(20, Math.ceil(total / 10)); // Điều chỉnh batch size theo tổng số dòng
+    
+    for (let i = 0; i < data.length; i += batchSize) {
+        const rowBatch = data.slice(i, i + batchSize);
+        updateProgress(
+            (i / total) * 100, 
+            `Đang xử lý batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(total/batchSize)}...`
+        );
 
-        translatedData.push(translatedRow);
-        
-        completed++;
-        updateProgress((completed / total) * 100);
-        
-        // Giảm delay giữa các batch
-        if (completed % BATCH_SIZE === 0) {
-            await delay(500); // Giảm delay xuống 500ms
+        // Translate batch
+        const batchResults = await Promise.all(
+            rowBatch.map(async (row) => {
+                const translatedRow = await Promise.all(
+                    row.map(cell => 
+                        cell?.toString().trim() 
+                            ? translationService.translate(cell.toString().trim(), targetLang, domain)
+                            : ''
+                    )
+                );
+                
+                completed++;
+                const percent = (completed / total) * 100;
+                updateProgress(
+                    percent, 
+                    `Đã dịch ${completed}/${total} dòng (${Math.round(percent)}%)`
+                );
+                return translatedRow;
+            })
+        );
+
+        translatedData.push(...batchResults);
+
+        // Dynamic delay based on batch size
+        if (i + batchSize < data.length) {
+            const delayMs = Math.min(1000, batchSize * 50); // 50ms per row, max 1s
+            await delay(delayMs);
         }
     }
 
@@ -100,6 +122,10 @@ function calculateStats(data, translatedData) {
     };
 }
 
+/**
+ * Smarttrans Translation Controller
+ * Handles document translation requests and progress tracking
+ */
 class TranslateController {
     // GET /
     showTranslatePage(req, res) {
@@ -127,7 +153,7 @@ class TranslateController {
             }
 
             // Tạo range với tên sheet
-            const fullRange = `${sheetName}!${sheetRange}`;
+            const fullRange = sheetRange ? `${sheetName}!${sheetRange}` : sheetName;
 
             // Khởi tạo OpenAI service với custom API key nếu có
             let translationService;
@@ -139,6 +165,11 @@ class TranslateController {
 
             // Get sheet data
             const data = await googleSheets.readSheet(sheetId, fullRange);
+            
+            // Kiểm tra kích thước data
+            if (data.length * data[0].length > 1000) {
+                updateProgress(0, 'Đang xử lý dữ liệu lớn, có thể mất nhiều thời gian...');
+            }
             
             // Start translation với service tương ứng
             const translatedData = await translateData(data, targetLang, domain, translationService);

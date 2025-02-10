@@ -3,7 +3,7 @@
         <div class="col-md-8">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h1 class="card-title text-center mb-4">Dịch thuật từ Google Sheet</h1>
+                    <h1 class="text-center mb-4">Dịch thuật tài liệu</h1>
                     
                     <% if (error) { %>
                         <div class="alert alert-danger" role="alert"><%= error %></div>
@@ -95,7 +95,7 @@
                                    class="form-control" 
                                    id="sheetRange" 
                                    name="sheetRange"
-                                   placeholder="Ví dụ: C23:D34, C:D, 44:46">
+                                   placeholder="Ví dụ: A1, C23:D34, C:D, 44:46">
                             <div class="accordion mt-2">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
@@ -105,24 +105,28 @@
                                     </h2>
                                     <div id="rangeGuideContent" class="accordion-collapse collapse">
                                         <div class="accordion-body">
-                                            <p class="mb-2">Có 3 cách chọn vùng dữ liệu:</p>
+                                            <p class="mb-2">Có 4 cách chọn vùng dữ liệu:</p>
                                             <ul class="list-unstyled small">
                                                 <li>
                                                     <i class="bi bi-1-circle-fill text-primary me-2"></i>
-                                                    <strong>Vùng cụ thể:</strong> Ví dụ "C23:D34" - dịch từ ô C23 đến D34
+                                                    <strong>Một ô cụ thể:</strong> Ví dụ "A1" - chỉ dịch ô A1
                                                 </li>
                                                 <li>
                                                     <i class="bi bi-2-circle-fill text-primary me-2"></i>
-                                                    <strong>Theo cột:</strong> Ví dụ "C:D" - dịch toàn bộ cột C và D
+                                                    <strong>Vùng cụ thể:</strong> Ví dụ "C23:D34" - dịch từ ô C23 đến D34
                                                 </li>
                                                 <li>
                                                     <i class="bi bi-3-circle-fill text-primary me-2"></i>
+                                                    <strong>Theo cột:</strong> Ví dụ "C:D" - dịch toàn bộ cột C và D
+                                                </li>
+                                                <li>
+                                                    <i class="bi bi-4-circle-fill text-primary me-2"></i>
                                                     <strong>Theo dòng:</strong> Ví dụ "44:46" - dịch từ dòng 44 đến 46 (tất cả các cột)
                                                 </li>
                                             </ul>
                                             <div class="alert alert-info mt-2 mb-0 py-2 small">
                                                 <i class="bi bi-info-circle-fill me-2"></i>
-                                                <strong>Lưu ý:</strong> Nếu để trống, hệ thống sẽ tự động dịch toàn bộ sheet (tối đa 1000 dòng)
+                                                <strong>Lưu ý:</strong> Để trống nếu muốn dịch toàn bộ sheet. Hoặc nhập vùng cụ thể, ví dụ: A1, C23:D34, C:D, 44:46
                                             </div>
                                         </div>
                                     </div>

@@ -82,4 +82,18 @@ router.post('/api/validate-key', async (req, res) => {
     }
 });
 
+// Thêm route cho Terms of Service
+router.get('/terms', (req, res) => {
+    res.render('terms', {
+        title: 'Điều khoản dịch vụ'
+    });
+});
+
+// Thêm route cho Privacy Policy
+router.get('/privacy', (req, res) => {
+    res.render('privacy', {
+        title: 'Chính sách bảo mật'
+    });
+});
+
 module.exports = router; 

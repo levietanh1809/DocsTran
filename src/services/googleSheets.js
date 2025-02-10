@@ -18,7 +18,7 @@ class GoogleSheetsService {
 
     async readSheet(sheetId, range) {
         try {
-            console.log('🔍 Reading sheet with params:', {
+            console.log('🔍 Smarttrans reading sheet:', {
                 sheetId,
                 range,
                 timestamp: new Date().toISOString()
@@ -26,22 +26,19 @@ class GoogleSheetsService {
 
             const response = await this.sheets.spreadsheets.values.get({
                 spreadsheetId: sheetId,
-                range: range
+                range: range || '',
+                valueRenderOption: 'UNFORMATTED_VALUE',
+                dateTimeRenderOption: 'FORMATTED_STRING'
             });
 
-            console.log('📖 Sheet data received:', {
-                range: response.data.range,
-                rowCount: response.data.values?.length || 0,
-                hasData: !!response.data.values
-            });
+            if (!response.data.values) {
+                console.warn('⚠️ No data found in range:', range || 'entire sheet');
+                throw new Error('Không tìm thấy dữ liệu trong sheet');
+            }
 
-            return response.data.values || [];
+            return response.data.values;
         } catch (error) {
-            console.error('❌ Google Sheets Read Error:', {
-                error: error.message,
-                sheetId,
-                range
-            });
+            console.error('❌ Error reading sheet:', error);
             throw new Error(`Không thể đọc Google Sheet: ${error.message}`);
         }
     }

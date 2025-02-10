@@ -45,26 +45,30 @@ document.getElementById('sheetTranslateForm').addEventListener('submit', async (
         eventSource.onmessage = (event) => {
             try {
                 const progress = JSON.parse(event.data);
-                console.log('Progress update:', progress); // Debug log
+                console.log('Progress update:', progress);
                 
-                // Cập nhật cả 2 progress bars
+                // Cập nhật progress bars
                 [progressBar, mainProgressBar].forEach(bar => {
                     bar.style.width = `${progress.percent}%`;
                     bar.setAttribute('aria-valuenow', progress.percent);
+                    
+                    // Thêm class khi hoàn thành
+                    if (progress.status === 'completed') {
+                        bar.classList.add('bg-success');
+                    }
                 });
 
                 // Cập nhật text hiển thị
-                btnText.textContent = `Đang xử lý (${progress.percent}%)`;
+                btnText.textContent = progress.status === 'completed' 
+                    ? 'Hoàn thành!' 
+                    : `Đang xử lý (${progress.percent}%)`;
                 document.getElementById('progressText').textContent = `${progress.percent}%`;
-                progressDetail.textContent = progress.detail || `Đã dịch ${progress.percent}%`;
+                progressDetail.textContent = progress.detail;
 
                 // Thêm class khi hoàn thành
-                if (progress.percent === 100) {
-                    eventSource.close();
-                    [progressBar, mainProgressBar].forEach(bar => {
-                        bar.classList.add('bg-success');
-                    });
+                if (progress.status === 'completed') {
                     progressDiv.classList.add('completed');
+                    eventSource.close();
                 }
             } catch (error) {
                 console.error('Error parsing progress:', error);
@@ -330,6 +334,12 @@ if (rangeInput) {
         try {
             const range = value.trim().toUpperCase();
 
+            // Kiểm tra format cho 1 ô (VD: A1, B5)
+            const singleCellFormat = /^[A-Z]+\d+$/;
+            if (singleCellFormat.test(range)) {
+                return '';
+            }
+
             // Kiểm tra có dấu :
             if (!range.includes(':')) {
                 throw new Error('Định dạng vùng dữ liệu không hợp lệ');
@@ -375,14 +385,36 @@ if (rangeInput) {
 
             throw new Error('Định dạng vùng dữ liệu không hợp lệ');
         } catch (error) {
-            return `${error.message} (VD: A2:A10, D:D, 14:14)`;
+            return `${error.message} (VD: A1, A2:A10, D:D, 14:14)`;
         }
     }
 
-    // Validate khi input thay đổi
+    // Validate range khi input thay đổi
     rangeInput.addEventListener('input', function() {
-        const errorMessage = validateRange(this.value);
-        this.setCustomValidity(errorMessage);
+        try {
+            const errorMessage = validateRange(this.value);
+            this.setCustomValidity(errorMessage);
+            
+            // Hiển thị feedback trực tiếp
+            const feedback = this.nextElementSibling;
+            if (!feedback) {
+                const div = document.createElement('div');
+                div.className = 'invalid-feedback';
+                this.parentNode.appendChild(div);
+            }
+            
+            const feedbackEl = feedback || this.nextElementSibling;
+            if (errorMessage) {
+                feedbackEl.textContent = errorMessage;
+                this.classList.add('is-invalid');
+                feedbackEl.style.display = 'block';
+            } else {
+                this.classList.remove('is-invalid');
+                feedbackEl.style.display = 'none';
+            }
+        } catch (error) {
+            this.setCustomValidity(error.message);
+        }
     });
 
     // Validate khi blur

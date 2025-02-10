@@ -1,7 +1,7 @@
 {
-  "name": "doctrans",
+  "name": "smarttrans",
   "version": "1.0.0",
-  "description": "Document translation application",
+  "description": "AI-powered document translation service",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",

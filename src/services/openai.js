@@ -8,131 +8,83 @@ class OpenAIService {
             throw new Error('OPENAI_API_KEY is not configured');
         }
 
-        // Chỉ validate format khi là custom API key
+        // Validate custom API key
         if (apiKey && !apiKey.match(/^sk-[a-zA-Z0-9_-]{32,}$/)) {
             throw new Error('OpenAI API key không hợp lệ');
         }
 
-        this.client = new OpenAI({
-            apiKey: key
-        });
+        this.client = new OpenAI({ apiKey: key });
         
-        // Thêm system prompt cho từng loại domain
+        // System prompts
         this.systemPrompts = {
-            technical: `
-                Quy tắc dịch:
-                -Lĩnh vực công nghệ.
-                -Bảo đảm sự tinh tế, đúng ngữ cảnh và cảm xúc trong bản dịch.
-                -Đọc kỹ ngữ cảnh của toàn câu trước khi dịch, tránh dịch từng từ riêng lẻ.
-                Phong cách dịch:
-                -Giữ sự tự nhiên và tính bản địa.
-                Cập nhật nội dung quan trọng:
-                -Không tự động làm nổi bật hoặc bôi đậm nội dung trong bản dịch.
-                -Ensure no parts of the text are skipped or left untranslated
-                -Be meticulous and thorough when translating each section
-            `,
-            general: `
-                Quy tắc dịch chung:
-                - Dịch chính xác và tự nhiên
-                - Giữ nguyên các thuật ngữ chuyên môn
-                - Đảm bảo tính nhất quán trong bản dịch
-            `,
-            // Thêm các domain khác nếu cần
+            technical: 'Technical domain. Keep terms. No explanation.',
+            general: 'Natural translation. Keep terms.'
         };
 
-        // Sử dụng gpt-4o-mini làm model mặc định
+        // Default model config
         this.defaultModel = {
-            id: 'gpt-4o-mini',  // GPT-4 Mini
+            id: 'gpt-4o-mini',
             name: 'GPT-4 Mini',
             pricing: {
-                input: 0.01,   // $0.01 per 1K tokens
-                output: 0.03   // $0.03 per 1K tokens
+                input: 0.01,
+                output: 0.03
             }
         };
 
-        // Thêm thông tin về các model khác để tham khảo
-        this.availableModels = {
-            'gpt-4o-mini': {
-                name: 'GPT-4 Mini',
-                pricing: {
-                    input: 0.01,
-                    output: 0.03
-                }
-            },
-            'gpt-4': {
-                name: 'GPT-4',
-                pricing: {
-                    input: 0.03,
-                    output: 0.06
-                }
-            },
-            'gpt-3.5-turbo': {
-                name: 'GPT-3.5 Turbo',
-                pricing: {
-                    input: 0.0015,
-                    output: 0.002
-                }
-            }
-        };
+        // Rate limiting
+        this.requestCount = 0;
+        this.resetTime = Date.now() + 60000;
+        this.rateLimit = 50;
 
-        this.requestQueue = [];
-        this.isProcessing = false;
-        this.MAX_CONCURRENT_REQUESTS = 5; // Số request đồng thời tối đa
-
-        // Cache cho kết quả dịch
-        this.translationCache = new Map();
-    }
-
-    // Lấy danh sách models và giá
-    async getModelsWithPricing() {
-        try {
-            const models = await this.client.models.list();
-            const availableModels = models.data
-                .filter(model => ['gpt-4', 'gpt-3.5-turbo'].includes(model.id))
-                .map(model => ({
-                    id: model.id,
-                    name: model.id === 'gpt-4' ? 'GPT-4 (Chất lượng cao)' : 'GPT-3.5 (Tiêu chuẩn)',
-                    pricing: this.modelPrices[model.id]
-                }));
-            
-            return availableModels;
-        } catch (error) {
-            console.error('Error fetching models:', error);
-            throw error;
-        }
+        // Cache with TTL
+        this.cache = new Map();
+        this.cacheTTL = 60 * 60 * 1000; // 1 hour
     }
 
     async translate(text, targetLang, domain) {
-        // Tạo cache key
         const cacheKey = `${text}_${targetLang}_${domain}`;
         
-        // Kiểm tra cache
-        if (this.translationCache.has(cacheKey)) {
-            return this.translationCache.get(cacheKey);
+        // Check cache
+        const cached = this.cache.get(cacheKey);
+        if (cached && Date.now() - cached.timestamp < this.cacheTTL) {
+            return cached.translation;
         }
 
-        // Thực hiện dịch nếu chưa có trong cache
-        const result = await this._translate(text, targetLang, domain);
+        // Translate if not in cache
+        const translation = await this._translate(text, targetLang, domain);
         
-        // Lưu vào cache
-        this.translationCache.set(cacheKey, result);
-        
-        return result;
+        // Save to cache
+        this.cache.set(cacheKey, {
+            translation,
+            timestamp: Date.now()
+        });
+
+        return translation;
     }
 
     async _translate(text, targetLang, domain) {
-        try {
-            // Bỏ qua dịch nếu text trống
-            if (!text || text.trim() === '') {
-                return '';
-            }
+        // Check rate limit
+        if (Date.now() >= this.resetTime) {
+            this.requestCount = 0;
+            this.resetTime = Date.now() + 60000;
+        }
 
+        if (this.requestCount >= this.rateLimit) {
+            const delay = this.resetTime - Date.now();
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return this._translate(text, targetLang, domain);
+        }
+
+        try {
+            if (!text || text.trim() === '') return '';
+
+            this.requestCount++;
             const completion = await this.client.chat.completions.create({
                 model: this.defaultModel.id,
                 messages: [
                     {
                         role: "system",
-                        content: `${this.systemPrompts[domain] || this.systemPrompts.general}\nTranslate the following text to ${targetLang}.No explanation, just translate.If can not translate, just keep the original text.`
+                        content: `${this.systemPrompts[domain] || this.systemPrompts.general}\nTranslate to ${targetLang}. If cannot translate, keep original text.`
                     },
                     {
                         role: "user",
@@ -140,14 +92,16 @@ class OpenAIService {
                     }
                 ],
                 temperature: 0.3,
-                max_tokens: 1000,
-                presence_penalty: 0,
-                frequency_penalty: 0
+                max_tokens: 1000
             });
 
             return completion.choices[0].message.content.trim();
         } catch (error) {
-            console.error('OpenAI Translation error:', error);
+            if (error.response?.status === 429) {
+                const delay = parseInt(error.response.headers['retry-after'] || '5') * 1000;
+                await new Promise(resolve => setTimeout(resolve, delay));
+                return this._translate(text, targetLang, domain);
+            }
             throw error;
         }
     }
@@ -160,13 +114,12 @@ class OpenAIService {
 
         const inputCost = estimatedInputTokens * pricing.input / 1000;
         const outputCost = estimatedOutputTokens * pricing.output / 1000;
-        const totalCost = inputCost + outputCost;
 
         return {
             model: this.defaultModel.name,
             inputCost,
             outputCost,
-            totalCost,
+            totalCost: inputCost + outputCost,
             details: {
                 inputTokens: estimatedInputTokens,
                 outputTokens: estimatedOutputTokens,
@@ -177,6 +130,5 @@ class OpenAIService {
     }
 }
 
-// Export cả instance mặc định và class
 module.exports = new OpenAIService();
 module.exports.OpenAIService = OpenAIService; 
