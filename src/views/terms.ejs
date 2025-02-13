@@ -1,74 +1,81 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <h1 class="text-center mb-5">Điều khoản dịch vụ</h1>
+            <h1 class="text-center mb-5"><%= __('pages.terms.title') %></h1>
             
             <div class="card shadow-sm">
                 <div class="card-body">
                     <section class="mb-5">
-                        <h2 class="h4 mb-4">1. Điều khoản sử dụng</h2>
-                        <p>Bằng việc truy cập và sử dụng Smarttrans, bạn đồng ý tuân thủ và chịu ràng buộc bởi các điều khoản và điều kiện sau đây. Nếu bạn không đồng ý với bất kỳ phần nào của các điều khoản này, vui lòng không sử dụng dịch vụ của chúng tôi.</p>
+                        <h2 class="h4 mb-4"><%= __('pages.terms.sections.usage.title') %></h2>
+                        <p><%= __('pages.terms.sections.usage.text') %></p>
                     </section>
 
                     <section class="mb-5">
-                        <h2 class="h4 mb-4">2. Mô tả dịch vụ</h2>
-                        <p>Smarttrans cung cấp dịch vụ dịch thuật tự động sử dụng công nghệ AI. Chúng tôi hỗ trợ dịch các ngôn ngữ sau:</p>
+                        <h2 class="h4 mb-4"><%= __('pages.terms.sections.service.title') %></h2>
+                        <p><%= __('pages.terms.sections.service.text') %></p>
                         <ul>
-                            <li>Tiếng Anh</li>
-                            <li>Tiếng Nhật</li>
-                            <li>Tiếng Hàn</li>
-                            <li>Tiếng Trung</li>
+                            <% __('pages.terms.sections.service.languages').forEach(lang => { %>
+                                <li><%= lang %></li>
+                            <% }); %>
                         </ul>
                     </section>
 
                     <section class="mb-5">
-                        <h2 class="h4 mb-4">3. Giới hạn trách nhiệm</h2>
-                        <p>Smarttrans cung cấp dịch vụ dịch thuật "nguyên trạng" và không đảm bảo độ chính xác 100% của bản dịch. Người dùng nên kiểm tra và hiệu chỉnh kết quả dịch trước khi sử dụng cho mục đích chính thức.</p>
+                        <h2 class="h4 mb-4"><%= __('pages.terms.sections.liability.title') %></h2>
+                        <p><%= __('pages.terms.sections.liability.text') %></p>
                     </section>
 
                     <section class="mb-5">
-                        <h2 class="h4 mb-4">4. Quyền sở hữu trí tuệ</h2>
-                        <p>Người dùng giữ quyền sở hữu đối với nội dung gốc của họ. Smarttrans không lưu trữ hoặc sử dụng nội dung người dùng cho bất kỳ mục đích nào khác ngoài việc cung cấp dịch vụ dịch thuật.</p>
+                        <h2 class="h4 mb-4"><%= __('pages.terms.sections.intellectual_property.title') %></h2>
+                        <p><%= __('pages.terms.sections.intellectual_property.text') %></p>
                     </section>
 
                     <section class="mb-5">
-                        <h2 class="h4 mb-4">5. Bảo mật dữ liệu</h2>
-                        <p>Chúng tôi cam kết bảo vệ thông tin của người dùng:</p>
+                        <h2 class="h4 mb-4"><%= __('pages.terms.sections.security.title') %></h2>
+                        <p><%= __('pages.terms.sections.security.text') %></p>
                         <ul>
-                            <li>Không lưu trữ nội dung dịch</li>
-                            <li>Không chia sẻ thông tin với bên thứ ba</li>
-                            <li>Sử dụng kết nối bảo mật HTTPS</li>
-                            <li>Tuân thủ các quy định về bảo vệ dữ liệu</li>
+                            <% __('pages.terms.sections.security.points').forEach(point => { %>
+                                <li><%= point %></li>
+                            <% }); %>
                         </ul>
                     </section>
 
                     <section class="mb-5">
-                        <h2 class="h4 mb-4">6. Chi phí và thanh toán</h2>
-                        <p>Chi phí dịch vụ được tính dựa trên:</p>
+                        <h2 class="h4 mb-4"><%= __('pages.terms.sections.pricing.title') %></h2>
+                        <p><%= __('pages.terms.sections.pricing.text') %></p>
                         <ul>
-                            <li>Số lượng ký tự trong văn bản gốc</li>
-                            <li>Model AI được sử dụng</li>
-                            <li>Giá được hiển thị trước khi bắt đầu dịch</li>
+                            <% __('pages.terms.sections.pricing.factors').forEach(factor => { %>
+                                <li><%= factor %></li>
+                            <% }); %>
                         </ul>
                     </section>
 
                     <section class="mb-5">
-                        <h2 class="h4 mb-4">7. Thay đổi điều khoản</h2>
-                        <p>Chúng tôi có quyền thay đổi các điều khoản này vào bất kỳ lúc nào. Những thay đổi sẽ có hiệu lực ngay khi được đăng tải. Việc tiếp tục sử dụng dịch vụ sau khi thay đổi đồng nghĩa với việc bạn chấp nhận các điều khoản mới.</p>
+                        <h2 class="h4 mb-4"><%= __('pages.terms.sections.changes.title') %></h2>
+                        <p><%= __('pages.terms.sections.changes.text') %></p>
                     </section>
 
                     <section>
-                        <h2 class="h4 mb-4">8. Liên hệ</h2>
-                        <p>Nếu bạn có bất kỳ câu hỏi nào về Điều khoản dịch vụ, vui lòng liên hệ:</p>
+                        <h2 class="h4 mb-4">
+                            <i class="bi bi-envelope me-2"></i>
+                            <%= __('pages.terms.sections.contact.title') %>
+                        </h2>
+                        <p><%= __('pages.terms.sections.contact.text') %></p>
                         <ul class="list-unstyled">
-                            <li><i class="bi bi-envelope me-2"></i>Email: lonlywolf189@gmail.com</li>
+                            <li>
+                                <i class="bi bi-envelope me-2"></i>
+                                <%= __('pages.terms.sections.contact.email') %>
+                            </li>
                         </ul>
                     </section>
                 </div>
             </div>
 
             <div class="text-center mt-4">
-                <p class="text-muted small">Cập nhật lần cuối: <%= new Date().toLocaleDateString('vi-VN') %></p>
+                <p class="text-muted small">
+                    <%= __('pages.terms.last_updated') %>
+                    <%= new Date().toLocaleDateString(currentLocale === 'vi' ? 'vi-VN' : 'en-US') %>
+                </p>
             </div>
         </div>
     </div>

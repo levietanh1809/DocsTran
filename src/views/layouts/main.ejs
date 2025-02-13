@@ -33,16 +33,40 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/">Trang chủ</a>
+                        <a class="nav-link active" href="/"><%= __('layout.header.home') %></a>
                     </li>
                     <li class="nav-item">
                         <button class="btn btn-link nav-link" 
                                 data-bs-toggle="modal" 
                                 data-bs-target="#settingsModal"
                                 data-bs-toggle="tooltip"
-                                title="Cài đặt hệ thống">
+                                title="<%= __('layout.header.settings.title') %>">
                             <i class="bi bi-gear-fill fs-5"></i>
                         </button>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="langDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-globe me-1"></i>
+                            <%= currentLocale.toUpperCase() %>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="<%= `${currentPath}?lang=vi` %>">
+                                    <% if (currentLocale === 'vi') { %>
+                                        <i class="bi bi-check2 me-2 text-success"></i>
+                                    <% } %>
+                                    Tiếng Việt
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="<%= `${currentPath}?lang=en` %>">
+                                    <% if (currentLocale === 'en') { %>
+                                        <i class="bi bi-check2 me-2 text-success"></i>
+                                    <% } %>
+                                    English
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </div>
@@ -56,7 +80,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title">
                         <i class="bi bi-gear me-2"></i>
-                        Cài đặt hệ thống
+                        <%= __('layout.header.settings.title') %>
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -64,10 +88,10 @@
                     <form id="settingsForm">
                         <div class="mb-3">
                             <label for="apiKey" class="form-label">
-                                OpenAI API Key
+                                <%= __('layout.header.settings.api_key.label') %>
                                 <i class="bi bi-info-circle" 
                                    data-bs-toggle="tooltip" 
-                                   title="Nếu không nhập, hệ thống sẽ sử dụng API key mặc định"></i>
+                                   title="<%= __('layout.header.settings.api_key.tooltip') %>"></i>
                             </label>
                             <div class="input-group">
                                 <input type="password" 
@@ -83,14 +107,18 @@
                                 </button>
                             </div>
                             <div class="form-text">
-                                API key sẽ được lưu trong trình duyệt của bạn
+                                <%= __('layout.header.settings.api_key.help') %>
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                    <button type="button" class="btn btn-primary" onclick="saveSettings()">Lưu cài đặt</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <%= __('layout.header.settings.buttons.close') %>
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="saveSettings()">
+                        <%= __('layout.header.settings.buttons.save') %>
+                    </button>
                 </div>
             </div>
         </div>
@@ -105,10 +133,19 @@
     <footer class="bg-light py-4 mt-auto">
         <div class="container text-center">
             <div class="mb-3">
-                <a href="/terms" class="text-muted text-decoration-none me-3">Điều khoản dịch vụ</a>
-                <a href="/privacy" class="text-muted text-decoration-none">Chính sách bảo mật</a>
+                <% if (title !== 'Trang chủ') { %>
+                    <a href="/terms" class="text-muted text-decoration-none me-3">
+                        <%= __('layout.footer.links.terms') %>
+                    </a>
+                    <a href="/privacy" class="text-muted text-decoration-none me-3">
+                        <%= __('layout.footer.links.privacy') %>
+                    </a>
+                    <a href="/support" class="text-muted text-decoration-none">
+                        <%= __('layout.footer.links.support') %>
+                    </a>
+                <% } %>
             </div>
-            <p class="mb-0">&copy; 2024 Smarttrans. All rights reserved.</p>
+            <p class="mb-0"><%= __('layout.footer.copyright') %></p>
         </div>
     </footer>
 

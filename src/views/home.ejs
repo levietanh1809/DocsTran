@@ -1,34 +1,153 @@
-<div class="text-center mb-5">
-    <h1 class="display-4 fw-bold">Chào mừng đến với DocTrans</h1>
-    <p class="lead">Giải pháp dịch thuật tài liệu thông minh</p>
-</div>
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="bi bi-translate me-2"></i>
+            <%= __('home.hero.title') %>
+        </h1>
+        <p class="lead text-muted mb-4"><%= __('home.hero.subtitle') %></p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="/translate" class="btn btn-primary btn-lg">
+                <i class="bi bi-globe me-2"></i>
+                <%= __('home.hero.start_button') %>
+            </a>
+            <a href="#features" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-info-circle me-2"></i>
+                <%= __('home.hero.learn_more') %>
+            </a>
+        </div>
+    </div>
 
-<div class="row g-4">
-    <div class="col-md-4">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">Dịch Google Sheets</h5>
-                <p class="card-text">Dịch nhanh chóng và chính xác nội dung từ Google Sheets.</p>
-                <a href="/translate" class="btn btn-primary">Bắt đầu dịch</a>
+    <!-- Features Section -->
+    <div class="row g-4 mb-5" id="features">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-globe2 text-primary fs-1"></i>
+                    </div>
+                    <h5 class="card-title"><%= __('home.features.web_app.title') %></h5>
+                    <p class="card-text text-muted"><%= __('home.features.web_app.description') %></p>
+                    <ul class="list-unstyled text-start">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.web_app.features.ui') %></li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.web_app.features.sheets') %></li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.web_app.features.progress') %></li>
+                    </ul>
+                    <a href="/translate" class="btn btn-primary mt-3">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        <%= __('home.features.web_app.start_button') %>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-google text-primary fs-1"></i>
+                    </div>
+                    <h5 class="card-title"><%= __('home.features.addon.title') %></h5>
+                    <p class="card-text text-muted"><%= __('home.features.addon.description') %></p>
+                    <ul class="list-unstyled text-start">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.addon.features.integrated') %></li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.addon.features.quick') %></li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.addon.features.stay') %></li>
+                    </ul>
+                    <a href="https://workspace.google.com/marketplace/app/smarttrans/..." 
+                       target="_blank"
+                       class="btn btn-primary mt-3">
+                        <i class="bi bi-download me-2"></i>
+                        <%= __('home.features.addon.install_button') %>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-gear text-primary fs-1"></i>
+                    </div>
+                    <h5 class="card-title"><%= __('home.features.custom.title') %></h5>
+                    <p class="card-text text-muted"><%= __('home.features.custom.description') %></p>
+                    <ul class="list-unstyled text-start">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.custom.features.api') %></li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.custom.features.model') %></li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.custom.features.domain') %></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">Lịch sử dịch</h5>
-                <p class="card-text">Xem lại và quản lý các dự án dịch thuật.</p>
-                <a href="/translations" class="btn btn-primary">Xem lịch sử</a>
+
+    <!-- Languages Section -->
+    <div class="row mb-5">
+        <div class="col-lg-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title text-center mb-4">
+                        <i class="bi bi-translate me-2 text-primary"></i>
+                        <%= __('home.languages.title') %>
+                    </h5>
+                    <div class="row g-4 text-center">
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-globe2 text-primary mb-2 fs-3"></i>
+                                <h6><%= __('home.languages.list.en') %></h6>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-globe2 text-primary mb-2 fs-3"></i>
+                                <h6><%= __('home.languages.list.ja') %></h6>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-globe2 text-primary mb-2 fs-3"></i>
+                                <h6><%= __('home.languages.list.ko') %></h6>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-plus-circle text-primary mb-2 fs-3"></i>
+                                <h6><%= __('home.languages.list.more') %></h6>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-center text-muted mt-4 mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <%= __('home.languages.note') %>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">Hỗ trợ đa ngôn ngữ</h5>
-                <p class="card-text">Hỗ trợ dịch sang nhiều ngôn ngữ khác nhau.</p>
-                <a href="#" class="btn btn-primary">Tìm hiểu thêm</a>
-            </div>
+
+    <!-- Author Section -->
+    <div class="text-center mb-5">
+        <div class="d-inline-block p-3 bg-light rounded-3">
+            <p class="text-muted mb-2"><%= __('home.author.developed_by') %></p>
+            <a href="/about" class="text-decoration-none">
+                <div class="d-flex align-items-center gap-2 justify-content-center">
+                    <img src="https://ui-avatars.com/api/?name=Le+Viet+Anh&size=32&background=0D8ABC&color=fff" 
+                         alt="<%= __('home.author.name') %>"
+                         class="rounded-circle">
+                    <span class="text-primary fw-medium"><%= __('home.author.name') %></span>
+                </div>
+            </a>
         </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="text-center">
+        <h5 class="mb-3"><%= __('home.contact.title') %></h5>
+        <p class="text-muted mb-4"><%= __('home.contact.subtitle') %></p>
+        <a href="/support" class="btn btn-outline-primary">
+            <i class="bi bi-headset me-2"></i>
+            <%= __('home.contact.button') %>
+        </a>
     </div>
 </div> 

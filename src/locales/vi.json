@@ -1,0 +1,384 @@
+{
+    "home": {
+        "hero": {
+            "title": "Smarttrans",
+            "subtitle": "Giải pháp dịch thuật thông minh tích hợp AI",
+            "start_button": "Bắt đầu dịch",
+            "learn_more": "Tìm hiểu thêm"
+        },
+        "features": {
+            "web_app": {
+                "title": "Web Application",
+                "description": "Dịch thuật trực tiếp trên trình duyệt, không cần cài đặt thêm.",
+                "features": {
+                    "ui": "Giao diện thân thiện",
+                    "sheets": "Tích hợp Google Sheets",
+                    "progress": "Theo dõi tiến độ realtime"
+                },
+                "start_button": "Bắt đầu dịch ngay"
+            },
+            "addon": {
+                "title": "Google Sheets Add-on",
+                "description": "Dịch thuật trực tiếp trong Google Sheets với add-on chuyên dụng.",
+                "features": {
+                    "integrated": "Tích hợp sẵn trong Sheets",
+                    "quick": "Dịch nhanh vùng đã chọn",
+                    "stay": "Không cần rời khỏi sheet"
+                },
+                "install_button": "Cài đặt Add-on"
+            },
+            "custom": {
+                "title": "Tùy chỉnh nâng cao",
+                "description": "Điều chỉnh theo nhu cầu riêng của bạn.",
+                "features": {
+                    "api": "Sử dụng API key riêng",
+                    "model": "Chọn model AI phù hợp",
+                    "domain": "Tối ưu cho từng lĩnh vực"
+                }
+            }
+        },
+        "languages": {
+            "title": "Ngôn ngữ hỗ trợ",
+            "list": {
+                "en": "Tiếng Anh",
+                "ja": "Tiếng Nhật",
+                "ko": "Tiếng Hàn",
+                "more": "Và nhiều hơn nữa"
+            },
+            "note": "Chúng tôi đang liên tục mở rộng để hỗ trợ thêm nhiều ngôn ngữ mới. Liên hệ với chúng tôi nếu bạn cần hỗ trợ ngôn ngữ cụ thể."
+        },
+        "author": {
+            "developed_by": "Được phát triển bởi",
+            "name": "Lê Việt Anh"
+        },
+        "contact": {
+            "title": "Bạn cần hỗ trợ?",
+            "subtitle": "Liên hệ với chúng tôi để được giải đáp mọi thắc mắc",
+            "button": "Liên hệ hỗ trợ"
+        }
+    },
+    "translate": {
+        "title": "Dịch thuật tài liệu",
+        "form": {
+            "project_name": {
+                "label": "Tên dự án",
+                "placeholder": "VD: Dịch tài liệu kỹ thuật tháng 3/2024",
+                "help": "Đặt tên dự án để dễ dàng quản lý và theo dõi tiến độ"
+            },
+            "sheet_url": {
+                "label": "URL Google Sheet",
+                "placeholder": "https://docs.google.com/spreadsheets/d/...",
+                "guide": {
+                    "title": "Hướng dẫn chia sẻ quyền",
+                    "intro": "Để dịch được Google Sheet, bạn cần:",
+                    "share_title": "Chia sẻ quyền chỉnh sửa",
+                    "steps": {
+                        "title": "Các bước chia sẻ:",
+                        "list": [
+                            "Mở Google Sheet của bạn",
+                            "Click nút \"Share\" góc trên bên phải",
+                            "Nhập email trên vào ô \"Add people\"",
+                            "Chọn quyền \"Editor\" (Chỉnh sửa)",
+                            "Click \"Send\""
+                        ]
+                    },
+                    "warning": "Nếu không chia sẻ quyền chỉnh sửa, hệ thống sẽ không thể cập nhật bản dịch vào sheet của bạn"
+                }
+            },
+            "sheet_name": {
+                "label": "Tên Sheet",
+                "placeholder": "Nhập URL Google Sheet trước"
+            },
+            "sheet_range": {
+                "label": "Vùng dữ liệu (Tùy chọn)",
+                "placeholder": "Ví dụ: A1, C23:D34, C:D, 44:46",
+                "guide": {
+                    "title": "Hướng dẫn chọn vùng dữ liệu",
+                    "intro": "Có 4 cách chọn vùng dữ liệu:",
+                    "types": {
+                        "cell": "Một ô cụ thể: Ví dụ \"A1\" - chỉ dịch ô A1",
+                        "range": "Vùng cụ thể: Ví dụ \"C23:D34\" - dịch từ ô C23 đến D34",
+                        "columns": "Theo cột: Ví dụ \"C:D\" - dịch toàn bộ cột C và D",
+                        "rows": "Theo dòng: Ví dụ \"44:46\" - dịch từ dòng 44 đến 46 (tất cả các cột)"
+                    },
+                    "note": "Để trống nếu muốn dịch toàn bộ sheet. Hoặc nhập vùng cụ thể, ví dụ: A1, C23:D34, C:D, 44:46"
+                }
+            },
+            "target_lang": {
+                "label": "Ngôn ngữ đích",
+                "placeholder": "Chọn ngôn ngữ...",
+                "options": {
+                    "vi": "Tiếng Việt",
+                    "en": "Tiếng Anh",
+                    "ja": "Tiếng Nhật",
+                    "ko": "Tiếng Hàn",
+                    "zh": "Tiếng Trung"
+                }
+            },
+            "domain": {
+                "label": "Lĩnh vực",
+                "placeholder": "Chọn lĩnh vực...",
+                "options": {
+                    "technical": "Kỹ thuật",
+                    "general": "Chung"
+                }
+            }
+        },
+        "model": {
+            "title": "Model: GPT-4 Mini",
+            "pricing": {
+                "input": "Input: $0.01/1K tokens",
+                "output": "Output: $0.03/1K tokens"
+            },
+            "description": "Model tối ưu cho dịch thuật, cân bằng giữa chất lượng và chi phí"
+        },
+        "submit": "Bắt đầu dịch",
+        "progress": {
+            "preparing": "Đang chuẩn bị...",
+            "connecting": "Đang kết nối...",
+            "processing": "Đang xử lý...",
+            "translating": "Đang dịch...",
+            "completed": "Hoàn thành!",
+            "batch_progress": "Đang xử lý batch {current}/{total}...",
+            "row_progress": "Đã dịch {completed}/{total} dòng ({percent}%)",
+            "init_project": "Đang khởi tạo dự án..."
+        },
+        "result": {
+            "success": {
+                "title": "Dịch thuật hoàn thành!",
+                "stats": {
+                    "cells": "Số ô đã dịch: {count}",
+                    "chars": "Tổng số ký tự: {count}",
+                    "cost": "Chi phí ước tính: {amount}",
+                    "details": {
+                        "title": "Chi tiết:",
+                        "input_tokens": "Input tokens: {count}",
+                        "output_tokens": "Output tokens: {count}",
+                        "input_cost": "Chi phí input: {amount}",
+                        "output_cost": "Chi phí output: {amount}"
+                    }
+                }
+            },
+            "error": {
+                "title": "Lỗi dịch thuật",
+                "sheet_invalid": "URL Google Sheet không hợp lệ",
+                "permission_denied": "Không có quyền truy cập sheet",
+                "api_error": "Lỗi API key: {message}",
+                "unknown": "Đã xảy ra lỗi không mong muốn"
+            }
+        },
+        "button_states": {
+            "submit": "Bắt đầu dịch",
+            "processing": "Đang xử lý..."
+        }
+    },
+    "layout": {
+        "header": {
+            "home": "Trang chủ",
+            "settings": {
+                "title": "Cài đặt hệ thống",
+                "api_key": {
+                    "label": "OpenAI API Key",
+                    "tooltip": "Nếu không nhập, hệ thống sẽ sử dụng API key mặc định",
+                    "help": "API key sẽ được lưu trong trình duyệt của bạn"
+                },
+                "buttons": {
+                    "close": "Đóng",
+                    "save": "Lưu cài đặt"
+                }
+            }
+        },
+        "footer": {
+            "links": {
+                "terms": "Điều khoản dịch vụ",
+                "privacy": "Chính sách bảo mật",
+                "support": "Hỗ trợ"
+            },
+            "copyright": "© 2024 Smarttrans. All rights reserved."
+        }
+    },
+    "pages": {
+        "about": {
+            "title": "Về chúng tôi",
+            "content": {
+                "intro": "Smarttrans là một dự án mã nguồn mở nhằm đơn giản hóa quy trình dịch thuật tài liệu.",
+                "features": {
+                    "title": "Tính năng chính:",
+                    "list": [
+                        "Tích hợp trực tiếp với Google Sheets",
+                        "Sử dụng AI tiên tiến để dịch thuật",
+                        "Hỗ trợ nhiều ngôn ngữ",
+                        "Giao diện thân thiện, dễ sử dụng",
+                        "Theo dõi tiến độ thời gian thực"
+                    ]
+                },
+                "contact": {
+                    "title": "Liên hệ",
+                    "email": "Email: contact@smarttrans.ai",
+                    "github": "GitHub: github.com/smarttrans"
+                }
+            }
+        },
+        "terms": {
+            "title": "Điều khoản dịch vụ",
+            "sections": {
+                "usage": {
+                    "title": "1. Điều khoản sử dụng",
+                    "text": "Bằng việc truy cập và sử dụng Smarttrans, bạn đồng ý tuân thủ và chịu ràng buộc bởi các điều khoản và điều kiện sau đây. Nếu bạn không đồng ý với bất kỳ phần nào của các điều khoản này, vui lòng không sử dụng dịch vụ của chúng tôi."
+                },
+                "service": {
+                    "title": "2. Mô tả dịch vụ",
+                    "text": "Smarttrans cung cấp dịch vụ dịch thuật tự động sử dụng công nghệ AI. Chúng tôi hỗ trợ dịch các ngôn ngữ sau:",
+                    "languages": [
+                        "Tiếng Anh",
+                        "Tiếng Nhật",
+                        "Tiếng Hàn",
+                        "Tiếng Trung"
+                    ]
+                },
+                "liability": {
+                    "title": "3. Giới hạn trách nhiệm",
+                    "text": "Smarttrans cung cấp dịch vụ dịch thuật \"nguyên trạng\" và không đảm bảo độ chính xác 100% của bản dịch. Người dùng nên kiểm tra và hiệu chỉnh kết quả dịch trước khi sử dụng cho mục đích chính thức."
+                },
+                "intellectual_property": {
+                    "title": "4. Quyền sở hữu trí tuệ",
+                    "text": "Người dùng giữ quyền sở hữu đối với nội dung gốc của họ. Smarttrans không lưu trữ hoặc sử dụng nội dung người dùng cho bất kỳ mục đích nào khác ngoài việc cung cấp dịch vụ dịch thuật."
+                },
+                "security": {
+                    "title": "5. Bảo mật dữ liệu",
+                    "text": "Chúng tôi cam kết bảo vệ thông tin của người dùng:",
+                    "points": [
+                        "Không lưu trữ nội dung dịch",
+                        "Không chia sẻ thông tin với bên thứ ba",
+                        "Sử dụng kết nối bảo mật HTTPS",
+                        "Tuân thủ các quy định về bảo vệ dữ liệu"
+                    ]
+                },
+                "pricing": {
+                    "title": "6. Chi phí và thanh toán",
+                    "text": "Chi phí dịch vụ được tính dựa trên:",
+                    "factors": [
+                        "Số lượng ký tự trong văn bản gốc",
+                        "Model AI được sử dụng",
+                        "Giá được hiển thị trước khi bắt đầu dịch"
+                    ]
+                },
+                "changes": {
+                    "title": "7. Thay đổi điều khoản",
+                    "text": "Chúng tôi có quyền thay đổi các điều khoản này vào bất kỳ lúc nào. Những thay đổi sẽ có hiệu lực ngay khi được đăng tải. Việc tiếp tục sử dụng dịch vụ sau khi thay đổi đồng nghĩa với việc bạn chấp nhận các điều khoản mới."
+                },
+                "contact": {
+                    "title": "8. Liên hệ",
+                    "text": "Nếu bạn có bất kỳ câu hỏi nào về Điều khoản dịch vụ, vui lòng liên hệ:",
+                    "email": "Email: lonlywolf189@gmail.com"
+                }
+            },
+            "last_updated": "Cập nhật lần cuối:"
+        },
+        "privacy": {
+            "title": "Chính sách bảo mật",
+            "sections": {
+                "data_collection": {
+                    "title": "1. Thu thập thông tin",
+                    "text": "Smarttrans chỉ thu thập những thông tin cần thiết để cung cấp dịch vụ dịch thuật:",
+                    "items": [
+                        "Nội dung văn bản cần dịch",
+                        "Thông tin về Google Sheet được chia sẻ",
+                        "API key do người dùng cung cấp (được lưu trữ cục bộ)"
+                    ]
+                },
+                "data_usage": {
+                    "title": "2. Sử dụng thông tin",
+                    "text": "Thông tin được thu thập chỉ được sử dụng để:",
+                    "purposes": [
+                        "Thực hiện dịch thuật theo yêu cầu",
+                        "Cải thiện chất lượng dịch vụ",
+                        "Xử lý sự cố kỹ thuật",
+                        "Thống kê việc sử dụng dịch vụ"
+                    ]
+                },
+                "data_security": {
+                    "title": "3. Bảo mật thông tin",
+                    "text": "Chúng tôi cam kết bảo vệ thông tin của người dùng bằng các biện pháp:",
+                    "measures": [
+                        "Mã hóa dữ liệu trong quá trình truyền tải",
+                        "Không lưu trữ nội dung dịch sau khi hoàn thành",
+                        "Giới hạn quyền truy cập vào hệ thống",
+                        "Thường xuyên cập nhật các biện pháp bảo mật"
+                    ]
+                },
+                "user_rights": {
+                    "title": "4. Quyền của người dùng",
+                    "text": "Người dùng có quyền:",
+                    "rights": [
+                        "Yêu cầu xóa dữ liệu cá nhân",
+                        "Từ chối việc thu thập thông tin",
+                        "Yêu cầu cung cấp thông tin về dữ liệu đã thu thập",
+                        "Cập nhật hoặc sửa đổi thông tin cá nhân"
+                    ]
+                },
+                "cookies": {
+                    "title": "5. Cookie và công nghệ theo dõi",
+                    "text": "Smarttrans sử dụng cookie và các công nghệ tương tự để:",
+                    "purposes": [
+                        "Ghi nhớ tùy chọn người dùng",
+                        "Cải thiện trải nghiệm sử dụng",
+                        "Phân tích hiệu suất hệ thống"
+                    ]
+                },
+                "changes": {
+                    "title": "6. Thay đổi chính sách",
+                    "text": "Chúng tôi có thể cập nhật chính sách này theo thời gian. Mọi thay đổi sẽ được thông báo trên trang web và có hiệu lực ngay sau khi được đăng tải."
+                },
+                "contact": {
+                    "title": "7. Liên hệ",
+                    "text": "Nếu bạn có bất kỳ câu hỏi nào về Chính sách bảo mật, vui lòng liên hệ:",
+                    "email": "Email: lonlywolf189@gmail.com"
+                }
+            },
+            "last_updated": "Cập nhật lần cuối:"
+        },
+        "support": {
+            "title": "Hỗ trợ",
+            "content": {
+                "intro": "Chúng tôi luôn sẵn sàng hỗ trợ bạn",
+                "sections": {
+                    "contact": {
+                        "title": "Liên hệ hỗ trợ",
+                        "methods": [
+                            {
+                                "type": "Email",
+                                "value": "lonlywolf189@gmail.com",
+                                "note": "Phản hồi trong vòng 24h"
+                            }
+                        ],
+                        "response_time": {
+                            "title": "Thời gian phản hồi:",
+                            "items": [
+                                "Email: Trong vòng 24 giờ làm việc",
+                                "Vấn đề khẩn cấp: Trong vòng 4 giờ làm việc"
+                            ]
+                        }
+                    },
+                    "faq": {
+                        "title": "Câu hỏi thường gặp",
+                        "questions": [
+                            {
+                                "q": "Làm thế nào để bắt đầu sử dụng Smarttrans?",
+                                "a": "Để bắt đầu, bạn chỉ cần có một Google Sheet và chia sẻ quyền chỉnh sửa cho email của hệ thống. Sau đó, dán link sheet vào form và chọn các tùy chọn dịch phù hợp."
+                            },
+                            {
+                                "q": "Tôi có thể sử dụng API key của riêng mình không?",
+                                "a": "Có, bạn có thể sử dụng API key OpenAI của riêng mình. Điều này giúp bạn kiểm soát chi phí và tốc độ dịch thuật tốt hơn."
+                            },
+                            {
+                                "q": "Chi phí dịch thuật được tính như thế nào?",
+                                "a": "Chi phí được tính dựa trên số lượng ký tự trong văn bản gốc. Bạn sẽ thấy ước tính chi phí trước khi bắt đầu dịch và chi phí thực tế sau khi hoàn thành."
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+} 

@@ -33,8 +33,8 @@ document.getElementById('sheetTranslateForm').addEventListener('submit', async (
         // Thay đổi trạng thái button và progress
         submitBtn.disabled = true;
         spinner.classList.remove('d-none');
-        btnText.textContent = 'Đang chuẩn bị...';
-        progressDetail.textContent = 'Đang khởi tạo dự án...';
+        btnText.textContent = window.translations.translate.button_states.processing;
+        progressDetail.textContent = window.translations.translate.progress.preparing;
 
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
@@ -48,9 +48,16 @@ document.getElementById('sheetTranslateForm').addEventListener('submit', async (
                 console.log('Progress update:', progress);
                 
                 // Cập nhật progress bars
+                const percent = progress.percent || 0;
                 [progressBar, mainProgressBar].forEach(bar => {
-                    bar.style.width = `${progress.percent}%`;
-                    bar.setAttribute('aria-valuenow', progress.percent);
+                    bar.style.width = `${percent}%`;
+                    bar.setAttribute('aria-valuenow', percent);
+                    
+                    // Cập nhật text hiển thị phần trăm
+                    const progressText = bar.querySelector('#progressText');
+                    if (progressText) {
+                        progressText.textContent = `${Math.round(percent)}%`;
+                    }
                     
                     // Thêm class khi hoàn thành
                     if (progress.status === 'completed') {
@@ -58,12 +65,30 @@ document.getElementById('sheetTranslateForm').addEventListener('submit', async (
                     }
                 });
 
-                // Cập nhật text hiển thị
-                btnText.textContent = progress.status === 'completed' 
-                    ? 'Hoàn thành!' 
-                    : `Đang xử lý (${progress.percent}%)`;
-                document.getElementById('progressText').textContent = `${progress.percent}%`;
-                progressDetail.textContent = progress.detail;
+                // Cập nhật text theo trạng thái
+                if (progress.status === 'completed') {
+                    progressDetail.textContent = window.translations.translate.progress.completed;
+                    btnText.textContent = window.translations.translate.button_states.submit;
+                } else {
+                    // Thay thế các placeholder trong message
+                    let message = progress.detail;
+                    if (message.includes('batch')) {
+                        const [current, total] = message.match(/\d+/g);
+                        message = window.translations.translate.progress.batch_progress
+                            .replace('{current}', current)
+                            .replace('{total}', total);
+                    } else if (message.includes('dòng')) {
+                        const [completed, total, percent] = message.match(/\d+/g);
+                        message = window.translations.translate.progress.row_progress
+                            .replace('{completed}', completed)
+                            .replace('{total}', total)
+                            .replace('{percent}', Math.round(percent));
+                    } else {
+                        message = window.translations.translate.progress.processing;
+                    }
+                    progressDetail.textContent = message;
+                    btnText.textContent = `${window.translations.translate.button_states.processing} (${Math.round(percent)}%)`;
+                }
 
                 // Thêm class khi hoàn thành
                 if (progress.status === 'completed') {
@@ -114,7 +139,7 @@ function resetUI() {
 
     submitBtn.disabled = false;
     spinner.classList.add('d-none');
-    btnText.textContent = 'Bắt đầu dịch';
+    btnText.textContent = window.translations.translate.button_states.submit;
     submitBtn.classList.remove('processing');
     
     // Ẩn progress bars với animation
@@ -424,9 +449,15 @@ if (rangeInput) {
     });
 }
 
-// Thêm hàm format số
-function formatNumber(num) {
-    return new Intl.NumberFormat().format(num);
+// Hàm format số
+function formatNumber(value) {
+    if (typeof value === 'string' && value.startsWith('$')) {
+        return value; // Giữ nguyên nếu đã có định dạng $
+    }
+    if (typeof value === 'number') {
+        return value.toLocaleString();
+    }
+    return value;
 }
 
 // Cập nhật hàm xử lý response thành công
@@ -440,51 +471,34 @@ function handleTranslationSuccess(result) {
     successAlert.classList.remove('d-none', 'alert-danger');
     successAlert.classList.add('alert-success');
     successAlert.innerHTML = `
-        <div class="border-start border-success ps-3">
-            <div class="text-success fw-bold mb-2">
-                <i class="bi bi-check-circle-fill me-1"></i>
-                Hoàn thành dịch thuật!
-            </div>
-            <div class="text-muted">
-                <div class="mb-1">
-                    <i class="bi bi-grid me-2"></i>
-                    <span class="fw-medium">Số ô đã dịch:</span> ${formatNumber(result.stats.totalCells)}
-                </div>
-                <div class="mb-1">
-                    <i class="bi bi-text-paragraph me-2"></i>
-                    <span class="fw-medium">Tổng ký tự:</span> ${formatNumber(result.stats.totalChars)}
-                </div>
-                <div class="mb-1">
-                    <i class="bi bi-robot me-2"></i>
-                    <span class="fw-medium">Model:</span> ${result.stats.model}
-                </div>
-                <div class="mb-2">
-                    <i class="bi bi-currency-dollar me-2"></i>
-                    <span class="fw-medium">Tổng chi phí:</span> ${result.stats.estimatedCost}
-                </div>
-                <div class="small text-muted border-top pt-2">
-                    <div>Input (${formatNumber(result.stats.details.inputTokens)} tokens): ${result.stats.details.inputCost}</div>
-                    <div>Output (${formatNumber(result.stats.details.outputTokens)} tokens): ${result.stats.details.outputCost}</div>
-                    <div class="mt-1">
-                        <i class="bi bi-info-circle-fill me-1"></i>
-                        Giá: ${result.stats.details.inputRate} (input), ${result.stats.details.outputRate} (output)
-                    </div>
-                </div>
-            </div>
-        </div>
+        <h5 class="alert-heading">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            ${window.translations.translate.result.success.title}
+        </h5>
+        <p class="mb-2">${window.translations.translate.result.success.stats.cells.replace('{count}', formatNumber(result.stats.totalCells))}</p>
+        <p class="mb-2">${window.translations.translate.result.success.stats.chars.replace('{count}', formatNumber(result.stats.totalChars))}</p>
+        <p class="mb-2">${window.translations.translate.result.success.stats.cost.replace('{amount}', formatNumber(result.stats.estimatedCost))}</p>
+        <hr>
+        <p class="mb-1"><strong>${window.translations.translate.result.success.stats.details.title}</strong></p>
+        <ul class="list-unstyled small mb-0">
+            <li>${window.translations.translate.result.success.stats.details.input_tokens.replace('{count}', formatNumber(result.stats.details.inputTokens))}</li>
+            <li>${window.translations.translate.result.success.stats.details.output_tokens.replace('{count}', formatNumber(result.stats.details.outputTokens))}</li>
+            <li>${window.translations.translate.result.success.stats.details.input_cost.replace('{amount}', formatNumber(result.stats.details.inputCost))}</li>
+            <li>${window.translations.translate.result.success.stats.details.output_cost.replace('{amount}', formatNumber(result.stats.details.outputCost))}</li>
+        </ul>
     `;
 
     // Scroll to success message
     successAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
     
-    // Chỉ reset button state, không reset form
+    // Reset button state với text từ translations
     const submitBtn = document.querySelector('button[type="submit"]');
     const spinner = submitBtn.querySelector('.spinner-border');
     const btnText = submitBtn.querySelector('.button-text');
     
     submitBtn.disabled = false;
     spinner.classList.add('d-none');
-    btnText.textContent = 'Bắt đầu dịch';
+    btnText.textContent = window.translations.translate.submit;
     submitBtn.classList.remove('processing');
 }
 
@@ -528,4 +542,28 @@ document.getElementById('sheetTranslateForm').addEventListener('submit', async (
     };
 
     // ... rest of the submit handler
-}); 
+});
+
+// Hàm hiển thị thông báo lỗi
+function showErrorAlert(error) {
+    const successAlert = document.getElementById('successAlert');
+    successAlert.classList.remove('d-none', 'alert-success');
+    successAlert.classList.add('alert-danger');
+    
+    let errorMessage = window.translations.translate.result.error.unknown;
+    if (error.includes('URL')) {
+        errorMessage = window.translations.translate.result.error.sheet_invalid;
+    } else if (error.includes('quyền') || error.includes('permission')) {
+        errorMessage = window.translations.translate.result.error.permission_denied;
+    } else if (error.includes('API key')) {
+        errorMessage = window.translations.translate.result.error.api_error.replace('{message}', error);
+    }
+    
+    successAlert.innerHTML = `
+        <h5 class="alert-heading">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            ${window.translations.translate.result.error.title}
+        </h5>
+        <p class="mb-0">${errorMessage}</p>
+    `;
+} 

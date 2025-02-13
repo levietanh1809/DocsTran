@@ -3,12 +3,15 @@
         <div class="col-md-8">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h1 class="text-center mb-4">Dịch thuật tài liệu</h1>
+                    <h1 class="text-center mb-4"><%= __('translate.title') %></h1>
                     
-                    <% if (error) { %>
+                    <!-- Error Alert -->
+                    <% if (typeof error !== 'undefined' && error) { %>
                         <div class="alert alert-danger" role="alert"><%= error %></div>
                     <% } %>
-                    <% if (success) { %>
+
+                    <!-- Success Alert -->
+                    <% if (typeof success !== 'undefined' && success) { %>
                         <div class="alert alert-success" role="alert"><%= success %></div>
                     <% } %>
 
@@ -16,40 +19,40 @@
                     <form id="sheetTranslateForm" class="needs-validation" novalidate>
                         <!-- Project Name -->
                         <div class="mb-4">
-                            <label for="projectName" class="form-label">Tên dự án</label>
+                            <label for="projectName" class="form-label"><%= __('translate.form.project_name.label') %></label>
                             <input type="text" 
                                    class="form-control" 
                                    id="projectName" 
                                    name="projectName"
-                                   placeholder="VD: Dịch tài liệu kỹ thuật tháng 3/2024"
+                                   placeholder="<%= __('translate.form.project_name.placeholder') %>"
                                    required>
                             <div class="form-text">
-                                Đặt tên dự án để dễ dàng quản lý và theo dõi tiến độ
+                                <%= __('translate.form.project_name.help') %>
                             </div>
                         </div>
 
                         <!-- Google Sheet URL -->
                         <div class="mb-4">
-                            <label for="sheetUrl" class="form-label">URL Google Sheet</label>
+                            <label for="sheetUrl" class="form-label"><%= __('translate.form.sheet_url.label') %></label>
                             <input type="text" 
                                    class="form-control" 
                                    id="sheetUrl" 
                                    name="sheetUrl" 
                                    required
-                                   placeholder="https://docs.google.com/spreadsheets/d/...">
+                                   placeholder="<%= __('translate.form.sheet_url.placeholder') %>">
                             <div class="accordion mt-2">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#urlGuideContent">
-                                            <i class="bi bi-info-circle me-2"></i> Hướng dẫn chia sẻ quyền
+                                            <i class="bi bi-info-circle me-2"></i> <%= __('translate.form.sheet_url.guide.title') %>
                                         </button>
                                     </h2>
                                     <div id="urlGuideContent" class="accordion-collapse collapse">
                                         <div class="accordion-body">
-                                            <p class="mb-2">Để dịch được Google Sheet, bạn cần:</p>
+                                            <p class="mb-2"><%= __('translate.form.sheet_url.guide.intro') %></p>
                                             <ol class="small mb-2">
                                                 <li class="mb-2">
-                                                    <strong>Chia sẻ quyền chỉnh sửa</strong> cho email:
+                                                    <strong><%= __('translate.form.sheet_url.guide.share_title') %></strong> cho email:
                                                     <div class="d-flex align-items-center mt-1 bg-light p-2 rounded">
                                                         <code class="me-2"><%= process.env.GOOGLE_CLIENT_EMAIL %></code>
                                                         <button class="btn btn-sm btn-outline-primary" 
@@ -60,19 +63,17 @@
                                                     </div>
                                                 </li>
                                                 <li>
-                                                    <strong>Các bước chia sẻ:</strong>
+                                                    <strong><%= __('translate.form.sheet_url.guide.steps.title') %></strong>
                                                     <ul class="mt-1">
-                                                        <li>Mở Google Sheet của bạn</li>
-                                                        <li>Click nút "Share" góc trên bên phải</li>
-                                                        <li>Nhập email trên vào ô "Add people"</li>
-                                                        <li>Chọn quyền "Editor" (Chỉnh sửa)</li>
-                                                        <li>Click "Send"</li>
+                                                        <% __('translate.form.sheet_url.guide.steps.list').forEach(step => { %>
+                                                            <li><%= step %></li>
+                                                        <% }); %>
                                                     </ul>
                                                 </li>
                                             </ol>
                                             <div class="alert alert-warning py-2 small">
                                                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                                Nếu không chia sẻ quyền chỉnh sửa, hệ thống sẽ không thể cập nhật bản dịch vào sheet của bạn
+                                                <%= __('translate.form.sheet_url.guide.warning') %>
                                             </div>
                                         </div>
                                     </div>
@@ -82,51 +83,51 @@
 
                         <!-- Sheet Name -->
                         <div class="mb-4">
-                            <label for="sheetName" class="form-label">Tên Sheet</label>
+                            <label for="sheetName" class="form-label"><%= __('translate.form.sheet_name.label') %></label>
                             <select class="form-select" id="sheetName" name="sheetName" required disabled>
-                                <option value="" selected disabled>Nhập URL Google Sheet trước</option>
+                                <option value="" selected disabled><%= __('translate.form.sheet_name.placeholder') %></option>
                             </select>
                         </div>
 
                         <!-- Sheet Range -->
                         <div class="mb-4">
-                            <label for="sheetRange" class="form-label">Vùng dữ liệu (Tùy chọn)</label>
+                            <label for="sheetRange" class="form-label"><%= __('translate.form.sheet_range.label') %></label>
                             <input type="text" 
                                    class="form-control" 
                                    id="sheetRange" 
                                    name="sheetRange"
-                                   placeholder="Ví dụ: A1, C23:D34, C:D, 44:46">
+                                   placeholder="<%= __('translate.form.sheet_range.placeholder') %>">
                             <div class="accordion mt-2">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#rangeGuideContent">
-                                            <i class="bi bi-info-circle me-2"></i> Hướng dẫn chọn vùng dữ liệu
+                                            <i class="bi bi-info-circle me-2"></i> <%= __('translate.form.sheet_range.guide.title') %>
                                         </button>
                                     </h2>
                                     <div id="rangeGuideContent" class="accordion-collapse collapse">
                                         <div class="accordion-body">
-                                            <p class="mb-2">Có 4 cách chọn vùng dữ liệu:</p>
+                                            <p class="mb-2"><%= __('translate.form.sheet_range.guide.intro') %></p>
                                             <ul class="list-unstyled small">
                                                 <li>
                                                     <i class="bi bi-1-circle-fill text-primary me-2"></i>
-                                                    <strong>Một ô cụ thể:</strong> Ví dụ "A1" - chỉ dịch ô A1
+                                                    <strong><%= __('translate.form.sheet_range.guide.types.cell') %></strong>
                                                 </li>
                                                 <li>
                                                     <i class="bi bi-2-circle-fill text-primary me-2"></i>
-                                                    <strong>Vùng cụ thể:</strong> Ví dụ "C23:D34" - dịch từ ô C23 đến D34
+                                                    <strong><%= __('translate.form.sheet_range.guide.types.range') %></strong>
                                                 </li>
                                                 <li>
                                                     <i class="bi bi-3-circle-fill text-primary me-2"></i>
-                                                    <strong>Theo cột:</strong> Ví dụ "C:D" - dịch toàn bộ cột C và D
+                                                    <strong><%= __('translate.form.sheet_range.guide.types.columns') %></strong>
                                                 </li>
                                                 <li>
                                                     <i class="bi bi-4-circle-fill text-primary me-2"></i>
-                                                    <strong>Theo dòng:</strong> Ví dụ "44:46" - dịch từ dòng 44 đến 46 (tất cả các cột)
+                                                    <strong><%= __('translate.form.sheet_range.guide.types.rows') %></strong>
                                                 </li>
                                             </ul>
                                             <div class="alert alert-info mt-2 mb-0 py-2 small">
                                                 <i class="bi bi-info-circle-fill me-2"></i>
-                                                <strong>Lưu ý:</strong> Để trống nếu muốn dịch toàn bộ sheet. Hoặc nhập vùng cụ thể, ví dụ: A1, C23:D34, C:D, 44:46
+                                                <%= __('translate.form.sheet_range.guide.note') %>
                                             </div>
                                         </div>
                                     </div>
@@ -136,23 +137,23 @@
 
                         <!-- Target Language -->
                         <div class="mb-4">
-                            <label for="targetLang" class="form-label">Ngôn ngữ đích</label>
+                            <label for="targetLang" class="form-label"><%= __('translate.form.target_lang.label') %></label>
                             <select class="form-select" id="targetLang" name="targetLang" required>
-                                <option value="" selected disabled>Chọn ngôn ngữ...</option>
-                                <option value="en">Tiếng Anh</option>
-                                <option value="ja">Tiếng Nhật</option>
-                                <option value="ko">Tiếng Hàn</option>
-                                <option value="zh">Tiếng Trung</option>
+                                <option value="" selected disabled><%= __('translate.form.target_lang.placeholder') %></option>
+                                <% Object.entries(__('translate.form.target_lang.options')).forEach(([key, value]) => { %>
+                                    <option value="<%= key %>"><%= value %></option>
+                                <% }); %>
                             </select>
                         </div>
 
                         <!-- Domain -->
                         <div class="mb-4">
-                            <label for="domain" class="form-label">Lĩnh vực</label>
+                            <label for="domain" class="form-label"><%= __('translate.form.domain.label') %></label>
                             <select class="form-select" id="domain" name="domain" required>
-                                <option value="" selected disabled>Chọn lĩnh vực...</option>
-                                <option value="technical">Kỹ thuật</option>
-                                <option value="general">Chung</option>
+                                <option value="" selected disabled><%= __('translate.form.domain.placeholder') %></option>
+                                <% Object.entries(__('translate.form.domain.options')).forEach(([key, value]) => { %>
+                                    <option value="<%= key %>"><%= value %></option>
+                                <% }); %>
                             </select>
                         </div>
 
@@ -161,13 +162,13 @@
                             <div class="d-flex align-items-center">
                                 <i class="bi bi-robot me-2"></i>
                                 <div>
-                                    <strong>Model:</strong> GPT-4 Mini
+                                    <strong><%= __('translate.model.title') %></strong>
                                     <div class="small text-muted mt-1">
-                                        <div>Input: $0.01/1K tokens</div>
-                                        <div>Output: $0.03/1K tokens</div>
+                                        <div><%= __('translate.model.pricing.input') %></div>
+                                        <div><%= __('translate.model.pricing.output') %></div>
                                         <div class="mt-1">
                                             <i class="bi bi-info-circle me-1"></i>
-                                            Model tối ưu cho dịch thuật, cân bằng giữa chất lượng và chi phí
+                                            <%= __('translate.model.description') %>
                                         </div>
                                     </div>
                                 </div>
@@ -178,7 +179,7 @@
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary btn-lg position-relative">
                                 <span class="spinner-border spinner-border-sm d-none me-2"></span>
-                                <span class="button-text">Bắt đầu dịch</span>
+                                <span class="button-text"><%= __('translate.submit') %></span>
                                 <div class="progress position-absolute bottom-0 start-0 w-100 rounded-bottom" style="height: 4px;">
                                     <div class="progress-bar" role="progressbar" style="width: 0%"></div>
                                 </div>
@@ -203,7 +204,7 @@
                             </div>
                         </div>
                         <div id="progressDetail" class="text-muted small">
-                            Đang chuẩn bị...
+                            <%= __('translate.progress.preparing') %>
                         </div>
                     </div>
 
@@ -215,4 +216,9 @@
     </div>
 </div>
 
+<script>
+    window.translations = {
+        translate: <%- JSON.stringify(__('translate')) %>
+    };
+</script>
 <script src="/js/translate.js"></script> 

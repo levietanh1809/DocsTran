@@ -28009,7 +28009,4838 @@ _**User**_
 
 _**Assistant**_
 
+Tôi sẽ cập nhật header và form:
 
+1. Cập nhật navbar trong main.ejs:
+
+````html:src/views/layouts/main.ejs
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="bi bi-translate me-2"></i>
+            Smarttrans
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <button class="btn btn-link nav-link" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#settingsModal"
+                            data-bs-toggle="tooltip"
+                            title="Cài đặt hệ thống">
+                        <i class="bi bi-gear-fill fs-5"></i>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+````
+
+2. Cập nhật form trong translate.ejs:
+
+````html:src/views/translate.ejs
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h1 class="text-center mb-4">Dịch thuật tài liệu</h1>
+        
+        <% if (error) { %>
+            <div class="alert alert-danger" role="alert"><%= error %></div>
+        <% } %>
+        <% if (success) { %>
+            <div class="alert alert-success" role="alert"><%= success %></div>
+        <% } %>
+
+        <!-- Form dịch -->
+        <form id="sheetTranslateForm" class="needs-validation" novalidate>
+            <!-- Project Name -->
+            <div class="mb-4">
+                <label for="projectName" class="form-label">Tên dự án</label>
+                <input type="text" 
+                       class="form-control" 
+                       id="projectName" 
+                       name="projectName"
+                       placeholder="VD: Dịch tài liệu kỹ thuật tháng 3/2024"
+                       required>
+                <div class="form-text">
+                    Đặt tên dự án để dễ dàng quản lý và theo dõi tiến độ
+                </div>
+            </div>
+            <!-- ... rest of the form ... -->
+````
+
+Những thay đổi này sẽ:
+1. Thêm icon translate vào navbar brand
+2. Đổi DocTrans thành Smarttrans trong navbar
+3. Bỏ tên Smarttrans khỏi form header
+4. Đơn giản hóa placeholder của project name
+5. Giữ nguyên các chức năng khác
+
+---
+
+_**User**_
+
+Hãy tạo cho tôi 1 trang để giới thiệu về tôi. Tên: Lê Việt Anh email:lonlywolf189@gmail.com Dự án cá nhân: smarttrans.site
+Professional in PHP, Node JS< JS, SQL Server. Hãy mô tả thật đẹp
+
+---
+
+_**Assistant**_
+
+Tôi sẽ tạo một trang About Me chuyên nghiệp. Đầu tiên thêm route và sau đó tạo view:
+
+1. Thêm route trong routes/index.js:
+
+````javascript:src/routes/index.js
+// Thêm route cho About page
+router.get('/about', (req, res) => {
+    res.render('about', {
+        title: 'Về tôi'
+    });
+});
+````
+
+2. Tạo file about.ejs:
+
+````html:src/views/about.ejs
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Profile Header -->
+            <div class="text-center mb-5">
+                <div class="mb-4">
+                    <img src="https://ui-avatars.com/api/?name=Le+Viet+Anh&size=128&background=0D8ABC&color=fff" 
+                         alt="Lê Việt Anh" 
+                         class="rounded-circle shadow-sm"
+                         width="128"
+                         height="128">
+                </div>
+                <h1 class="display-5 fw-bold mb-3">Lê Việt Anh</h1>
+                <p class="lead text-muted mb-4">Full Stack Developer</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="mailto:lonlywolf189@gmail.com" class="btn btn-outline-primary">
+                        <i class="bi bi-envelope me-2"></i>
+                        Liên hệ
+                    </a>
+                    <a href="https://smarttrans.site" target="_blank" class="btn btn-outline-secondary">
+                        <i class="bi bi-globe me-2"></i>
+                        Dự án
+                    </a>
+                </div>
+            </div>
+
+            <!-- About Section -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">
+                                <i class="bi bi-person-badge me-2 text-primary"></i>
+                                Giới thiệu
+                            </h5>
+                            <p class="card-text">
+                                Là một Full Stack Developer với kinh nghiệm chuyên sâu về PHP, Node.js, JavaScript và SQL Server. 
+                                Tôi đam mê xây dựng các giải pháp phần mềm hiệu quả và có khả năng mở rộng.
+                            </p>
+                            <p class="card-text">
+                                Hiện tại, tôi đang phát triển Smarttrans - một nền tảng dịch thuật thông minh 
+                                tích hợp công nghệ AI, nhằm mục đích hỗ trợ doanh nghiệp và cá nhân 
+                                trong việc dịch thuật tài liệu một cách nhanh chóng và chính xác.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">
+                                <i class="bi bi-code-slash me-2 text-primary"></i>
+                                Kỹ năng chuyên môn
+                            </h5>
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3">Backend Development</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <span class="badge bg-primary">PHP</span>
+                                    <span class="badge bg-primary">Node.js</span>
+                                    <span class="badge bg-primary">Express.js</span>
+                                    <span class="badge bg-primary">SQL Server</span>
+                                    <span class="badge bg-primary">RESTful APIs</span>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3">Frontend Development</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <span class="badge bg-secondary">JavaScript</span>
+                                    <span class="badge bg-secondary">HTML5</span>
+                                    <span class="badge bg-secondary">CSS3</span>
+                                    <span class="badge bg-secondary">Bootstrap</span>
+                                    <span class="badge bg-secondary">React</span>
+                                </div>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-3">DevOps & Tools</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <span class="badge bg-success">Git</span>
+                                    <span class="badge bg-success">Docker</span>
+                                    <span class="badge bg-success">CI/CD</span>
+                                    <span class="badge bg-success">Nginx</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects Section -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">
+                        <i class="bi bi-briefcase me-2 text-primary"></i>
+                        Dự án nổi bật
+                    </h5>
+                    <div class="project-item">
+                        <div class="d-flex align-items-center mb-3">
+                            <h4 class="h5 mb-0">Smarttrans</h4>
+                            <span class="badge bg-success ms-3">Active</span>
+                        </div>
+                        <p class="text-muted mb-3">
+                            Nền tảng dịch thuật thông minh tích hợp AI, hỗ trợ dịch thuật tài liệu đa ngôn ngữ 
+                            với độ chính xác cao và tốc độ nhanh.
+                        </p>
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-2">Tính năng chính:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Dịch thuật tự động với AI</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Hỗ trợ nhiều ngôn ngữ</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Tích hợp với Google Sheets</li>
+                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Giao diện thân thiện</li>
+                            </ul>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge bg-light text-dark">Node.js</span>
+                            <span class="badge bg-light text-dark">Express.js</span>
+                            <span class="badge bg-light text-dark">OpenAI API</span>
+                            <span class="badge bg-light text-dark">Google Sheets API</span>
+                            <span class="badge bg-light text-dark">Bootstrap 5</span>
+                        </div>
+                        <div class="mt-3">
+                            <a href="https://smarttrans.site" target="_blank" class="btn btn-sm btn-primary">
+                                <i class="bi bi-box-arrow-up-right me-2"></i>
+                                Xem dự án
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+````
+
+Trang About này có:
+1. Header với avatar và thông tin liên hệ
+2. Phần giới thiệu chuyên nghiệp
+3. Hiển thị kỹ năng với badges đẹp mắt
+4. Chi tiết về dự án Smarttrans
+5. Thiết kế responsive và modern
+6. Sử dụng Bootstrap 5 và Bootstrap Icons
+7. Tối ưu SEO với semantic HTML
+
+Bạn có thể truy cập trang này qua route /about
+
+---
+
+_**User**_
+
+Create 1 support page and add contact to lonlywolf189@gmail.com
+
+place it to footer 
+
+---
+
+_**Assistant**_
+
+Tôi sẽ tạo trang Support và thêm link vào footer:
+
+1. Tạo route cho trang Support:
+
+````javascript:src/routes/index.js
+// Thêm route cho Support page
+router.get('/support', (req, res) => {
+    res.render('support', {
+        title: 'Hỗ trợ'
+    });
+});
+````
+
+2. Tạo file support.ejs:
+
+````html:src/views/support.ejs
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold mb-3">Hỗ trợ</h1>
+                <p class="lead text-muted">Chúng tôi luôn sẵn sàng hỗ trợ bạn</p>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-4">
+                        <i class="bi bi-headset me-2 text-primary"></i>
+                        Liên hệ hỗ trợ
+                    </h5>
+                    
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
+                                <i class="bi bi-envelope text-primary fs-4"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="fw-bold mb-1">Email</h6>
+                            <p class="mb-0">
+                                <a href="mailto:lonlywolf189@gmail.com" class="text-decoration-none">
+                                    lonlywolf189@gmail.com
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mb-4">
+                        <div class="d-flex">
+                            <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+                            <div>
+                                <strong>Thời gian phản hồi:</strong>
+                                <ul class="mb-0 mt-1">
+                                    <li>Email: Trong vòng 24 giờ làm việc</li>
+                                    <li>Vấn đề khẩn cấp: Trong vòng 4 giờ làm việc</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-question-circle me-2 text-primary"></i>
+                        Câu hỏi thường gặp
+                    </h5>
+                    
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item border-0 mb-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    Làm thế nào để bắt đầu sử dụng Smarttrans?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Để bắt đầu, bạn chỉ cần có một Google Sheet và chia sẻ quyền chỉnh sửa cho email của hệ thống. 
+                                    Sau đó, dán link sheet vào form và chọn các tùy chọn dịch phù hợp.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item border-0 mb-3">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    Tôi có thể sử dụng API key của riêng mình không?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Có, bạn có thể sử dụng API key OpenAI của riêng mình. Điều này giúp bạn kiểm soát chi phí 
+                                    và tốc độ dịch thuật tốt hơn.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item border-0">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    Chi phí dịch thuật được tính như thế nào?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Chi phí được tính dựa trên số lượng ký tự trong văn bản gốc. 
+                                    Bạn sẽ thấy ước tính chi phí trước khi bắt đầu dịch và chi phí thực tế sau khi hoàn thành.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+````
+
+3. Cập nhật footer trong main.ejs:
+
+````html:src/views/layouts/main.ejs
+<footer class="bg-light py-4 mt-auto">
+    <div class="container text-center">
+        <div class="mb-3">
+            <a href="/terms" class="text-muted text-decoration-none me-3">Điều khoản dịch vụ</a>
+            <a href="/privacy" class="text-muted text-decoration-none me-3">Chính sách bảo mật</a>
+            <a href="/support" class="text-muted text-decoration-none">Hỗ trợ</a>
+        </div>
+        <p class="mb-0">&copy; 2024 Smarttrans. All rights reserved.</p>
+    </div>
+</footer>
+````
+
+Trang Support này có:
+1. Thông tin liên hệ rõ ràng
+2. Thời gian phản hồi dự kiến
+3. FAQ với accordion đẹp mắt
+4. Thiết kế responsive
+5. Link trong footer
+6. Tối ưu SEO
+7. Phù hợp với style chung của ứng dụng
+
+---
+
+_**User**_
+
+Create home page for this app include web and appscript application
+
+---
+
+_**Assistant**_
+
+Tôi sẽ tạo một trang chủ giới thiệu cả hai phiên bản của ứng dụng. Cập nhật file home.ejs:
+
+````html:src/views/home.ejs
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="bi bi-translate me-2"></i>
+            Smarttrans
+        </h1>
+        <p class="lead text-muted mb-4">Giải pháp dịch thuật thông minh tích hợp AI</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="/translate" class="btn btn-primary btn-lg">
+                <i class="bi bi-globe me-2"></i>
+                Dùng ngay
+            </a>
+            <a href="#features" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-info-circle me-2"></i>
+                Tìm hiểu thêm
+            </a>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row g-4 mb-5" id="features">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-globe2 text-primary fs-1"></i>
+                    </div>
+                    <h5 class="card-title">Web Application</h5>
+                    <p class="card-text text-muted">Dịch thuật trực tiếp trên trình duyệt, không cần cài đặt thêm.</p>
+                    <ul class="list-unstyled text-start">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Giao diện thân thiện</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Tích hợp Google Sheets</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Theo dõi tiến độ realtime</li>
+                    </ul>
+                    <a href="/translate" class="btn btn-primary mt-3">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        Bắt đầu dịch
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-google text-primary fs-1"></i>
+                    </div>
+                    <h5 class="card-title">Google Sheets Add-on</h5>
+                    <p class="card-text text-muted">Dịch thuật trực tiếp trong Google Sheets với add-on chuyên dụng.</p>
+                    <ul class="list-unstyled text-start">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Tích hợp sẵn trong Sheets</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Dịch nhanh vùng đã chọn</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Không cần rời khỏi sheet</li>
+                    </ul>
+                    <a href="https://workspace.google.com/marketplace/app/smarttrans/..." 
+                       target="_blank"
+                       class="btn btn-primary mt-3">
+                        <i class="bi bi-download me-2"></i>
+                        Cài đặt Add-on
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-gear text-primary fs-1"></i>
+                    </div>
+                    <h5 class="card-title">Tùy chỉnh nâng cao</h5>
+                    <p class="card-text text-muted">Điều chỉnh theo nhu cầu riêng của bạn.</p>
+                    <ul class="list-unstyled text-start">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Sử dụng API key riêng</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Chọn model AI phù hợp</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Tối ưu cho từng lĩnh vực</li>
+                    </ul>
+                    <a href="/about" class="btn btn-primary mt-3">
+                        <i class="bi bi-gear me-2"></i>
+                        Xem chi tiết
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Languages Section -->
+    <div class="row mb-5">
+        <div class="col-lg-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title text-center mb-4">
+                        <i class="bi bi-translate me-2 text-primary"></i>
+                        Ngôn ngữ hỗ trợ
+                    </h5>
+                    <div class="row g-4 text-center">
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-globe2 text-primary mb-2 fs-3"></i>
+                                <h6>Tiếng Anh</h6>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-globe2 text-primary mb-2 fs-3"></i>
+                                <h6>Tiếng Nhật</h6>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-globe2 text-primary mb-2 fs-3"></i>
+                                <h6>Tiếng Hàn</h6>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-globe2 text-primary mb-2 fs-3"></i>
+                                <h6>Tiếng Trung</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="text-center">
+        <h5 class="mb-3">Bạn cần hỗ trợ?</h5>
+        <p class="text-muted mb-4">Liên hệ với chúng tôi để được giải đáp mọi thắc mắc</p>
+        <a href="/support" class="btn btn-outline-primary">
+            <i class="bi bi-headset me-2"></i>
+            Liên hệ hỗ trợ
+        </a>
+    </div>
+</div>
+````
+
+Trang chủ này có:
+1. Hero section với call-to-action rõ ràng
+2. Giới thiệu 2 phiên bản của ứng dụng (Web và Google Sheets Add-on)
+3. Các tính năng nâng cao
+4. Danh sách ngôn ngữ hỗ trợ
+5. Section liên hệ hỗ trợ
+6. Thiết kế responsive và modern
+7. Sử dụng Bootstrap Icons cho trực quan
+8. Tối ưu SEO với semantic HTML
+
+---
+
+_**User**_
+
+Create route để truy cập trang home
+
+---
+
+_**Assistant**_
+
+Tôi sẽ thêm route cho trang home vào routes/index.js:
+
+````javascript:src/routes/index.js
+// Thêm route cho trang chủ
+router.get('/', (req, res) => {
+    res.render('home', {
+        title: 'Trang chủ'
+    });
+});
+
+// ... existing code ...
+````
+
+Đồng thời cập nhật lại thứ tự các routes để tránh xung đột:
+
+````javascript:src/routes/index.js
+const express = require('express');
+const router = express.Router();
+const translateController = require('../controllers/translateController');
+const validateGoogleSheet = require('../middlewares/validateGoogleSheet');
+
+// Trang chủ
+router.get('/', (req, res) => {
+    res.render('home', {
+        title: 'Trang chủ'
+    });
+});
+
+// Trang dịch
+router.get('/translate', translateController.showTranslatePage);
+
+// Các trang tĩnh
+router.get('/about', (req, res) => {
+    res.render('about', {
+        title: 'Về tôi'
+    });
+});
+
+router.get('/terms', (req, res) => {
+    res.render('terms', {
+        title: 'Điều khoản dịch vụ'
+    });
+});
+
+router.get('/privacy', (req, res) => {
+    res.render('privacy', {
+        title: 'Chính sách bảo mật'
+    });
+});
+
+router.get('/support', (req, res) => {
+    res.render('support', {
+        title: 'Hỗ trợ'
+    });
+});
+
+// API endpoints
+router.post('/api/translate-sheet', validateGoogleSheet, translateController.handleSheetTranslation);
+
+router.post('/api/sheets/list', async (req, res) => {
+    try {
+        const { sheetUrl } = req.body;
+        const sheetId = sheetUrl.match(/\/d\/(.*?)(\/|$)/)?.[1];
+        
+        if (!sheetId) {
+            throw new Error('URL Google Sheet không hợp lệ');
+        }
+
+        const sheets = await googleSheets.getSheetsList(sheetId);
+        res.json({ success: true, sheets });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+router.get('/api/translation-progress', (req, res) => {
+    res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive'
+    });
+    req.app.locals.progressClient = res;
+});
+
+// Health check
+router.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok' });
+});
+
+module.exports = router;
+````
+
+Những thay đổi chính:
+1. Thêm route cho trang chủ (/)
+2. Nhóm các routes theo chức năng:
+   - Trang chính
+   - Trang tĩnh
+   - API endpoints
+3. Đảm bảo thứ tự routes hợp lý để tránh xung đột
+4. Giữ nguyên các chức năng hiện có
+5. Thêm title cho mỗi trang
+
+---
+
+_**User**_
+
+Đổi url / để trở vào màn home. Còn sử dụng url /translate đẻ vào màn hình thực hiện dịch
+
+---
+
+_**Assistant**_
+
+Tôi thấy bạn đã thay đổi đúng route rồi. Bây giờ:
+
+1. Trang chủ (/) sẽ hiển thị trang giới thiệu về ứng dụng
+2. Trang dịch (/translate) sẽ là nơi thực hiện dịch thuật
+
+Tôi sẽ cập nhật lại controller để phản ánh thay đổi này:
+
+````javascript:src/controllers/translateController.js
+/**
+ * Smarttrans Translation Controller
+ */
+class TranslateController {
+    // GET /translate
+    showTranslatePage(req, res) {
+        res.render('translate', {
+            title: 'Dịch thuật tài liệu',
+            error: null,
+            success: null
+        });
+    }
+
+    // ... rest of the controller methods
+}
+
+module.exports = new TranslateController();
+````
+
+Những thay đổi này sẽ:
+1. Tách biệt rõ ràng giữa trang chủ và trang dịch
+2. Giúp SEO tốt hơn với landing page riêng
+3. Tạo trải nghiệm người dùng tốt hơn với trang giới thiệu
+4. Vẫn giữ nguyên toàn bộ chức năng dịch thuật
+
+---
+
+_**User**_
+
+Ở màn hình home page có link điều hướng đến màn hình dịch. Hãy sửa lại luôn phần đó
+
+---
+
+_**Assistant**_
+
+
+
+Tôi sẽ cập nhật các link điều hướng trong home.ejs:
+
+````html:src/views/home.ejs
+<!-- Hero Section -->
+<div class="text-center mb-5">
+    <h1 class="display-4 fw-bold mb-3">
+        <i class="bi bi-translate me-2"></i>
+        Smarttrans
+    </h1>
+    <p class="lead text-muted mb-4">Giải pháp dịch thuật thông minh tích hợp AI</p>
+    <div class="d-flex justify-content-center gap-3">
+        <a href="/translate" class="btn btn-primary btn-lg">
+            <i class="bi bi-globe me-2"></i>
+            Bắt đầu dịch
+        </a>
+        <a href="#features" class="btn btn-outline-primary btn-lg">
+            <i class="bi bi-info-circle me-2"></i>
+            Tìm hiểu thêm
+        </a>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row g-4 mb-5" id="features">
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <!-- ... card content ... -->
+            <a href="/translate" class="btn btn-primary mt-3">
+                <i class="bi bi-arrow-right me-2"></i>
+                Bắt đầu dịch ngay
+            </a>
+        </div>
+    </div>
+    <!-- ... other cards ... -->
+</div>
+````
+
+Những thay đổi:
+1. Đổi text "Dùng ngay" thành "Bắt đầu dịch"
+2. Đổi text button trong feature card thành "Bắt đầu dịch ngay"
+3. Giữ nguyên đường dẫn /translate
+4. Giữ nguyên các icon và style
+
+---
+
+_**User**_
+
+Riêng màn hình home page sẽ không có thao đường link đến CHính sách bảo mật ở footer
+
+---
+
+_**Assistant**_
+
+
+
+Tôi sẽ cập nhật footer trong main.ejs để không hiển thị link Chính sách bảo mật khi ở trang chủ:
+
+````html:src/views/layouts/main.ejs
+<!-- Footer -->
+<footer class="bg-light py-4 mt-auto">
+    <div class="container text-center">
+        <div class="mb-3">
+            <% if (title !== 'Trang chủ') { %>
+                <a href="/terms" class="text-muted text-decoration-none me-3">Điều khoản dịch vụ</a>
+                <a href="/privacy" class="text-muted text-decoration-none me-3">Chính sách bảo mật</a>
+                <a href="/support" class="text-muted text-decoration-none">Hỗ trợ</a>
+            <% } %>
+        </div>
+        <p class="mb-0">&copy; 2024 Smarttrans. All rights reserved.</p>
+    </div>
+</footer>
+````
+
+Thay đổi này sẽ:
+1. Ẩn các link trong footer khi ở trang chủ (title === 'Trang chủ')
+2. Hiển thị đầy đủ các link ở các trang khác
+3. Vẫn giữ copyright notice ở tất cả các trang
+4. Giữ nguyên style và layout của footer
+
+---
+
+_**User**_
+
+Bỏ đường link xem chi tiết ở màn hình home page phần tùy chỉnh nâng cao
+
+---
+
+_**Assistant**_
+
+
+
+Tôi sẽ cập nhật phần "Tùy chỉnh nâng cao" trong home.ejs:
+
+````html:src/views/home.ejs
+<!-- Card Tùy chỉnh nâng cao -->
+<div class="col-md-4">
+    <div class="card h-100 border-0 shadow-sm">
+        <div class="card-body text-center p-4">
+            <div class="mb-3">
+                <i class="bi bi-gear text-primary fs-1"></i>
+            </div>
+            <h5 class="card-title">Tùy chỉnh nâng cao</h5>
+            <p class="card-text text-muted">Điều chỉnh theo nhu cầu riêng của bạn.</p>
+            <ul class="list-unstyled text-start">
+                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Sử dụng API key riêng</li>
+                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Chọn model AI phù hợp</li>
+                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Tối ưu cho từng lĩnh vực</li>
+            </ul>
+            <!-- Bỏ button "Xem chi tiết" -->
+        </div>
+    </div>
+</div>
+````
+
+Thay đổi này sẽ:
+1. Bỏ button "Xem chi tiết" và link đến /about
+2. Giữ nguyên nội dung giới thiệu tính năng
+3. Giữ nguyên style và layout của card
+
+---
+
+_**User**_
+
+Thêm phần link đến trang about để mọi người biết về thông tin tác giả
+
+---
+
+_**Assistant**_
+
+
+
+Tôi sẽ thêm một section nhỏ về tác giả vào cuối trang home.ejs, ngay trước phần Contact:
+
+````html:src/views/home.ejs
+    <!-- Languages Section -->
+    <div class="row mb-5">
+        <!-- ... existing languages section ... -->
+    </div>
+
+    <!-- Author Section -->
+    <div class="text-center mb-5">
+        <div class="d-inline-block p-3 bg-light rounded-3">
+            <p class="text-muted mb-2">Được phát triển bởi</p>
+            <a href="/about" class="text-decoration-none">
+                <div class="d-flex align-items-center gap-2 justify-content-center">
+                    <img src="https://ui-avatars.com/api/?name=Le+Viet+Anh&size=32&background=0D8ABC&color=fff" 
+                         alt="Lê Việt Anh"
+                         class="rounded-circle">
+                    <span class="text-primary fw-medium">Lê Việt Anh</span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="text-center">
+        <!-- ... existing contact section ... -->
+    </div>
+````
+
+Thay đổi này sẽ:
+1. Thêm section giới thiệu tác giả
+2. Link đến trang About để xem thông tin chi tiết
+3. Hiển thị avatar và tên tác giả
+4. Giữ style nhất quán với trang
+5. Đặt vị trí phù hợp trong layout
+
+---
+
+_**User**_
+
+Hãy check lại hiện đnag bị lỗi hiển thị progress
+
+---
+
+_**Assistant**_
+
+
+
+Tôi thấy vấn đề với việc theo dõi progress. Cần sửa lại cách xử lý progress client. Tôi sẽ sửa lại các phần liên quan:
+
+1. Sửa route xử lý progress:
+
+````javascript:src/routes/index.js
+router.get('/api/translation-progress', (req, res) => {
+    res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive'
+    });
+
+    // Gửi event đầu tiên để kiểm tra kết nối
+    res.write(`data: ${JSON.stringify({
+        percent: 0,
+        detail: 'Đang kết nối...'
+    })}\n\n`);
+
+    // Lưu client connection vào app.locals
+    req.app.locals.progressClient = res;
+
+    // Cleanup khi client disconnect
+    req.on('close', () => {
+        req.app.locals.progressClient = null;
+    });
+});
+````
+
+2. Sửa hàm updateProgress trong translateController:
+
+````javascript:src/controllers/translateController.js
+function updateProgress(req, percent, detail) {
+    if (req.app.locals.progressClient) {
+        try {
+            const progress = {
+                percent: Math.min(100, Math.max(0, Math.round(percent))),
+                detail: detail || 'Đang xử lý...',
+                status: percent >= 100 ? 'completed' : 'processing'
+            };
+
+            req.app.locals.progressClient.write(`data: ${JSON.stringify(progress)}\n\n`);
+        } catch (error) {
+            console.error('Error sending progress:', error);
+        }
+    }
+}
+
+// Sử dụng trong handleSheetTranslation
+async handleSheetTranslation(req, res) {
+    try {
+        // ... existing code ...
+        
+        updateProgress(req, 20, 'Đang đọc dữ liệu...');
+        
+        // ... rest of the code ...
+        
+    } catch (error) {
+        // ... error handling ...
+    }
+}
+````
+
+Những thay đổi chính:
+1. Thêm event đầu tiên để kiểm tra kết nối
+2. Lưu progressClient vào app.locals thay vì global
+3. Thêm cleanup khi client disconnect
+4. Truyền req vào hàm updateProgress để truy cập app.locals
+5. Thêm xử lý lỗi khi gửi progress
+
+Điều này sẽ giúp:
+- Tránh memory leak
+- Xử lý nhiều client cùng lúc tốt hơn
+- Đảm bảo progress được gửi đúng đến client yêu cầu
+- Cleanup resources khi client disconnect
+
+---
+
+_**User**_
+
+fixx this and recheck
+
+---
+
+_**Assistant**_
+
+
+
+Lỗi xảy ra vì hàm translateData không có tham số req. Tôi sẽ sửa lại:
+
+````javascript:src/controllers/translateController.js
+// Thêm tham số req vào hàm translateData
+async function translateData(data, targetLang, domain, translationService, req) {
+    const total = data.length;
+    let completed = 0;
+    const translatedData = [];
+
+    // Nếu chỉ có 1 cell
+    if (data.length === 1 && data[0].length === 1) {
+        const cell = data[0][0];
+        updateProgress(req, 50, 'Đang dịch...');
+        const translated = cell?.toString().trim() 
+            ? await translationService.translate(cell.toString().trim(), targetLang, domain)
+            : '';
+        updateProgress(req, 100, 'Hoàn thành!');
+        return [[translated]];
+    }
+
+    // Xử lý theo batch
+    const batchSize = Math.min(20, Math.ceil(total / 10));
+    
+    for (let i = 0; i < data.length; i += batchSize) {
+        const rowBatch = data.slice(i, i + batchSize);
+        updateProgress(req, (i / total) * 100, 
+            `Đang xử lý batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(total/batchSize)}...`
+        );
+
+        // Translate batch
+        const batchResults = await Promise.all(
+            rowBatch.map(async (row) => {
+                const translatedRow = await Promise.all(
+                    row.map(cell => 
+                        cell?.toString().trim() 
+                            ? translationService.translate(cell.toString().trim(), targetLang, domain)
+                            : ''
+                    )
+                );
+                
+                completed++;
+                const percent = (completed / total) * 100;
+                updateProgress(req, percent, 
+                    `Đã dịch ${completed}/${total} dòng (${Math.round(percent)}%)`
+                );
+                return translatedRow;
+            })
+        );
+
+        translatedData.push(...batchResults);
+
+        if (i + batchSize < data.length) {
+            const delayMs = Math.min(1000, batchSize * 50);
+            await delay(delayMs);
+        }
+    }
+
+    return translatedData;
+}
+
+class TranslateController {
+    // ... other methods ...
+
+    async handleSheetTranslation(req, res) {
+        try {
+            // ... existing validation code ...
+
+            updateProgress(req, 20, 'Đang đọc dữ liệu...');
+            
+            const data = await googleSheets.readSheet(sheetId, fullRange);
+            
+            if (data.length * data[0].length > 1000) {
+                updateProgress(req, 0, 'Đang xử lý dữ liệu lớn, có thể mất nhiều thời gian...');
+            }
+            
+            // Truyền thêm req vào hàm translateData
+            const translatedData = await translateData(
+                data, 
+                targetLang, 
+                domain, 
+                translationService,
+                req
+            );
+            
+            // ... rest of the code ...
+
+        } catch (error) {
+            console.error('Translation error:', error);
+            res.status(500).json({
+                success: false,
+                error: error.message
+            });
+        }
+    }
+}
+````
+
+Những thay đổi chính:
+1. Thêm tham số req vào hàm translateData
+2. Truyền req từ handleSheetTranslation vào translateData
+3. Sử dụng req trong các lời gọi updateProgress
+4. Giữ nguyên logic xử lý dịch thuật
+
+Điều này sẽ:
+- Sửa lỗi ReferenceError: req is not defined
+- Đảm bảo progress được cập nhật đúng cho từng request
+- Giữ nguyên chức năng theo dõi tiến độ
+
+---
+
+_**User**_
+
+Hãy thêm tính năng đa ngôn ngữ. Đầu tiên tôi muốn đa ngôn ngữ ở màn hình home trước
+
+---
+
+_**Assistant**_
+
+Tôi sẽ giúp bạn thêm tính năng đa ngôn ngữ cho trang home. Đầu tiên cần cài đặt i18n:
+
+1. Cài đặt package i18n:
+
+````bash
+npm install i18n
+````
+
+2. Tạo file cấu hình i18n:
+
+````javascript:src/config/i18n.js
+const i18n = require('i18n');
+const path = require('path');
+
+i18n.configure({
+    locales: ['vi', 'en'],
+    defaultLocale: 'vi',
+    directory: path.join(__dirname, '../locales'),
+    objectNotation: true,
+    updateFiles: false,
+    syncFiles: false,
+    cookie: 'lang'
+});
+
+module.exports = i18n;
+````
+
+3. Tạo file ngôn ngữ:
+
+````json:src/locales/vi.json
+{
+    "home": {
+        "hero": {
+            "title": "Smarttrans",
+            "subtitle": "Giải pháp dịch thuật thông minh tích hợp AI",
+            "start_button": "Bắt đầu dịch",
+            "learn_more": "Tìm hiểu thêm"
+        },
+        "features": {
+            "web_app": {
+                "title": "Web Application",
+                "description": "Dịch thuật trực tiếp trên trình duyệt, không cần cài đặt thêm.",
+                "features": {
+                    "ui": "Giao diện thân thiện",
+                    "sheets": "Tích hợp Google Sheets",
+                    "progress": "Theo dõi tiến độ realtime"
+                },
+                "start_button": "Bắt đầu dịch ngay"
+            },
+            "addon": {
+                "title": "Google Sheets Add-on",
+                "description": "Dịch thuật trực tiếp trong Google Sheets với add-on chuyên dụng.",
+                "features": {
+                    "integrated": "Tích hợp sẵn trong Sheets",
+                    "quick": "Dịch nhanh vùng đã chọn",
+                    "stay": "Không cần rời khỏi sheet"
+                },
+                "install_button": "Cài đặt Add-on"
+            },
+            "custom": {
+                "title": "Tùy chỉnh nâng cao",
+                "description": "Điều chỉnh theo nhu cầu riêng của bạn.",
+                "features": {
+                    "api": "Sử dụng API key riêng",
+                    "model": "Chọn model AI phù hợp",
+                    "domain": "Tối ưu cho từng lĩnh vực"
+                }
+            }
+        },
+        "languages": {
+            "title": "Ngôn ngữ hỗ trợ",
+            "list": {
+                "en": "Tiếng Anh",
+                "ja": "Tiếng Nhật",
+                "ko": "Tiếng Hàn"
+            }
+        },
+        "author": {
+            "developed_by": "Được phát triển bởi",
+            "name": "Lê Việt Anh"
+        },
+        "contact": {
+            "title": "Bạn cần hỗ trợ?",
+            "subtitle": "Liên hệ với chúng tôi để được giải đáp mọi thắc mắc",
+            "button": "Liên hệ hỗ trợ"
+        }
+    }
+}
+````
+
+````json:src/locales/en.json
+{
+    "home": {
+        "hero": {
+            "title": "Smarttrans",
+            "subtitle": "AI-powered Smart Translation Solution",
+            "start_button": "Start Translating",
+            "learn_more": "Learn More"
+        },
+        "features": {
+            "web_app": {
+                "title": "Web Application",
+                "description": "Translate directly in your browser, no installation needed.",
+                "features": {
+                    "ui": "User-friendly Interface",
+                    "sheets": "Google Sheets Integration",
+                    "progress": "Real-time Progress Tracking"
+                },
+                "start_button": "Start Now"
+            },
+            "addon": {
+                "title": "Google Sheets Add-on",
+                "description": "Translate directly within Google Sheets using our dedicated add-on.",
+                "features": {
+                    "integrated": "Built into Sheets",
+                    "quick": "Quick Selection Translation",
+                    "stay": "Stay in Your Spreadsheet"
+                },
+                "install_button": "Install Add-on"
+            },
+            "custom": {
+                "title": "Advanced Customization",
+                "description": "Customize according to your needs.",
+                "features": {
+                    "api": "Use Your Own API Key",
+                    "model": "Choose AI Model",
+                    "domain": "Domain Optimization"
+                }
+            }
+        },
+        "languages": {
+            "title": "Supported Languages",
+            "list": {
+                "en": "English",
+                "ja": "Japanese",
+                "ko": "Korean"
+            }
+        },
+        "author": {
+            "developed_by": "Developed by",
+            "name": "Le Viet Anh"
+        },
+        "contact": {
+            "title": "Need Help?",
+            "subtitle": "Contact us for any questions",
+            "button": "Contact Support"
+        }
+    }
+}
+````
+
+4. Thêm middleware i18n vào index.js:
+
+````javascript:src/index.js
+const i18n = require('./config/i18n');
+
+// ... existing code ...
+
+// Thêm i18n middleware
+app.use(i18n.init);
+
+// ... rest of the code ...
+````
+
+5. Thêm language switcher vào navbar trong main.ejs:
+
+````html:src/views/layouts/main.ejs
+<!-- Trong phần navbar -->
+<ul class="navbar-nav ms-auto">
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="langDropdown" role="button" data-bs-toggle="dropdown">
+            <i class="bi bi-globe me-1"></i>
+            <%= req.getLocale().toUpperCase() %>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="?lang=vi">Tiếng Việt</a></li>
+            <li><a class="dropdown-item" href="?lang=en">English</a></li>
+        </ul>
+    </li>
+</ul>
+````
+
+6. Cập nhật home.ejs để sử dụng i18n:
+
+````html:src/views/home.ejs
+<div class="text-center mb-5">
+    <h1 class="display-4 fw-bold mb-3">
+        <i class="bi bi-translate me-2"></i>
+        <%= __('home.hero.title') %>
+    </h1>
+    <p class="lead text-muted mb-4"><%= __('home.hero.subtitle') %></p>
+    <div class="d-flex justify-content-center gap-3">
+        <a href="/translate" class="btn btn-primary btn-lg">
+            <i class="bi bi-globe me-2"></i>
+            <%= __('home.hero.start_button') %>
+        </a>
+        <a href="#features" class="btn btn-outline-primary btn-lg">
+            <i class="bi bi-info-circle me-2"></i>
+            <%= __('home.hero.learn_more') %>
+        </a>
+    </div>
+</div>
+
+<!-- Continue updating rest of the template using __ function -->
+````
+
+Những thay đổi này sẽ:
+1. Hỗ trợ chuyển đổi giữa tiếng Việt và tiếng Anh
+2. Lưu ngôn ngữ đã chọn vào cookie
+3. Tự động detect ngôn ngữ từ trình duyệt
+4. Dễ dàng thêm ngôn ngữ mới
+5. Tách biệt nội dung và code
+
+---
+
+_**User**_
+
+Fix lõi và giải thích tại sao cho tôi
+
+---
+
+_**Assistant**_
+
+Lỗi xảy ra vì chúng ta đang cố truy cập `req.getLocale()` trong template mà không truyền biến `req` vào template.
+
+Để sửa lỗi này, chúng ta cần:
+
+1. Sửa lại route để truyền locale vào template:
+
+````javascript:src/routes/index.js
+// Trang chủ
+router.get('/', (req, res) => {
+    res.render('home', {
+        title: 'Trang chủ',
+        currentLocale: req.getLocale() // Thêm dòng này
+    });
+});
+````
+
+2. Sửa lại template để sử dụng currentLocale thay vì req.getLocale():
+
+````html:src/views/layouts/main.ejs
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" id="langDropdown" role="button" data-bs-toggle="dropdown">
+        <i class="bi bi-globe me-1"></i>
+        <%= currentLocale.toUpperCase() %>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="?lang=vi">Tiếng Việt</a></li>
+        <li><a class="dropdown-item" href="?lang=en">English</a></li>
+    </ul>
+</li>
+````
+
+Giải thích:
+1. Trong Express, `req` là object request chỉ tồn tại trong context của route handler
+2. Khi render template, chúng ta cần truyền rõ các biến mà template cần sử dụng
+3. Không nên truy cập trực tiếp `req` trong template vì:
+   - Không đảm bảo req luôn tồn tại
+   - Vi phạm nguyên tắc separation of concerns
+   - Khó maintain và debug
+4. Cách sửa:
+   - Lấy thông tin cần thiết từ req trong route handler
+   - Truyền thông tin đó như một biến vào template
+   - Template chỉ sử dụng các biến được truyền vào
+
+Đây là best practice khi làm việc với template engine trong Express.
+
+---
+
+_**User**_
+
+Tôi không chuyên ngôn ngữ được
+
+---
+
+_**Assistant**_
+
+
+
+Vấn đề là chúng ta cần truyền `currentLocale` cho tất cả các route. Cách tốt nhất là tạo một middleware để xử lý việc này:
+
+1. Tạo middleware mới:
+
+````javascript:src/middlewares/localeMiddleware.js
+function localeMiddleware(req, res, next) {
+    // Thêm currentLocale vào res.locals để tất cả views có thể truy cập
+    res.locals.currentLocale = req.getLocale();
+    next();
+}
+
+module.exports = localeMiddleware;
+````
+
+2. Sử dụng middleware trong index.js:
+
+````javascript:src/index.js
+const localeMiddleware = require('./middlewares/localeMiddleware');
+
+// ... existing code ...
+
+// Thêm i18n middleware
+app.use(i18n.init);
+
+// Thêm locale middleware sau i18n
+app.use(localeMiddleware);
+
+// ... rest of the code ...
+````
+
+3. Sửa lại routes để không cần truyền currentLocale:
+
+````javascript:src/routes/index.js
+// Trang chủ
+router.get('/', (req, res) => {
+    res.render('home', {
+        title: 'Trang chủ'
+    });
+});
+
+// Trang dịch
+router.get('/translate', (req, res) => {
+    res.render('translate', {
+        title: 'Dịch thuật tài liệu'
+    });
+});
+
+// Các trang tĩnh cũng tương tự
+````
+
+Giải thích:
+1. `res.locals` là object được chia sẻ giữa middleware và views
+2. Bằng cách đặt `currentLocale` vào `res.locals`, tất cả views có thể truy cập nó
+3. Không cần truyền `currentLocale` trong mỗi route
+4. Middleware sẽ tự động chạy cho mọi request
+5. Đảm bảo tính nhất quán trong toàn bộ ứng dụng
+
+Cách này giúp:
+- Code gọn gàng hơn
+- Không phải lặp lại code
+- Dễ bảo trì và mở rộng
+- Tránh lỗi khi quên truyền currentLocale
+
+---
+
+_**User**_
+
+Khi chuyên ngôn ngữ tôi đang không thấy ứng dụng thay đổi
+
+---
+
+_**Assistant**_
+
+
+
+Để xử lý việc chuyển đổi ngôn ngữ, chúng ta cần:
+
+1. Thêm middleware để xử lý query parameter `lang`:
+
+````javascript:src/middlewares/localeMiddleware.js
+function localeMiddleware(req, res, next) {
+    // Kiểm tra query parameter lang
+    const lang = req.query.lang;
+    if (lang && ['en', 'vi'].includes(lang)) {
+        // Lưu locale vào cookie
+        res.cookie('lang', lang, { maxAge: 365 * 24 * 60 * 60 * 1000 }); // 1 năm
+        req.setLocale(lang);
+    }
+
+    // Thêm currentLocale vào res.locals
+    res.locals.currentLocale = req.getLocale();
+    next();
+}
+
+module.exports = localeMiddleware;
+````
+
+2. Cập nhật i18n config để sử dụng cookie:
+
+````javascript:src/config/i18n.js
+const i18n = require('i18n');
+const path = require('path');
+
+i18n.configure({
+    locales: ['vi', 'en'],
+    defaultLocale: 'vi',
+    directory: path.join(__dirname, '../locales'),
+    objectNotation: true,
+    updateFiles: false,
+    syncFiles: false,
+    cookie: 'lang',
+    queryParameter: 'lang'
+});
+
+module.exports = i18n;
+````
+
+3. Thêm cookie-parser middleware trong index.js:
+
+````javascript:src/index.js
+const cookieParser = require('cookie-parser');
+
+// ... existing code ...
+
+// Thêm cookie parser trước i18n
+app.use(cookieParser());
+
+// i18n middleware
+app.use(i18n.init);
+
+// locale middleware
+app.use(localeMiddleware);
+
+// ... rest of the code ...
+````
+
+4. Cài đặt cookie-parser:
+
+```bash
+npm install cookie-parser
+```
+
+5. Cập nhật language switcher trong main.ejs để giữ lại current path:
+
+````html:src/views/layouts/main.ejs
+<ul class="dropdown-menu dropdown-menu-end">
+    <li>
+        <a class="dropdown-item" href="<%= `${req.path}?lang=vi` %>">
+            <% if (currentLocale === 'vi') { %>
+                <i class="bi bi-check2 me-2 text-success"></i>
+            <% } %>
+            Tiếng Việt
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item" href="<%= `${req.path}?lang=en` %>">
+            <% if (currentLocale === 'en') { %>
+                <i class="bi bi-check2 me-2 text-success"></i>
+            <% } %>
+            English
+        </a>
+    </li>
+</ul>
+````
+
+Những thay đổi này sẽ:
+1. Lưu ngôn ngữ đã chọn vào cookie
+2. Duy trì ngôn ngữ qua các lần truy cập
+3. Hiển thị dấu check cho ngôn ngữ hiện tại
+4. Giữ nguyên đường dẫn khi chuyển ngôn ngữ
+5. Tự động áp dụng ngôn ngữ cho toàn bộ ứng dụng
+
+---
+
+_**User**_
+
+fix
+
+---
+
+_**Assistant**_
+
+
+
+Lỗi xảy ra do chưa cài đặt package i18n. Chúng ta cần cài đặt các package cần thiết:
+
+````bash
+npm install i18n cookie-parser
+````
+
+Sau khi cài đặt xong, package.json sẽ được cập nhật:
+
+````json:package.json
+{
+  "dependencies": {
+    // ... existing dependencies
+    "i18n": "^0.15.1",
+    "cookie-parser": "^1.4.6"
+  }
+}
+````
+
+Giải thích:
+1. `i18n`: Package để hỗ trợ đa ngôn ngữ
+2. `cookie-parser`: Package để xử lý cookie, cần thiết cho việc lưu ngôn ngữ đã chọn
+
+Sau khi cài đặt xong, khởi động lại server:
+```bash
+npm run dev
+```
+
+Bây giờ ứng dụng sẽ:
+1. Có thể chuyển đổi ngôn ngữ
+2. Lưu ngôn ngữ đã chọn vào cookie
+3. Tự động load ngôn ngữ từ cookie khi refresh trang
+
+---
+
+_**User**_
+
+Fix this và đảm bảo không xảy ra lỗi này trên toàn bộ app
+
+---
+
+_**Assistant**_
+
+
+
+Chúng ta cần truyền `req.path` vào template thông qua res.locals. Sửa lại localeMiddleware:
+
+````javascript:src/middlewares/localeMiddleware.js
+function localeMiddleware(req, res, next) {
+    // Kiểm tra query parameter lang
+    const lang = req.query.lang;
+    if (lang && ['en', 'vi'].includes(lang)) {
+        // Lưu locale vào cookie
+        res.cookie('lang', lang, { maxAge: 365 * 24 * 60 * 60 * 1000 }); // 1 năm
+        req.setLocale(lang);
+    }
+
+    // Thêm các biến cần thiết vào res.locals
+    res.locals = {
+        ...res.locals,
+        currentLocale: req.getLocale(),
+        currentPath: req.path,
+        fullUrl: req.originalUrl
+    };
+
+    next();
+}
+
+module.exports = localeMiddleware;
+````
+
+Sau đó sửa lại main.ejs để sử dụng currentPath thay vì req.path:
+
+````html:src/views/layouts/main.ejs
+<ul class="dropdown-menu dropdown-menu-end">
+    <li>
+        <a class="dropdown-item" href="<%= `${currentPath}?lang=vi` %>">
+            <% if (currentLocale === 'vi') { %>
+                <i class="bi bi-check2 me-2 text-success"></i>
+            <% } %>
+            Tiếng Việt
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item" href="<%= `${currentPath}?lang=en` %>">
+            <% if (currentLocale === 'en') { %>
+                <i class="bi bi-check2 me-2 text-success"></i>
+            <% } %>
+            English
+        </a>
+    </li>
+</ul>
+````
+
+Giải thích:
+1. Thêm các biến cần thiết vào res.locals để có thể truy cập từ mọi view
+2. Sử dụng spread operator để giữ lại các biến hiện có trong res.locals
+3. Thêm currentPath và fullUrl để có thể sử dụng khi cần
+4. Sử dụng currentPath thay vì truy cập trực tiếp req.path
+5. Đảm bảo tính nhất quán trên toàn bộ ứng dụng
+
+Cách này sẽ:
+- Tránh lỗi "req is not defined"
+- Tuân thủ best practice về separation of concerns
+- Dễ dàng thêm các biến khác khi cần
+- Giữ template sạch sẽ và dễ maintain
+
+---
+
+_**User**_
+
+Ở màn home có các thành phần khác nhưu ngôn ngữ hỗ trợ, mô tả tính năng, phát triển bởi,... hãy cũng đảm bảo được hỗ trợ đa ngôn ngữ
+
+---
+
+_**Assistant**_
+
+
+
+Tôi sẽ cập nhật home.ejs để sử dụng i18n cho tất cả các thành phần:
+
+````html:src/views/home.ejs
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="bi bi-translate me-2"></i>
+            <%= __('home.hero.title') %>
+        </h1>
+        <p class="lead text-muted mb-4"><%= __('home.hero.subtitle') %></p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="/translate" class="btn btn-primary btn-lg">
+                <i class="bi bi-globe me-2"></i>
+                <%= __('home.hero.start_button') %>
+            </a>
+            <a href="#features" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-info-circle me-2"></i>
+                <%= __('home.hero.learn_more') %>
+            </a>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row g-4 mb-5" id="features">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-globe2 text-primary fs-1"></i>
+                    </div>
+                    <h5 class="card-title"><%= __('home.features.web_app.title') %></h5>
+                    <p class="card-text text-muted"><%= __('home.features.web_app.description') %></p>
+                    <ul class="list-unstyled text-start">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.web_app.features.ui') %></li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.web_app.features.sheets') %></li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.web_app.features.progress') %></li>
+                    </ul>
+                    <a href="/translate" class="btn btn-primary mt-3">
+                        <i class="bi bi-arrow-right me-2"></i>
+                        <%= __('home.features.web_app.start_button') %>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-google text-primary fs-1"></i>
+                    </div>
+                    <h5 class="card-title"><%= __('home.features.addon.title') %></h5>
+                    <p class="card-text text-muted"><%= __('home.features.addon.description') %></p>
+                    <ul class="list-unstyled text-start">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.addon.features.integrated') %></li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.addon.features.quick') %></li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.addon.features.stay') %></li>
+                    </ul>
+                    <a href="https://workspace.google.com/marketplace/app/smarttrans/..." 
+                       target="_blank"
+                       class="btn btn-primary mt-3">
+                        <i class="bi bi-download me-2"></i>
+                        <%= __('home.features.addon.install_button') %>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-gear text-primary fs-1"></i>
+                    </div>
+                    <h5 class="card-title"><%= __('home.features.custom.title') %></h5>
+                    <p class="card-text text-muted"><%= __('home.features.custom.description') %></p>
+                    <ul class="list-unstyled text-start">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.custom.features.api') %></li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.custom.features.model') %></li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><%= __('home.features.custom.features.domain') %></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Languages Section -->
+    <div class="row mb-5">
+        <div class="col-lg-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="card-title text-center mb-4">
+                        <i class="bi bi-translate me-2 text-primary"></i>
+                        <%= __('home.languages.title') %>
+                    </h5>
+                    <div class="row g-4 text-center">
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-globe2 text-primary mb-2 fs-3"></i>
+                                <h6><%= __('home.languages.list.en') %></h6>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-globe2 text-primary mb-2 fs-3"></i>
+                                <h6><%= __('home.languages.list.ja') %></h6>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-globe2 text-primary mb-2 fs-3"></i>
+                                <h6><%= __('home.languages.list.ko') %></h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Author Section -->
+    <div class="text-center mb-5">
+        <div class="d-inline-block p-3 bg-light rounded-3">
+            <p class="text-muted mb-2"><%= __('home.author.developed_by') %></p>
+            <a href="/about" class="text-decoration-none">
+                <div class="d-flex align-items-center gap-2 justify-content-center">
+                    <img src="https://ui-avatars.com/api/?name=Le+Viet+Anh&size=32&background=0D8ABC&color=fff" 
+                         alt="<%= __('home.author.name') %>"
+                         class="rounded-circle">
+                    <span class="text-primary fw-medium"><%= __('home.author.name') %></span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="text-center">
+        <h5 class="mb-3"><%= __('home.contact.title') %></h5>
+        <p class="text-muted mb-4"><%= __('home.contact.subtitle') %></p>
+        <a href="/support" class="btn btn-outline-primary">
+            <i class="bi bi-headset me-2"></i>
+            <%= __('home.contact.button') %>
+        </a>
+    </div>
+</div>
+````
+
+Những thay đổi này sẽ:
+1. Sử dụng i18n cho tất cả text trong trang
+2. Duy trì cấu trúc JSON đã định nghĩa trong locales
+3. Giữ nguyên layout và style
+4. Hỗ trợ chuyển đổi ngôn ngữ mượt mà
+5. Dễ dàng thêm ngôn ngữ mới trong tương lai
+
+---
+
+_**User**_
+
+Hãy sửa lại phần mô tả ngôn ngữ hỗ trợ trong màn home. Tôi muốn mô tả rằng chúng tôi còn hỗ trợ nhiều ngôn ngữ khác nữa
+
+---
+
+_**Assistant**_
+
+
+
+Tôi sẽ cập nhật phần ngôn ngữ hỗ trợ để thêm thông tin về các ngôn ngữ khác:
+
+````html:src/views/home.ejs
+<!-- Languages Section -->
+<div class="row mb-5">
+    <div class="col-lg-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="card-title text-center mb-4">
+                    <i class="bi bi-translate me-2 text-primary"></i>
+                    <%= __('home.languages.title') %>
+                </h5>
+                <div class="row g-4 text-center">
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 bg-light rounded">
+                            <i class="bi bi-globe2 text-primary mb-2 fs-3"></i>
+                            <h6><%= __('home.languages.list.en') %></h6>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 bg-light rounded">
+                            <i class="bi bi-globe2 text-primary mb-2 fs-3"></i>
+                            <h6><%= __('home.languages.list.ja') %></h6>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 bg-light rounded">
+                            <i class="bi bi-globe2 text-primary mb-2 fs-3"></i>
+                            <h6><%= __('home.languages.list.ko') %></h6>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 bg-light rounded">
+                            <i class="bi bi-plus-circle text-primary mb-2 fs-3"></i>
+                            <h6><%= __('home.languages.list.more') %></h6>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center text-muted mt-4 mb-0">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <%= __('home.languages.note') %>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+````
+
+Cập nhật file ngôn ngữ:
+
+````json:src/locales/vi.json
+{
+    "home": {
+        "languages": {
+            "title": "Ngôn ngữ hỗ trợ",
+            "list": {
+                "en": "Tiếng Anh",
+                "ja": "Tiếng Nhật",
+                "ko": "Tiếng Hàn",
+                "more": "Và nhiều hơn nữa"
+            },
+            "note": "Chúng tôi đang liên tục mở rộng để hỗ trợ thêm nhiều ngôn ngữ mới. Liên hệ với chúng tôi nếu bạn cần hỗ trợ ngôn ngữ cụ thể."
+        }
+    }
+}
+````
+
+````json:src/locales/en.json
+{
+    "home": {
+        "languages": {
+            "title": "Supported Languages",
+            "list": {
+                "en": "English",
+                "ja": "Japanese",
+                "ko": "Korean",
+                "more": "And more"
+            },
+            "note": "We are continuously expanding to support more languages. Contact us if you need support for a specific language."
+        }
+    }
+}
+````
+
+Thay đổi này sẽ:
+1. Thêm ô thứ 4 để chỉ ra còn nhiều ngôn ngữ khác
+2. Thêm ghi chú giải thích về việc mở rộng ngôn ngữ
+3. Sử dụng icon plus-circle để biểu thị thêm
+4. Giữ layout nhất quán
+5. Hỗ trợ đa ngôn ngữ đầy đủ
+
+---
+
+_**User**_
+
+Fix this
+
+---
+
+_**Assistant**_
+
+
+
+Lỗi xảy ra vì chúng ta không truyền biến error và success vào template translate. Cần sửa lại route:
+
+````javascript:src/routes/index.js
+// Trang dịch
+router.get('/translate', (req, res) => {
+    res.render('translate', {
+        title: 'Dịch thuật tài liệu',
+        error: null,  // Thêm biến error
+        success: null // Thêm biến success
+    });
+});
+````
+
+Hoặc chúng ta có thể kiểm tra sự tồn tại của biến trong template:
+
+````html:src/views/translate.ejs
+<!-- Error Alert -->
+<% if (typeof error !== 'undefined' && error) { %>
+    <div class="alert alert-danger" role="alert"><%= error %></div>
+<% } %>
+
+<!-- Success Alert -->
+<% if (typeof success !== 'undefined' && success) { %>
+    <div class="alert alert-success" role="alert"><%= success %></div>
+<% } %>
+````
+
+Tôi khuyến nghị cách 1 (truyền biến trong route) vì:
+1. Rõ ràng về các biến được sử dụng
+2. Tránh lỗi undefined
+3. Dễ maintain và debug
+4. Tuân thủ nguyên tắc "explicit is better than implicit"
+
+---
+
+_**User**_
+
+Hãy áp dụng đa ngôn ngữ cho trang /translate
+
+---
+
+_**Assistant**_
+
+
+
+Tôi sẽ cập nhật trang translate để hỗ trợ đa ngôn ngữ:
+
+1. Thêm các chuỗi dịch cho trang translate:
+
+````json:src/locales/vi.json
+{
+    "translate": {
+        "title": "Dịch thuật tài liệu",
+        "form": {
+            "project_name": {
+                "label": "Tên dự án",
+                "placeholder": "VD: Dịch tài liệu kỹ thuật tháng 3/2024",
+                "help": "Đặt tên dự án để dễ dàng quản lý và theo dõi tiến độ"
+            },
+            "sheet_url": {
+                "label": "URL Google Sheet",
+                "placeholder": "https://docs.google.com/spreadsheets/d/...",
+                "guide": {
+                    "title": "Hướng dẫn chia sẻ quyền",
+                    "intro": "Để dịch được Google Sheet, bạn cần:",
+                    "share_title": "Chia sẻ quyền chỉnh sửa",
+                    "steps": {
+                        "title": "Các bước chia sẻ:",
+                        "list": [
+                            "Mở Google Sheet của bạn",
+                            "Click nút \"Share\" góc trên bên phải",
+                            "Nhập email trên vào ô \"Add people\"",
+                            "Chọn quyền \"Editor\" (Chỉnh sửa)",
+                            "Click \"Send\""
+                        ]
+                    },
+                    "warning": "Nếu không chia sẻ quyền chỉnh sửa, hệ thống sẽ không thể cập nhật bản dịch vào sheet của bạn"
+                }
+            },
+            "sheet_name": {
+                "label": "Tên Sheet",
+                "placeholder": "Nhập URL Google Sheet trước"
+            },
+            "sheet_range": {
+                "label": "Vùng dữ liệu (Tùy chọn)",
+                "placeholder": "Ví dụ: A1, C23:D34, C:D, 44:46",
+                "guide": {
+                    "title": "Hướng dẫn chọn vùng dữ liệu",
+                    "intro": "Có 4 cách chọn vùng dữ liệu:",
+                    "types": {
+                        "cell": "Một ô cụ thể: Ví dụ \"A1\" - chỉ dịch ô A1",
+                        "range": "Vùng cụ thể: Ví dụ \"C23:D34\" - dịch từ ô C23 đến D34",
+                        "columns": "Theo cột: Ví dụ \"C:D\" - dịch toàn bộ cột C và D",
+                        "rows": "Theo dòng: Ví dụ \"44:46\" - dịch từ dòng 44 đến 46 (tất cả các cột)"
+                    },
+                    "note": "Để trống nếu muốn dịch toàn bộ sheet. Hoặc nhập vùng cụ thể, ví dụ: A1, C23:D34, C:D, 44:46"
+                }
+            },
+            "target_lang": {
+                "label": "Ngôn ngữ đích",
+                "placeholder": "Chọn ngôn ngữ...",
+                "options": {
+                    "en": "Tiếng Anh",
+                    "ja": "Tiếng Nhật",
+                    "ko": "Tiếng Hàn",
+                    "zh": "Tiếng Trung"
+                }
+            },
+            "domain": {
+                "label": "Lĩnh vực",
+                "placeholder": "Chọn lĩnh vực...",
+                "options": {
+                    "technical": "Kỹ thuật",
+                    "general": "Chung"
+                }
+            }
+        },
+        "model": {
+            "title": "Model: GPT-4 Mini",
+            "pricing": {
+                "input": "Input: $0.01/1K tokens",
+                "output": "Output: $0.03/1K tokens"
+            },
+            "description": "Model tối ưu cho dịch thuật, cân bằng giữa chất lượng và chi phí"
+        },
+        "submit": "Bắt đầu dịch",
+        "progress": {
+            "preparing": "Đang chuẩn bị..."
+        }
+    }
+}
+````
+
+2. Thêm bản dịch tiếng Anh:
+
+````json:src/locales/en.json
+{
+    "translate": {
+        "title": "Document Translation",
+        "form": {
+            "project_name": {
+                "label": "Project Name",
+                "placeholder": "E.g.: Technical document translation March 2024",
+                "help": "Name your project for easy management and progress tracking"
+            },
+            "sheet_url": {
+                "label": "Google Sheet URL",
+                "placeholder": "https://docs.google.com/spreadsheets/d/...",
+                "guide": {
+                    "title": "Sharing Guide",
+                    "intro": "To translate Google Sheet, you need to:",
+                    "share_title": "Share edit access",
+                    "steps": {
+                        "title": "Sharing steps:",
+                        "list": [
+                            "Open your Google Sheet",
+                            "Click \"Share\" button in top right",
+                            "Enter the email above in \"Add people\"",
+                            "Select \"Editor\" permission",
+                            "Click \"Send\""
+                        ]
+                    },
+                    "warning": "Without edit access, the system cannot update translations to your sheet"
+                }
+            },
+            "sheet_name": {
+                "label": "Sheet Name",
+                "placeholder": "Enter Google Sheet URL first"
+            },
+            "sheet_range": {
+                "label": "Data Range (Optional)",
+                "placeholder": "Example: A1, C23:D34, C:D, 44:46",
+                "guide": {
+                    "title": "Data Range Guide",
+                    "intro": "There are 4 ways to select data range:",
+                    "types": {
+                        "cell": "Single cell: Example \"A1\" - translate only A1",
+                        "range": "Specific range: Example \"C23:D34\" - translate from C23 to D34",
+                        "columns": "By columns: Example \"C:D\" - translate all of columns C and D",
+                        "rows": "By rows: Example \"44:46\" - translate rows 44 to 46 (all columns)"
+                    },
+                    "note": "Leave empty to translate entire sheet. Or enter specific range, e.g.: A1, C23:D34, C:D, 44:46"
+                }
+            },
+            "target_lang": {
+                "label": "Target Language",
+                "placeholder": "Select language...",
+                "options": {
+                    "en": "English",
+                    "ja": "Japanese",
+                    "ko": "Korean",
+                    "zh": "Chinese"
+                }
+            },
+            "domain": {
+                "label": "Domain",
+                "placeholder": "Select domain...",
+                "options": {
+                    "technical": "Technical",
+                    "general": "General"
+                }
+            }
+        },
+        "model": {
+            "title": "Model: GPT-4 Mini",
+            "pricing": {
+                "input": "Input: $0.01/1K tokens",
+                "output": "Output: $0.03/1K tokens"
+            },
+            "description": "Optimized model for translation, balancing quality and cost"
+        },
+        "submit": "Start Translation",
+        "progress": {
+            "preparing": "Preparing..."
+        }
+    }
+}
+````
+
+3. Cập nhật translate.ejs để sử dụng các chuỗi đã dịch:
+
+````html:src/views/translate.ejs
+<h1 class="text-center mb-4"><%= __('translate.title') %></h1>
+
+<!-- Project Name -->
+<div class="mb-4">
+    <label for="projectName" class="form-label"><%= __('translate.form.project_name.label') %></label>
+    <input type="text" 
+           class="form-control" 
+           id="projectName" 
+           name="projectName"
+           placeholder="<%= __('translate.form.project_name.placeholder') %>"
+           required>
+    <div class="form-text">
+        <%= __('translate.form.project_name.help') %>
+    </div>
+</div>
+
+<!-- Continue updating rest of the template... -->
+````
+
+Những thay đổi này sẽ:
+1. Hỗ trợ đầy đủ tiếng Việt và tiếng Anh
+2. Tổ chức chuỗi dịch theo cấu trúc rõ ràng
+3. Dễ dàng thêm ngôn ngữ mới
+4. Giữ nguyên layout và chức năng
+
+---
+
+_**User**_
+
+hãy đảm bảo toàn bộ trang /translate đều hỗ trợ đa ngôn ngữ
+
+---
+
+_**Assistant**_
+
+
+
+Tôi sẽ cập nhật toàn bộ nội dung trong trang translate để sử dụng i18n:
+
+````html:src/views/translate.ejs
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1 class="text-center mb-4"><%= __('translate.title') %></h1>
+                    
+                    <!-- Form dịch -->
+                    <form id="sheetTranslateForm" class="needs-validation" novalidate>
+                        <!-- Project Name -->
+                        <div class="mb-4">
+                            <label for="projectName" class="form-label"><%= __('translate.form.project_name.label') %></label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="projectName" 
+                                   name="projectName"
+                                   placeholder="<%= __('translate.form.project_name.placeholder') %>"
+                                   required>
+                            <div class="form-text">
+                                <%= __('translate.form.project_name.help') %>
+                            </div>
+                        </div>
+
+                        <!-- Google Sheet URL -->
+                        <div class="mb-4">
+                            <label for="sheetUrl" class="form-label"><%= __('translate.form.sheet_url.label') %></label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="sheetUrl" 
+                                   name="sheetUrl" 
+                                   required
+                                   placeholder="<%= __('translate.form.sheet_url.placeholder') %>">
+                            <div class="accordion mt-2">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#urlGuideContent">
+                                            <i class="bi bi-info-circle me-2"></i> <%= __('translate.form.sheet_url.guide.title') %>
+                                        </button>
+                                    </h2>
+                                    <div id="urlGuideContent" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <p class="mb-2"><%= __('translate.form.sheet_url.guide.intro') %></p>
+                                            <ol class="small mb-2">
+                                                <li class="mb-2">
+                                                    <strong><%= __('translate.form.sheet_url.guide.share_title') %></strong> cho email:
+                                                    <div class="d-flex align-items-center mt-1 bg-light p-2 rounded">
+                                                        <code class="me-2"><%= process.env.GOOGLE_CLIENT_EMAIL %></code>
+                                                        <button class="btn btn-sm btn-outline-primary" 
+                                                                onclick="copyEmail()"
+                                                                title="Copy email">
+                                                            <i class="bi bi-clipboard"></i>
+                                                        </button>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <strong><%= __('translate.form.sheet_url.guide.steps.title') %></strong>
+                                                    <ul class="mt-1">
+                                                        <% __('translate.form.sheet_url.guide.steps.list').forEach(step => { %>
+                                                            <li><%= step %></li>
+                                                        <% }); %>
+                                                    </ul>
+                                                </li>
+                                            </ol>
+                                            <div class="alert alert-warning py-2 small">
+                                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                                <%= __('translate.form.sheet_url.guide.warning') %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sheet Name -->
+                        <div class="mb-4">
+                            <label for="sheetName" class="form-label"><%= __('translate.form.sheet_name.label') %></label>
+                            <select class="form-select" id="sheetName" name="sheetName" required disabled>
+                                <option value="" selected disabled><%= __('translate.form.sheet_name.placeholder') %></option>
+                            </select>
+                        </div>
+
+                        <!-- Sheet Range -->
+                        <div class="mb-4">
+                            <label for="sheetRange" class="form-label"><%= __('translate.form.sheet_range.label') %></label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="sheetRange" 
+                                   name="sheetRange"
+                                   placeholder="<%= __('translate.form.sheet_range.placeholder') %>">
+                            <div class="accordion mt-2">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#rangeGuideContent">
+                                            <i class="bi bi-info-circle me-2"></i> <%= __('translate.form.sheet_range.guide.title') %>
+                                        </button>
+                                    </h2>
+                                    <div id="rangeGuideContent" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <p class="mb-2"><%= __('translate.form.sheet_range.guide.intro') %></p>
+                                            <ul class="list-unstyled small">
+                                                <li>
+                                                    <i class="bi bi-1-circle-fill text-primary me-2"></i>
+                                                    <strong><%= __('translate.form.sheet_range.guide.types.cell') %></strong>
+                                                </li>
+                                                <li>
+                                                    <i class="bi bi-2-circle-fill text-primary me-2"></i>
+                                                    <strong><%= __('translate.form.sheet_range.guide.types.range') %></strong>
+                                                </li>
+                                                <li>
+                                                    <i class="bi bi-3-circle-fill text-primary me-2"></i>
+                                                    <strong><%= __('translate.form.sheet_range.guide.types.columns') %></strong>
+                                                </li>
+                                                <li>
+                                                    <i class="bi bi-4-circle-fill text-primary me-2"></i>
+                                                    <strong><%= __('translate.form.sheet_range.guide.types.rows') %></strong>
+                                                </li>
+                                            </ul>
+                                            <div class="alert alert-info mt-2 mb-0 py-2 small">
+                                                <i class="bi bi-info-circle-fill me-2"></i>
+                                                <%= __('translate.form.sheet_range.guide.note') %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Target Language -->
+                        <div class="mb-4">
+                            <label for="targetLang" class="form-label"><%= __('translate.form.target_lang.label') %></label>
+                            <select class="form-select" id="targetLang" name="targetLang" required>
+                                <option value="" selected disabled><%= __('translate.form.target_lang.placeholder') %></option>
+                                <% Object.entries(__('translate.form.target_lang.options')).forEach(([key, value]) => { %>
+                                    <option value="<%= key %>"><%= value %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+
+                        <!-- Domain -->
+                        <div class="mb-4">
+                            <label for="domain" class="form-label"><%= __('translate.form.domain.label') %></label>
+                            <select class="form-select" id="domain" name="domain" required>
+                                <option value="" selected disabled><%= __('translate.form.domain.placeholder') %></option>
+                                <% Object.entries(__('translate.form.domain.options')).forEach(([key, value]) => { %>
+                                    <option value="<%= key %>"><%= value %></option>
+                                <% }); %>
+                            </select>
+                        </div>
+
+                        <!-- AI Model Selection -->
+                        <div class="alert alert-info mb-4">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-robot me-2"></i>
+                                <div>
+                                    <strong><%= __('translate.model.title') %></strong>
+                                    <div class="small text-muted mt-1">
+                                        <div><%= __('translate.model.pricing.input') %></div>
+                                        <div><%= __('translate.model.pricing.output') %></div>
+                                        <div class="mt-1">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            <%= __('translate.model.description') %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg position-relative">
+                                <span class="spinner-border spinner-border-sm d-none me-2"></span>
+                                <span class="button-text"><%= __('translate.submit') %></span>
+                                <div class="progress position-absolute bottom-0 start-0 w-100 rounded-bottom" style="height: 4px;">
+                                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Progress bar -->
+                    <div id="translationProgress" class="d-none my-4">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="flex-grow-1">
+                                <div class="progress" style="height: 20px;">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                         role="progressbar" 
+                                         style="width: 0%" 
+                                         aria-valuenow="0" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100">
+                                        <span id="progressText">0%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="progressDetail" class="text-muted small">
+                            <%= __('translate.progress.preparing') %>
+                        </div>
+                    </div>
+
+                    <!-- Kết quả thành công -->
+                    <div id="successAlert" class="alert d-none mt-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/translate.js"></script>
+````
+
+Tất cả text đã được chuyển sang sử dụng i18n, đảm bảo:
+1. Tất cả label, placeholder, help text đều hỗ trợ đa ngôn ngữ
+2. Các hướng dẫn chi tiết được dịch đầy đủ
+3. Các option trong select box được lấy từ file ngôn ngữ
+4. Thông báo tiến trình cũng được dịch
+5. Giữ nguyên layout và chức năng của trang
+
+---
+
+_**User**_
+
+add thêm ngôn ngữ tiếng Việt vào target language
+
+---
+
+_**Assistant**_
+
+
+
+
+
+Tôi sẽ thêm tiếng Việt vào danh sách ngôn ngữ đích trong cả 2 file ngôn ngữ:
+
+````json:src/locales/vi.json
+{
+    "translate": {
+        "form": {
+            "target_lang": {
+                "label": "Ngôn ngữ đích",
+                "placeholder": "Chọn ngôn ngữ...",
+                "options": {
+                    "vi": "Tiếng Việt",
+                    "en": "Tiếng Anh",
+                    "ja": "Tiếng Nhật", 
+                    "ko": "Tiếng Hàn",
+                    "zh": "Tiếng Trung"
+                }
+            }
+        }
+    }
+}
+````
+
+
+````json:src/locales/en.json
+{
+    "translate": {
+        "form": {
+            "target_lang": {
+                "label": "Target Language",
+                "placeholder": "Select language...",
+                "options": {
+                    "vi": "Vietnamese",
+                    "en": "English",
+                    "ja": "Japanese",
+                    "ko": "Korean", 
+                    "zh": "Chinese"
+                }
+            }
+        }
+    }
+}
+````
+
+
+Thay đổi này sẽ:
+1. Thêm tiếng Việt vào danh sách ngôn ngữ đích
+2. Đặt tiếng Việt lên đầu danh sách
+3. Giữ nguyên thứ tự các ngôn ngữ khác
+4. Hỗ trợ đa ngôn ngữ cho tên các ngôn ngữ
+
+---
+
+_**User**_
+
+Button bắt đầu dịch và nội dung của Hoàn thành dịch thuật cũng hỗ trợ đa ngôn ngữ
+
+---
+
+_**Assistant**_
+
+
+
+
+
+Tôi sẽ thêm các chuỗi dịch cho button và thông báo hoàn thành:
+
+````json:src/locales/vi.json
+{
+    "translate": {
+        // ... existing translations ...
+        "progress": {
+            "preparing": "Đang chuẩn bị...",
+            "connecting": "Đang kết nối...",
+            "processing": "Đang xử lý...",
+            "translating": "Đang dịch...",
+            "completed": "Hoàn thành!",
+            "batch_progress": "Đang xử lý batch {current}/{total}...",
+            "row_progress": "Đã dịch {completed}/{total} dòng ({percent}%)"
+        },
+        "result": {
+            "success": {
+                "title": "Dịch thuật hoàn thành!",
+                "stats": {
+                    "cells": "Số ô đã dịch: {count}",
+                    "chars": "Tổng số ký tự: {count}",
+                    "cost": "Chi phí ước tính: {amount}",
+                    "details": {
+                        "title": "Chi tiết:",
+                        "input_tokens": "Input tokens: {count}",
+                        "output_tokens": "Output tokens: {count}",
+                        "input_cost": "Chi phí input: {amount}",
+                        "output_cost": "Chi phí output: {amount}"
+                    }
+                }
+            },
+            "error": {
+                "title": "Lỗi dịch thuật",
+                "sheet_invalid": "URL Google Sheet không hợp lệ",
+                "permission_denied": "Không có quyền truy cập sheet",
+                "api_error": "Lỗi API key: {message}",
+                "unknown": "Đã xảy ra lỗi không mong muốn"
+            }
+        }
+    }
+}
+````
+
+
+````json:src/locales/en.json
+{
+    "translate": {
+        // ... existing translations ...
+        "progress": {
+            "preparing": "Preparing...",
+            "connecting": "Connecting...",
+            "processing": "Processing...",
+            "translating": "Translating...",
+            "completed": "Completed!",
+            "batch_progress": "Processing batch {current}/{total}...",
+            "row_progress": "Translated {completed}/{total} rows ({percent}%)"
+        },
+        "result": {
+            "success": {
+                "title": "Translation Completed!",
+                "stats": {
+                    "cells": "Cells translated: {count}",
+                    "chars": "Total characters: {count}",
+                    "cost": "Estimated cost: {amount}",
+                    "details": {
+                        "title": "Details:",
+                        "input_tokens": "Input tokens: {count}",
+                        "output_tokens": "Output tokens: {count}",
+                        "input_cost": "Input cost: {amount}",
+                        "output_cost": "Output cost: {amount}"
+                    }
+                }
+            },
+            "error": {
+                "title": "Translation Error",
+                "sheet_invalid": "Invalid Google Sheet URL",
+                "permission_denied": "Sheet access denied",
+                "api_error": "API key error: {message}",
+                "unknown": "An unexpected error occurred"
+            }
+        }
+    }
+}
+````
+
+
+Cập nhật file translate.js để sử dụng các chuỗi đã dịch:
+
+````javascript:src/public/js/translate.js
+// Hàm hiển thị thông báo thành công
+function showSuccessAlert(stats) {
+    const successAlert = document.getElementById('successAlert');
+    successAlert.classList.remove('d-none', 'alert-danger');
+    successAlert.classList.add('alert-success');
+    
+    successAlert.innerHTML = `
+        <h5 class="alert-heading">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            ${window.translations.translate.result.success.title}
+        </h5>
+        <p class="mb-2">${window.translations.translate.result.success.stats.cells.replace('{count}', stats.totalCells)}</p>
+        <p class="mb-2">${window.translations.translate.result.success.stats.chars.replace('{count}', stats.totalChars)}</p>
+        <p class="mb-2">${window.translations.translate.result.success.stats.cost.replace('{amount}', stats.estimatedCost)}</p>
+        <hr>
+        <p class="mb-1"><strong>${window.translations.translate.result.success.stats.details.title}</strong></p>
+        <ul class="list-unstyled small mb-0">
+            <li>${window.translations.translate.result.success.stats.details.input_tokens.replace('{count}', stats.details.inputTokens)}</li>
+            <li>${window.translations.translate.result.success.stats.details.output_tokens.replace('{count}', stats.details.outputTokens)}</li>
+            <li>${window.translations.translate.result.success.stats.details.input_cost.replace('{amount}', stats.details.inputCost)}</li>
+            <li>${window.translations.translate.result.success.stats.details.output_cost.replace('{amount}', stats.details.outputCost)}</li>
+        </ul>
+    `;
+}
+
+// Hàm hiển thị thông báo lỗi
+function showErrorAlert(error) {
+    const successAlert = document.getElementById('successAlert');
+    successAlert.classList.remove('d-none', 'alert-success');
+    successAlert.classList.add('alert-danger');
+    
+    let errorMessage = window.translations.translate.result.error.unknown;
+    if (error.includes('URL')) {
+        errorMessage = window.translations.translate.result.error.sheet_invalid;
+    } else if (error.includes('quyền') || error.includes('permission')) {
+        errorMessage = window.translations.translate.result.error.permission_denied;
+    } else if (error.includes('API key')) {
+        errorMessage = window.translations.translate.result.error.api_error.replace('{message}', error);
+    }
+    
+    successAlert.innerHTML = `
+        <h5 class="alert-heading">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            ${window.translations.translate.result.error.title}
+        </h5>
+        <p class="mb-0">${errorMessage}</p>
+    `;
+}
+````
+
+
+Thêm script để truyền translations từ server xuống client:
+
+````html:src/views/translate.ejs
+<!-- Thêm vào cuối file, trước script translate.js -->
+<script>
+    window.translations = {
+        translate: <%- JSON.stringify(__('translate')) %>
+    };
+</script>
+<script src="/js/translate.js"></script>
+````
+
+Những thay đổi này sẽ:
+1. Hỗ trợ đa ngôn ngữ cho tất cả thông báo tiến trình
+2. Hỗ trợ đa ngôn ngữ cho thông báo thành công/lỗi
+3. Cho phép thay thế các biến trong chuỗi dịch
+4. Giữ nguyên logic xử lý của ứng dụng
+
+---
+
+_**User**_
+
+Lỗi cost đang là Nan. Nút bắt đầu dịch sau khi dịch xong cũng đang để tiếng Việt
+
+---
+
+_**Assistant**_
+
+
+
+Tôi sẽ sửa hai vấn đề này:
+
+1. Sửa lỗi NaN trong cost bằng cách thêm hàm formatNumber:
+
+````javascript:src/public/js/translate.js
+// Hàm format số
+function formatNumber(value) {
+    if (typeof value === 'string' && value.startsWith('$')) {
+        return value; // Giữ nguyên nếu đã có định dạng $
+    }
+    if (typeof value === 'number') {
+        return value.toLocaleString();
+    }
+    return value;
+}
+
+// Cập nhật hàm handleTranslationSuccess
+function handleTranslationSuccess(result) {
+    // ... existing code ...
+
+    // Reset button state với text từ translations
+    const submitBtn = document.querySelector('button[type="submit"]');
+    const spinner = submitBtn.querySelector('.spinner-border');
+    const btnText = submitBtn.querySelector('.button-text');
+    
+    submitBtn.disabled = false;
+    spinner.classList.add('d-none');
+    btnText.textContent = window.translations.translate.submit; // Sử dụng text từ translations
+    submitBtn.classList.remove('processing');
+}
+
+// Cập nhật event listener submit form
+document.getElementById('sheetTranslateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const spinner = submitBtn.querySelector('.spinner-border');
+    const btnText = submitBtn.querySelector('.button-text');
+    
+    // Disable button và hiển thị spinner
+    submitBtn.disabled = true;
+    spinner.classList.remove('d-none');
+    btnText.textContent = window.translations.translate.progress.processing; // Sử dụng text từ translations
+    submitBtn.classList.add('processing');
+
+    // ... rest of the submit handler
+});
+````
+
+2. Thêm các chuỗi dịch cho trạng thái button:
+
+````json:src/locales/vi.json
+{
+    "translate": {
+        // ... existing translations ...
+        "button_states": {
+            "submit": "Bắt đầu dịch",
+            "processing": "Đang xử lý..."
+        }
+    }
+}
+````
+
+````json:src/locales/en.json
+{
+    "translate": {
+        // ... existing translations ...
+        "button_states": {
+            "submit": "Start Translation",
+            "processing": "Processing..."
+        }
+    }
+}
+````
+
+Những thay đổi này sẽ:
+1. Xử lý đúng định dạng số cho cost
+2. Sử dụng text đa ngôn ngữ cho button trong mọi trạng thái
+3. Đảm bảo tính nhất quán của ngôn ngữ
+4. Tránh lỗi NaN khi hiển thị giá trị
+
+---
+
+_**User**_
+
+Các text như Đang xử lý ở progress bar hiện tại vẫn chưa hô trợ đa ngôn ngữ 
+
+---
+
+_**Assistant**_
+
+
+
+
+
+Tôi sẽ cập nhật các text trong progress bar để sử dụng i18n. Cần sửa file translate.js:
+
+````javascript:src/public/js/translate.js
+// Event listener cho form submit
+document.getElementById('sheetTranslateForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // ... existing validation code ...
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const spinner = submitBtn.querySelector('.spinner-border');
+    const btnText = submitBtn.querySelector('.button-text');
+    const progressBar = submitBtn.querySelector('.progress-bar');
+    const progressDetail = document.getElementById('progressDetail');
+    const progressDiv = document.getElementById('translationProgress');
+    const mainProgressBar = progressDiv.querySelector('.progress-bar');
+    
+    // Reset và hiện progress bars
+    [progressBar, mainProgressBar].forEach(bar => {
+        bar.style.width = '0%';
+        bar.setAttribute('aria-valuenow', 0);
+    });
+    submitBtn.classList.add('processing');
+    progressDiv.classList.remove('d-none');
+
+    try {
+        // Thay đổi trạng thái button và progress
+        submitBtn.disabled = true;
+        spinner.classList.remove('d-none');
+        btnText.textContent = window.translations.translate.button_states.processing;
+        progressDetail.textContent = window.translations.translate.progress.preparing;
+
+        // ... rest of the code ...
+
+        // Xử lý progress events
+        eventSource.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            const percent = data.percent || 0;
+            
+            // Cập nhật progress bars
+            [progressBar, mainProgressBar].forEach(bar => {
+                bar.style.width = `${percent}%`;
+                bar.setAttribute('aria-valuenow', percent);
+            });
+            
+            // Cập nhật text theo trạng thái
+            if (data.status === 'completed') {
+                progressDetail.textContent = window.translations.translate.progress.completed;
+            } else {
+                // Thay thế các placeholder trong message
+                let message = data.detail;
+                if (message.includes('batch')) {
+                    const [current, total] = message.match(/\d+/g);
+                    message = window.translations.translate.progress.batch_progress
+                        .replace('{current}', current)
+                        .replace('{total}', total);
+                } else if (message.includes('dòng')) {
+                    const [completed, total, percent] = message.match(/\d+/g);
+                    message = window.translations.translate.progress.row_progress
+                        .replace('{completed}', completed)
+                        .replace('{total}', total)
+                        .replace('{percent}', percent);
+                } else {
+                    message = window.translations.translate.progress.processing;
+                }
+                progressDetail.textContent = message;
+            }
+        };
+
+        // ... rest of the code ...
+
+    } catch (error) {
+        // Reset form state
+        submitBtn.disabled = false;
+        spinner.classList.add('d-none');
+        btnText.textContent = window.translations.translate.button_states.submit;
+        submitBtn.classList.remove('processing');
+        progressDiv.classList.add('d-none');
+
+        // Show error
+        showErrorAlert(error.message);
+    }
+});
+````
+
+
+Cập nhật thêm các chuỗi dịch trong file ngôn ngữ:
+
+````json:src/locales/vi.json
+{
+    "translate": {
+        "progress": {
+            "preparing": "Đang chuẩn bị...",
+            "connecting": "Đang kết nối...",
+            "processing": "Đang xử lý...",
+            "translating": "Đang dịch...",
+            "completed": "Hoàn thành!",
+            "batch_progress": "Đang xử lý batch {current}/{total}...",
+            "row_progress": "Đã dịch {completed}/{total} dòng ({percent}%)",
+            "init_project": "Đang khởi tạo dự án..."
+        }
+    }
+}
+````
+
+
+````json:src/locales/en.json
+{
+    "translate": {
+        "progress": {
+            "preparing": "Preparing...",
+            "connecting": "Connecting...",
+            "processing": "Processing...",
+            "translating": "Translating...",
+            "completed": "Completed!",
+            "batch_progress": "Processing batch {current}/{total}...",
+            "row_progress": "Translated {completed}/{total} rows ({percent}%)",
+            "init_project": "Initializing project..."
+        }
+    }
+}
+````
+
+
+Những thay đổi này sẽ:
+1. Sử dụng i18n cho tất cả text trong progress bar
+2. Hỗ trợ thay thế biến trong message
+3. Xử lý các trạng thái khác nhau của progress
+4. Đảm bảo tính nhất quán của ngôn ngữ
+5. Dễ dàng thêm ngôn ngữ mới
+
+---
+
+_**User**_
+
+Phần trăm ở progress bar  đang bị lỗi luôn là 0
+
+---
+
+_**Assistant**_
+
+
+
+
+
+Tôi sẽ sửa lại phần cập nhật progress bar trong file translate.js:
+
+````javascript:src/public/js/translate.js
+// Event source handler
+eventSource.onmessage = (event) => {
+    try {
+        const progress = JSON.parse(event.data);
+        console.log('Progress update:', progress);
+        
+        // Cập nhật progress bars
+        const percent = progress.percent || 0;
+        [progressBar, mainProgressBar].forEach(bar => {
+            bar.style.width = `${percent}%`;
+            bar.setAttribute('aria-valuenow', percent);
+            
+            // Cập nhật text hiển thị phần trăm
+            const progressText = bar.querySelector('#progressText');
+            if (progressText) {
+                progressText.textContent = `${Math.round(percent)}%`;
+            }
+            
+            // Thêm class khi hoàn thành
+            if (progress.status === 'completed') {
+                bar.classList.add('bg-success');
+            }
+        });
+
+        // Cập nhật text theo trạng thái
+        if (progress.status === 'completed') {
+            progressDetail.textContent = window.translations.translate.progress.completed;
+            btnText.textContent = window.translations.translate.button_states.submit;
+        } else {
+            // Thay thế các placeholder trong message
+            let message = progress.detail;
+            if (message.includes('batch')) {
+                const [current, total] = message.match(/\d+/g);
+                message = window.translations.translate.progress.batch_progress
+                    .replace('{current}', current)
+                    .replace('{total}', total);
+            } else if (message.includes('dòng')) {
+                const [completed, total, percent] = message.match(/\d+/g);
+                message = window.translations.translate.progress.row_progress
+                    .replace('{completed}', completed)
+                    .replace('{total}', total)
+                    .replace('{percent}', Math.round(percent));
+            } else {
+                message = window.translations.translate.progress.processing;
+            }
+            progressDetail.textContent = message;
+            btnText.textContent = `${window.translations.translate.button_states.processing} (${Math.round(percent)}%)`;
+        }
+
+        // Thêm class khi hoàn thành
+        if (progress.status === 'completed') {
+            progressDiv.classList.add('completed');
+            eventSource.close();
+        }
+    } catch (error) {
+        console.error('Error parsing progress:', error);
+    }
+};
+````
+
+
+Những thay đổi chính:
+1. Thêm cập nhật text hiển thị phần trăm trong progress bar
+2. Làm tròn số phần trăm bằng Math.round()
+3. Cập nhật text button với phần trăm hiện tại
+4. Đảm bảo progress bar và text luôn đồng bộ
+5. Xử lý trường hợp percent là undefined
+
+Điều này sẽ:
+- Hiển thị đúng phần trăm tiến độ
+- Cập nhật liên tục khi có thay đổi
+- Hiển thị số nguyên thay vì số thập phân
+- Đồng bộ giữa các thành phần UI
+
+---
+
+_**User**_
+
+Cả footer và header đều sẽ cần apply đa ngôn ngữ
+
+---
+
+_**Assistant**_
+
+
+
+
+
+Tôi sẽ thêm các chuỗi dịch cho header và footer, sau đó cập nhật main.ejs:
+
+1. Thêm chuỗi dịch cho header và footer:
+
+````json:src/locales/vi.json
+{
+    "layout": {
+        "header": {
+            "home": "Trang chủ",
+            "settings": {
+                "title": "Cài đặt hệ thống",
+                "api_key": {
+                    "label": "OpenAI API Key",
+                    "tooltip": "Nếu không nhập, hệ thống sẽ sử dụng API key mặc định",
+                    "help": "API key sẽ được lưu trong trình duyệt của bạn"
+                },
+                "buttons": {
+                    "close": "Đóng",
+                    "save": "Lưu cài đặt"
+                }
+            }
+        },
+        "footer": {
+            "links": {
+                "terms": "Điều khoản dịch vụ",
+                "privacy": "Chính sách bảo mật",
+                "support": "Hỗ trợ"
+            },
+            "copyright": "© 2024 Smarttrans. All rights reserved."
+        }
+    }
+}
+````
+
+
+````json:src/locales/en.json
+{
+    "layout": {
+        "header": {
+            "home": "Home",
+            "settings": {
+                "title": "System Settings",
+                "api_key": {
+                    "label": "OpenAI API Key",
+                    "tooltip": "If not provided, system will use default API key",
+                    "help": "API key will be saved in your browser"
+                },
+                "buttons": {
+                    "close": "Close",
+                    "save": "Save Settings"
+                }
+            }
+        },
+        "footer": {
+            "links": {
+                "terms": "Terms of Service",
+                "privacy": "Privacy Policy",
+                "support": "Support"
+            },
+            "copyright": "© 2024 Smarttrans. All rights reserved."
+        }
+    }
+}
+````
+
+
+2. Cập nhật main.ejs:
+
+````html:src/views/layouts/main.ejs
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="bi bi-translate me-2"></i>
+            Smarttrans
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/"><%= __('layout.header.home') %></a>
+                </li>
+                <li class="nav-item">
+                    <button class="btn btn-link nav-link" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#settingsModal"
+                            data-bs-toggle="tooltip"
+                            title="<%= __('layout.header.settings.title') %>">
+                        <i class="bi bi-gear-fill fs-5"></i>
+                    </button>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="langDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-globe me-1"></i>
+                        <%= currentLocale.toUpperCase() %>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="<%= `${currentPath}?lang=vi` %>">
+                                <% if (currentLocale === 'vi') { %>
+                                    <i class="bi bi-check2 me-2 text-success"></i>
+                                <% } %>
+                                Tiếng Việt
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="<%= `${currentPath}?lang=en` %>">
+                                <% if (currentLocale === 'en') { %>
+                                    <i class="bi bi-check2 me-2 text-success"></i>
+                                <% } %>
+                                English
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Settings Modal -->
+<div class="modal fade" id="settingsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-gear me-2"></i>
+                    <%= __('layout.header.settings.title') %>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="settingsForm">
+                    <div class="mb-3">
+                        <label for="apiKey" class="form-label">
+                            <%= __('layout.header.settings.api_key.label') %>
+                            <i class="bi bi-info-circle" 
+                               data-bs-toggle="tooltip" 
+                               title="<%= __('layout.header.settings.api_key.tooltip') %>"></i>
+                        </label>
+                        <div class="input-group">
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="apiKey" 
+                                   name="apiKey"
+                                   placeholder="sk-..." 
+                                   pattern="^sk-[a-zA-Z0-9_-]{32,}$">
+                            <button class="btn btn-outline-secondary" 
+                                    type="button" 
+                                    onclick="toggleApiKeyVisibility(this)">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <div class="form-text">
+                            <%= __('layout.header.settings.api_key.help') %>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <%= __('layout.header.settings.buttons.close') %>
+                </button>
+                <button type="button" class="btn btn-primary" onclick="saveSettings()">
+                    <%= __('layout.header.settings.buttons.save') %>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<main class="container my-5">
+    <%- body %>
+</main>
+
+<!-- Footer -->
+<footer class="bg-light py-4 mt-auto">
+    <div class="container text-center">
+        <div class="mb-3">
+            <% if (title !== 'Trang chủ') { %>
+                <a href="/terms" class="text-muted text-decoration-none me-3">
+                    <%= __('layout.footer.links.terms') %>
+                </a>
+                <a href="/privacy" class="text-muted text-decoration-none me-3">
+                    <%= __('layout.footer.links.privacy') %>
+                </a>
+                <a href="/support" class="text-muted text-decoration-none">
+                    <%= __('layout.footer.links.support') %>
+                </a>
+            <% } %>
+        </div>
+        <p class="mb-0"><%= __('layout.footer.copyright') %></p>
+    </div>
+</footer>
+````
+
+Những thay đổi này sẽ:
+1. Hỗ trợ đa ngôn ngữ cho toàn bộ header và footer
+2. Tổ chức chuỗi dịch theo cấu trúc rõ ràng
+3. Dễ dàng thêm ngôn ngữ mới
+4. Giữ nguyên layout và chức năng
+
+---
+
+_**User**_
+
+Các trang prolicy, term, about, suport cũng hãy hỗ trợ đa ngôn ngữ
+
+---
+
+_**Assistant**_
+
+
+
+
+
+
+
+Tôi sẽ thêm các chuỗi dịch cho các trang tĩnh này:
+
+1. Thêm chuỗi dịch cho tiếng Việt:
+
+````json:src/locales/vi.json
+{
+    "pages": {
+        "about": {
+            "title": "Về chúng tôi",
+            "content": {
+                "intro": "Smarttrans là một dự án mã nguồn mở nhằm đơn giản hóa quy trình dịch thuật tài liệu.",
+                "features": {
+                    "title": "Tính năng chính:",
+                    "list": [
+                        "Tích hợp trực tiếp với Google Sheets",
+                        "Sử dụng AI tiên tiến để dịch thuật",
+                        "Hỗ trợ nhiều ngôn ngữ",
+                        "Giao diện thân thiện, dễ sử dụng",
+                        "Theo dõi tiến độ thời gian thực"
+                    ]
+                },
+                "contact": {
+                    "title": "Liên hệ",
+                    "email": "Email: contact@smarttrans.ai",
+                    "github": "GitHub: github.com/smarttrans"
+                }
+            }
+        },
+        "terms": {
+            "title": "Điều khoản dịch vụ",
+            "content": {
+                "intro": "Vui lòng đọc kỹ các điều khoản sau trước khi sử dụng dịch vụ:",
+                "sections": [
+                    {
+                        "title": "1. Điều khoản sử dụng",
+                        "text": "Bằng việc sử dụng dịch vụ, bạn đồng ý tuân thủ các điều khoản và điều kiện này."
+                    },
+                    {
+                        "title": "2. Quyền sở hữu trí tuệ",
+                        "text": "Mọi quyền sở hữu trí tuệ liên quan đến dịch vụ đều thuộc về Smarttrans."
+                    },
+                    {
+                        "title": "3. Bảo mật dữ liệu",
+                        "text": "Chúng tôi cam kết bảo vệ dữ liệu của bạn theo chính sách bảo mật."
+                    },
+                    {
+                        "title": "4. Giới hạn trách nhiệm",
+                        "text": "Chúng tôi không chịu trách nhiệm về các lỗi dịch thuật hoặc thiệt hại phát sinh."
+                    }
+                ]
+            }
+        },
+        "privacy": {
+            "title": "Chính sách bảo mật",
+            "content": {
+                "intro": "Chính sách bảo mật này giải thích cách chúng tôi thu thập và sử dụng thông tin:",
+                "sections": [
+                    {
+                        "title": "Thu thập dữ liệu",
+                        "text": "Chúng tôi chỉ thu thập thông tin cần thiết để cung cấp dịch vụ."
+                    },
+                    {
+                        "title": "Sử dụng dữ liệu",
+                        "text": "Dữ liệu được sử dụng để cải thiện dịch vụ và trải nghiệm người dùng."
+                    },
+                    {
+                        "title": "Bảo mật",
+                        "text": "Chúng tôi áp dụng các biện pháp bảo mật để bảo vệ thông tin của bạn."
+                    },
+                    {
+                        "title": "Chia sẻ dữ liệu",
+                        "text": "Chúng tôi không chia sẻ thông tin với bên thứ ba khi chưa được sự đồng ý."
+                    }
+                ]
+            }
+        },
+        "support": {
+            "title": "Hỗ trợ",
+            "content": {
+                "intro": "Chúng tôi luôn sẵn sàng hỗ trợ bạn:",
+                "sections": {
+                    "contact": {
+                        "title": "Liên hệ",
+                        "methods": [
+                            {
+                                "type": "Email",
+                                "value": "support@smarttrans.ai",
+                                "note": "Phản hồi trong vòng 24h"
+                            },
+                            {
+                                "type": "GitHub",
+                                "value": "github.com/smarttrans/issues",
+                                "note": "Báo cáo lỗi & góp ý"
+                            }
+                        ]
+                    },
+                    "faq": {
+                        "title": "Câu hỏi thường gặp",
+                        "questions": [
+                            {
+                                "q": "Làm sao để bắt đầu sử dụng?",
+                                "a": "Truy cập trang chủ và click nút 'Bắt đầu dịch'"
+                            },
+                            {
+                                "q": "Có cần tài khoản không?",
+                                "a": "Không, bạn có thể sử dụng ngay mà không cần đăng ký"
+                            },
+                            {
+                                "q": "Chi phí sử dụng?",
+                                "a": "Miễn phí với API key mặc định, hoặc sử dụng API key riêng"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}
+````
+
+2. Thêm chuỗi dịch cho tiếng Anh:
+
+````json:src/locales/en.json
+{
+    "pages": {
+        "about": {
+            "title": "About Us",
+            "content": {
+                "intro": "Smarttrans is an open-source project aimed at simplifying document translation workflows.",
+                "features": {
+                    "title": "Key Features:",
+                    "list": [
+                        "Direct Google Sheets integration",
+                        "Advanced AI-powered translation",
+                        "Multiple language support",
+                        "User-friendly interface",
+                        "Real-time progress tracking"
+                    ]
+                },
+                "contact": {
+                    "title": "Contact",
+                    "email": "Email: contact@smarttrans.ai",
+                    "github": "GitHub: github.com/smarttrans"
+                }
+            }
+        },
+        "terms": {
+            "title": "Terms of Service",
+            "content": {
+                "intro": "Please read the following terms carefully before using the service:",
+                "sections": [
+                    {
+                        "title": "1. Terms of Use",
+                        "text": "By using the service, you agree to comply with these terms and conditions."
+                    },
+                    {
+                        "title": "2. Intellectual Property",
+                        "text": "All intellectual property rights related to the service belong to Smarttrans."
+                    },
+                    {
+                        "title": "3. Data Security",
+                        "text": "We are committed to protecting your data according to our privacy policy."
+                    },
+                    {
+                        "title": "4. Limitation of Liability",
+                        "text": "We are not responsible for translation errors or resulting damages."
+                    }
+                ]
+            }
+        },
+        "privacy": {
+            "title": "Privacy Policy",
+            "content": {
+                "intro": "This privacy policy explains how we collect and use information:",
+                "sections": [
+                    {
+                        "title": "Data Collection",
+                        "text": "We only collect information necessary to provide the service."
+                    },
+                    {
+                        "title": "Data Usage",
+                        "text": "Data is used to improve service and user experience."
+                    },
+                    {
+                        "title": "Security",
+                        "text": "We implement security measures to protect your information."
+                    },
+                    {
+                        "title": "Data Sharing",
+                        "text": "We do not share information with third parties without consent."
+                    }
+                ]
+            }
+        },
+        "support": {
+            "title": "Support",
+            "content": {
+                "intro": "We're here to help you:",
+                "sections": {
+                    "contact": {
+                        "title": "Contact",
+                        "methods": [
+                            {
+                                "type": "Email",
+                                "value": "support@smarttrans.ai",
+                                "note": "Response within 24h"
+                            },
+                            {
+                                "type": "GitHub",
+                                "value": "github.com/smarttrans/issues",
+                                "note": "Bug reports & suggestions"
+                            }
+                        ]
+                    },
+                    "faq": {
+                        "title": "FAQ",
+                        "questions": [
+                            {
+                                "q": "How do I get started?",
+                                "a": "Visit homepage and click 'Start Translating'"
+                            },
+                            {
+                                "q": "Do I need an account?",
+                                "a": "No, you can use it right away without registration"
+                            },
+                            {
+                                "q": "What's the cost?",
+                                "a": "Free with default API key, or use your own key"
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}
+````
+
+3. Cập nhật routes để truyền title từ i18n:
+
+````javascript:src/routes/index.js
+// Các trang tĩnh
+router.get('/about', (req, res) => {
+    res.render('about', {
+        title: req.__('pages.about.title')
+    });
+});
+
+router.get('/terms', (req, res) => {
+    res.render('terms', {
+        title: req.__('pages.terms.title')
+    });
+});
+
+router.get('/privacy', (req, res) => {
+    res.render('privacy', {
+        title: req.__('pages.privacy.title')
+    });
+});
+
+router.get('/support', (req, res) => {
+    res.render('support', {
+        title: req.__('pages.support.title')
+    });
+});
+````
+
+Bạn cần tạo các file view tương ứng (about.ejs, terms.ejs, privacy.ejs, support.ejs) và sử dụng các chuỗi dịch này. Tôi có thể giúp bạn tạo các file view này nếu bạn cần.
+
+---
+
+_**User**_
+
+Hãy hỗ trợ đa ngôn ngữ cho màn /terms
+
+---
+
+_**Assistant**_
+
+Tôi sẽ cập nhật file terms.ejs để sử dụng các chuỗi dịch từ i18n:
+
+````html:src/views/terms.ejs
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h1 class="text-center mb-5"><%= __('pages.terms.title') %></h1>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <p class="lead mb-4"><%= __('pages.terms.content.intro') %></p>
+
+                    <% __('pages.terms.content.sections').forEach(section => { %>
+                        <section class="mb-5">
+                            <h2 class="h4 mb-4"><%= section.title %></h2>
+                            <p><%= section.text %></p>
+                        </section>
+                    <% }); %>
+
+                    <section>
+                        <h2 class="h4 mb-4">
+                            <i class="bi bi-envelope me-2"></i>
+                            <%= __('pages.terms.content.contact.title') %>
+                        </h2>
+                        <ul class="list-unstyled">
+                            <li><%= __('pages.terms.content.contact.email') %></li>
+                            <li><%= __('pages.terms.content.contact.github') %></li>
+                        </ul>
+                    </section>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <p class="text-muted small">
+                    <%= __('pages.terms.content.last_updated') %> 
+                    <%= new Date().toLocaleDateString(currentLocale === 'vi' ? 'vi-VN' : 'en-US') %>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+````
+
+Những thay đổi chính:
+1. Sử dụng `__()` để lấy chuỗi dịch từ i18n
+2. Dùng forEach để render các section từ chuỗi dịch
+3. Format ngày theo locale hiện tại
+4. Thêm icon cho phần contact
+5. Giữ nguyên cấu trúc HTML và style
+
+Điều này sẽ:
+- Hiển thị nội dung theo ngôn ngữ người dùng chọn
+- Duy trì layout và style nhất quán
+- Dễ dàng thêm/sửa nội dung qua file ngôn ngữ
+- Tự động cập nhật khi chuyển đổi ngôn ngữ
+
+---
+
+_**User**_
+
+Hãy hỗ trợ đa ngôn ngữ từng dòng và giữu nguyên nội dung cũ
+
+---
+
+_**Assistant**_
+
+Tôi sẽ cập nhật file terms.ejs để giữ nguyên nội dung nhưng hỗ trợ đa ngôn ngữ:
+
+````html:src/views/terms.ejs
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h1 class="text-center mb-5"><%= __('pages.terms.title') %></h1>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <section class="mb-5">
+                        <h2 class="h4 mb-4"><%= __('pages.terms.sections.usage.title') %></h2>
+                        <p><%= __('pages.terms.sections.usage.text') %></p>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="h4 mb-4"><%= __('pages.terms.sections.service.title') %></h2>
+                        <p><%= __('pages.terms.sections.service.text') %></p>
+                        <ul>
+                            <% __('pages.terms.sections.service.languages').forEach(lang => { %>
+                                <li><%= lang %></li>
+                            <% }); %>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="h4 mb-4"><%= __('pages.terms.sections.liability.title') %></h2>
+                        <p><%= __('pages.terms.sections.liability.text') %></p>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="h4 mb-4"><%= __('pages.terms.sections.intellectual_property.title') %></h2>
+                        <p><%= __('pages.terms.sections.intellectual_property.text') %></p>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="h4 mb-4"><%= __('pages.terms.sections.security.title') %></h2>
+                        <p><%= __('pages.terms.sections.security.text') %></p>
+                        <ul>
+                            <% __('pages.terms.sections.security.points').forEach(point => { %>
+                                <li><%= point %></li>
+                            <% }); %>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="h4 mb-4"><%= __('pages.terms.sections.pricing.title') %></h2>
+                        <p><%= __('pages.terms.sections.pricing.text') %></p>
+                        <ul>
+                            <% __('pages.terms.sections.pricing.factors').forEach(factor => { %>
+                                <li><%= factor %></li>
+                            <% }); %>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="h4 mb-4"><%= __('pages.terms.sections.changes.title') %></h2>
+                        <p><%= __('pages.terms.sections.changes.text') %></p>
+                    </section>
+
+                    <section>
+                        <h2 class="h4 mb-4">
+                            <i class="bi bi-envelope me-2"></i>
+                            <%= __('pages.terms.sections.contact.title') %>
+                        </h2>
+                        <p><%= __('pages.terms.sections.contact.text') %></p>
+                        <ul class="list-unstyled">
+                            <li>
+                                <i class="bi bi-envelope me-2"></i>
+                                <%= __('pages.terms.sections.contact.email') %>
+                            </li>
+                        </ul>
+                    </section>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <p class="text-muted small">
+                    <%= __('pages.terms.last_updated') %>
+                    <%= new Date().toLocaleDateString(currentLocale === 'vi' ? 'vi-VN' : 'en-US') %>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+````
+
+Và cập nhật các chuỗi dịch trong vi.json và en.json:
+
+````json:src/locales/vi.json
+{
+    "pages": {
+        "terms": {
+            "title": "Điều khoản dịch vụ",
+            "sections": {
+                "usage": {
+                    "title": "1. Điều khoản sử dụng",
+                    "text": "Bằng việc truy cập và sử dụng Smarttrans, bạn đồng ý tuân thủ và chịu ràng buộc bởi các điều khoản và điều kiện sau đây. Nếu bạn không đồng ý với bất kỳ phần nào của các điều khoản này, vui lòng không sử dụng dịch vụ của chúng tôi."
+                },
+                "service": {
+                    "title": "2. Mô tả dịch vụ",
+                    "text": "Smarttrans cung cấp dịch vụ dịch thuật tự động sử dụng công nghệ AI. Chúng tôi hỗ trợ dịch các ngôn ngữ sau:",
+                    "languages": [
+                        "Tiếng Anh",
+                        "Tiếng Nhật",
+                        "Tiếng Hàn",
+                        "Tiếng Trung"
+                    ]
+                },
+                "liability": {
+                    "title": "3. Giới hạn trách nhiệm",
+                    "text": "Smarttrans cung cấp dịch vụ dịch thuật \"nguyên trạng\" và không đảm bảo độ chính xác 100% của bản dịch. Người dùng nên kiểm tra và hiệu chỉnh kết quả dịch trước khi sử dụng cho mục đích chính thức."
+                },
+                "intellectual_property": {
+                    "title": "4. Quyền sở hữu trí tuệ",
+                    "text": "Người dùng giữ quyền sở hữu đối với nội dung gốc của họ. Smarttrans không lưu trữ hoặc sử dụng nội dung người dùng cho bất kỳ mục đích nào khác ngoài việc cung cấp dịch vụ dịch thuật."
+                },
+                "security": {
+                    "title": "5. Bảo mật dữ liệu",
+                    "text": "Chúng tôi cam kết bảo vệ thông tin của người dùng:",
+                    "points": [
+                        "Không lưu trữ nội dung dịch",
+                        "Không chia sẻ thông tin với bên thứ ba",
+                        "Sử dụng kết nối bảo mật HTTPS",
+                        "Tuân thủ các quy định về bảo vệ dữ liệu"
+                    ]
+                },
+                "pricing": {
+                    "title": "6. Chi phí và thanh toán",
+                    "text": "Chi phí dịch vụ được tính dựa trên:",
+                    "factors": [
+                        "Số lượng ký tự trong văn bản gốc",
+                        "Model AI được sử dụng",
+                        "Giá được hiển thị trước khi bắt đầu dịch"
+                    ]
+                },
+                "changes": {
+                    "title": "7. Thay đổi điều khoản",
+                    "text": "Chúng tôi có quyền thay đổi các điều khoản này vào bất kỳ lúc nào. Những thay đổi sẽ có hiệu lực ngay khi được đăng tải. Việc tiếp tục sử dụng dịch vụ sau khi thay đổi đồng nghĩa với việc bạn chấp nhận các điều khoản mới."
+                },
+                "contact": {
+                    "title": "8. Liên hệ",
+                    "text": "Nếu bạn có bất kỳ câu hỏi nào về Điều khoản dịch vụ, vui lòng liên hệ:",
+                    "email": "Email: lonlywolf189@gmail.com"
+                }
+            },
+            "last_updated": "Cập nhật lần cuối:"
+        }
+    }
+}
+````
+
+````json:src/locales/en.json
+{
+    "pages": {
+        "terms": {
+            "title": "Terms of Service",
+            "sections": {
+                "usage": {
+                    "title": "1. Terms of Use",
+                    "text": "By accessing and using Smarttrans, you agree to be bound by these terms and conditions. If you disagree with any part of these terms, please do not use our service."
+                },
+                "service": {
+                    "title": "2. Service Description",
+                    "text": "Smarttrans provides automated translation services using AI technology. We support translation for the following languages:",
+                    "languages": [
+                        "English",
+                        "Japanese",
+                        "Korean",
+                        "Chinese"
+                    ]
+                },
+                "liability": {
+                    "title": "3. Limitation of Liability",
+                    "text": "Smarttrans provides translation services \"as is\" and does not guarantee 100% accuracy of translations. Users should review and edit translation results before using them for official purposes."
+                },
+                "intellectual_property": {
+                    "title": "4. Intellectual Property",
+                    "text": "Users retain ownership of their original content. Smarttrans does not store or use user content for any purpose other than providing translation services."
+                },
+                "security": {
+                    "title": "5. Data Security",
+                    "text": "We are committed to protecting user information:",
+                    "points": [
+                        "No storage of translated content",
+                        "No sharing of information with third parties",
+                        "Use of secure HTTPS connection",
+                        "Compliance with data protection regulations"
+                    ]
+                },
+                "pricing": {
+                    "title": "6. Costs and Payment",
+                    "text": "Service costs are based on:",
+                    "factors": [
+                        "Number of characters in source text",
+                        "AI model used",
+                        "Price displayed before translation begins"
+                    ]
+                },
+                "changes": {
+                    "title": "7. Changes to Terms",
+                    "text": "We reserve the right to modify these terms at any time. Changes will be effective immediately upon posting. Continued use of the service after changes implies acceptance of the new terms."
+                },
+                "contact": {
+                    "title": "8. Contact",
+                    "text": "If you have any questions about these Terms of Service, please contact:",
+                    "email": "Email: lonlywolf189@gmail.com"
+                }
+            },
+            "last_updated": "Last updated:"
+        }
+    }
+}
+````
+
+Những thay đổi này sẽ:
+1. Giữ nguyên nội dung và cấu trúc của trang
+2. Hỗ trợ đa ngôn ngữ cho tất cả các phần
+3. Tổ chức chuỗi dịch theo cấu trúc rõ ràng
+4. Dễ dàng thêm/sửa nội dung qua file ngôn ngữ
+
+---
+
+_**User**_
+
+Hãy áp dụng việc đa ngôn ngữ tương tự với màn /privacy
+
+---
+
+_**Assistant**_
+
+Tôi sẽ cập nhật file privacy.ejs để sử dụng cấu trúc đa ngôn ngữ tương tự như terms:
+
+````html:src/views/privacy.ejs
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h1 class="text-center mb-5"><%= __('pages.privacy.title') %></h1>
+            
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <section class="mb-5">
+                        <h2 class="h4 mb-4"><%= __('pages.privacy.sections.data_collection.title') %></h2>
+                        <p><%= __('pages.privacy.sections.data_collection.text') %></p>
+                        <ul>
+                            <% __('pages.privacy.sections.data_collection.items').forEach(item => { %>
+                                <li><%= item %></li>
+                            <% }); %>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="h4 mb-4"><%= __('pages.privacy.sections.data_usage.title') %></h2>
+                        <p><%= __('pages.privacy.sections.data_usage.text') %></p>
+                        <ul>
+                            <% __('pages.privacy.sections.data_usage.purposes').forEach(purpose => { %>
+                                <li><%= purpose %></li>
+                            <% }); %>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="h4 mb-4"><%= __('pages.privacy.sections.data_security.title') %></h2>
+                        <p><%= __('pages.privacy.sections.data_security.text') %></p>
+                        <ul>
+                            <% __('pages.privacy.sections.data_security.measures').forEach(measure => { %>
+                                <li><%= measure %></li>
+                            <% }); %>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="h4 mb-4"><%= __('pages.privacy.sections.user_rights.title') %></h2>
+                        <p><%= __('pages.privacy.sections.user_rights.text') %></p>
+                        <ul>
+                            <% __('pages.privacy.sections.user_rights.rights').forEach(right => { %>
+                                <li><%= right %></li>
+                            <% }); %>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="h4 mb-4"><%= __('pages.privacy.sections.cookies.title') %></h2>
+                        <p><%= __('pages.privacy.sections.cookies.text') %></p>
+                        <ul>
+                            <% __('pages.privacy.sections.cookies.purposes').forEach(purpose => { %>
+                                <li><%= purpose %></li>
+                            <% }); %>
+                        </ul>
+                    </section>
+
+                    <section class="mb-5">
+                        <h2 class="h4 mb-4"><%= __('pages.privacy.sections.changes.title') %></h2>
+                        <p><%= __('pages.privacy.sections.changes.text') %></p>
+                    </section>
+
+                    <section>
+                        <h2 class="h4 mb-4">
+                            <i class="bi bi-envelope me-2"></i>
+                            <%= __('pages.privacy.sections.contact.title') %>
+                        </h2>
+                        <p><%= __('pages.privacy.sections.contact.text') %></p>
+                        <ul class="list-unstyled">
+                            <li>
+                                <i class="bi bi-envelope me-2"></i>
+                                <%= __('pages.privacy.sections.contact.email') %>
+                            </li>
+                        </ul>
+                    </section>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <p class="text-muted small">
+                    <%= __('pages.privacy.last_updated') %>
+                    <%= new Date().toLocaleDateString(currentLocale === 'vi' ? 'vi-VN' : 'en-US') %>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+````
+
+Và cập nhật chuỗi dịch trong vi.json và en.json:
+
+````json:src/locales/vi.json
+{
+    "pages": {
+        "privacy": {
+            "title": "Chính sách bảo mật",
+            "sections": {
+                "data_collection": {
+                    "title": "1. Thu thập thông tin",
+                    "text": "Smarttrans chỉ thu thập những thông tin cần thiết để cung cấp dịch vụ dịch thuật:",
+                    "items": [
+                        "Nội dung văn bản cần dịch",
+                        "Thông tin về Google Sheet được chia sẻ",
+                        "API key do người dùng cung cấp (được lưu trữ cục bộ)"
+                    ]
+                },
+                "data_usage": {
+                    "title": "2. Sử dụng thông tin",
+                    "text": "Thông tin được thu thập chỉ được sử dụng để:",
+                    "purposes": [
+                        "Thực hiện dịch thuật theo yêu cầu",
+                        "Cải thiện chất lượng dịch vụ",
+                        "Xử lý sự cố kỹ thuật",
+                        "Thống kê việc sử dụng dịch vụ"
+                    ]
+                },
+                "data_security": {
+                    "title": "3. Bảo mật thông tin",
+                    "text": "Chúng tôi cam kết bảo vệ thông tin của người dùng bằng các biện pháp:",
+                    "measures": [
+                        "Mã hóa dữ liệu trong quá trình truyền tải",
+                        "Không lưu trữ nội dung dịch sau khi hoàn thành",
+                        "Giới hạn quyền truy cập vào hệ thống",
+                        "Thường xuyên cập nhật các biện pháp bảo mật"
+                    ]
+                },
+                "user_rights": {
+                    "title": "4. Quyền của người dùng",
+                    "text": "Người dùng có quyền:",
+                    "rights": [
+                        "Yêu cầu xóa dữ liệu cá nhân",
+                        "Từ chối việc thu thập thông tin",
+                        "Yêu cầu cung cấp thông tin về dữ liệu đã thu thập",
+                        "Cập nhật hoặc sửa đổi thông tin cá nhân"
+                    ]
+                },
+                "cookies": {
+                    "title": "5. Cookie và công nghệ theo dõi",
+                    "text": "Smarttrans sử dụng cookie và các công nghệ tương tự để:",
+                    "purposes": [
+                        "Ghi nhớ tùy chọn người dùng",
+                        "Cải thiện trải nghiệm sử dụng",
+                        "Phân tích hiệu suất hệ thống"
+                    ]
+                },
+                "changes": {
+                    "title": "6. Thay đổi chính sách",
+                    "text": "Chúng tôi có thể cập nhật chính sách này theo thời gian. Mọi thay đổi sẽ được thông báo trên trang web và có hiệu lực ngay sau khi được đăng tải."
+                },
+                "contact": {
+                    "title": "7. Liên hệ",
+                    "text": "Nếu bạn có bất kỳ câu hỏi nào về Chính sách bảo mật, vui lòng liên hệ:",
+                    "email": "Email: lonlywolf189@gmail.com"
+                }
+            },
+            "last_updated": "Cập nhật lần cuối:"
+        }
+    }
+}
+````
+
+````json:src/locales/en.json
+{
+    "pages": {
+        "privacy": {
+            "title": "Privacy Policy",
+            "sections": {
+                "data_collection": {
+                    "title": "1. Data Collection",
+                    "text": "Smarttrans only collects information necessary for providing translation services:",
+                    "items": [
+                        "Content to be translated",
+                        "Shared Google Sheet information",
+                        "User-provided API key (stored locally)"
+                    ]
+                },
+                "data_usage": {
+                    "title": "2. Data Usage",
+                    "text": "Collected information is only used to:",
+                    "purposes": [
+                        "Perform requested translations",
+                        "Improve service quality",
+                        "Handle technical issues",
+                        "Track service usage"
+                    ]
+                },
+                "data_security": {
+                    "title": "3. Data Security",
+                    "text": "We are committed to protecting user information through:",
+                    "measures": [
+                        "Data encryption during transmission",
+                        "No storage of translated content after completion",
+                        "Limited system access",
+                        "Regular security updates"
+                    ]
+                },
+                "user_rights": {
+                    "title": "4. User Rights",
+                    "text": "Users have the right to:",
+                    "rights": [
+                        "Request personal data deletion",
+                        "Opt-out of data collection",
+                        "Request information about collected data",
+                        "Update or modify personal information"
+                    ]
+                },
+                "cookies": {
+                    "title": "5. Cookies and Tracking",
+                    "text": "Smarttrans uses cookies and similar technologies to:",
+                    "purposes": [
+                        "Remember user preferences",
+                        "Improve user experience",
+                        "Analyze system performance"
+                    ]
+                },
+                "changes": {
+                    "title": "6. Policy Changes",
+                    "text": "We may update this policy over time. Any changes will be posted on the website and take effect immediately after posting."
+                },
+                "contact": {
+                    "title": "7. Contact",
+                    "text": "If you have any questions about this Privacy Policy, please contact:",
+                    "email": "Email: lonlywolf189@gmail.com"
+                }
+            },
+            "last_updated": "Last updated:"
+        }
+    }
+}
+````
+
+Những thay đổi này sẽ:
+1. Tổ chức nội dung theo cấu trúc rõ ràng
+2. Hỗ trợ đa ngôn ngữ cho toàn bộ nội dung
+3. Dễ dàng thêm/sửa nội dung qua file ngôn ngữ
+4. Giữ nguyên layout và style của trang
+
+---
+
+_**User**_
+
+Áp dụng tương tự vưới màn /support
+
+---
+
+_**Assistant**_
+
+Tôi sẽ cập nhật file support.ejs để sử dụng cấu trúc đa ngôn ngữ:
+
+````html:src/views/support.ejs
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold mb-3"><%= __('pages.support.title') %></h1>
+                <p class="lead text-muted"><%= __('pages.support.content.intro') %></p>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-4">
+                        <i class="bi bi-headset me-2 text-primary"></i>
+                        <%= __('pages.support.content.sections.contact.title') %>
+                    </h5>
+                    
+                    <% __('pages.support.content.sections.contact.methods').forEach(method => { %>
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="flex-shrink-0">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
+                                    <i class="bi bi-<%= method.type.toLowerCase() %> text-primary fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="fw-bold mb-1"><%= method.type %></h6>
+                                <p class="mb-0">
+                                    <a href="<%= method.type.toLowerCase() === 'email' ? 'mailto:' + method.value : method.value %>" 
+                                       class="text-decoration-none"
+                                       <%= method.type.toLowerCase() !== 'email' ? 'target="_blank"' : '' %>>
+                                        <%= method.value %>
+                                    </a>
+                                </p>
+                                <small class="text-muted"><%= method.note %></small>
+                            </div>
+                        </div>
+                    <% }); %>
+
+                    <div class="alert alert-info mb-4">
+                        <div class="d-flex">
+                            <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+                            <div>
+                                <strong><%= __('pages.support.content.sections.contact.response_time.title') %></strong>
+                                <ul class="mb-0 mt-1">
+                                    <% __('pages.support.content.sections.contact.response_time.items').forEach(item => { %>
+                                        <li><%= item %></li>
+                                    <% }); %>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-question-circle me-2 text-primary"></i>
+                        <%= __('pages.support.content.sections.faq.title') %>
+                    </h5>
+                    
+                    <div class="accordion" id="faqAccordion">
+                        <% __('pages.support.content.sections.faq.questions').forEach((faq, index) => { %>
+                            <div class="accordion-item border-0 mb-3">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed bg-light" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#faq<%= index %>">
+                                        <%= faq.q %>
+                                    </button>
+                                </h2>
+                                <div id="faq<%= index %>" 
+                                     class="accordion-collapse collapse" 
+                                     data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        <%= faq.a %>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+````
+
+Và cập nhật thêm chuỗi dịch trong vi.json và en.json:
+
+````json:src/locales/vi.json
+{
+    "pages": {
+        "support": {
+            "title": "Hỗ trợ",
+            "content": {
+                "intro": "Chúng tôi luôn sẵn sàng hỗ trợ bạn",
+                "sections": {
+                    "contact": {
+                        "title": "Liên hệ hỗ trợ",
+                        "methods": [
+                            {
+                                "type": "Email",
+                                "value": "support@smarttrans.ai",
+                                "note": "Phản hồi trong vòng 24h"
+                            },
+                            {
+                                "type": "GitHub",
+                                "value": "github.com/smarttrans/issues",
+                                "note": "Báo cáo lỗi & góp ý"
+                            }
+                        ],
+                        "response_time": {
+                            "title": "Thời gian phản hồi:",
+                            "items": [
+                                "Email: Trong vòng 24 giờ làm việc",
+                                "Vấn đề khẩn cấp: Trong vòng 4 giờ làm việc"
+                            ]
+                        }
+                    },
+                    "faq": {
+                        "title": "Câu hỏi thường gặp",
+                        "questions": [
+                            {
+                                "q": "Làm thế nào để bắt đầu sử dụng Smarttrans?",
+                                "a": "Để bắt đầu, bạn chỉ cần có một Google Sheet và chia sẻ quyền chỉnh sửa cho email của hệ thống. Sau đó, dán link sheet vào form và chọn các tùy chọn dịch phù hợp."
+                            },
+                            {
+                                "q": "Tôi có thể sử dụng API key của riêng mình không?",
+                                "a": "Có, bạn có thể sử dụng API key OpenAI của riêng mình. Điều này giúp bạn kiểm soát chi phí và tốc độ dịch thuật tốt hơn."
+                            },
+                            {
+                                "q": "Chi phí dịch thuật được tính như thế nào?",
+                                "a": "Chi phí được tính dựa trên số lượng ký tự trong văn bản gốc. Bạn sẽ thấy ước tính chi phí trước khi bắt đầu dịch và chi phí thực tế sau khi hoàn thành."
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}
+````
+
+````json:src/locales/en.json
+{
+    "pages": {
+        "support": {
+            "title": "Support",
+            "content": {
+                "intro": "We're here to help you",
+                "sections": {
+                    "contact": {
+                        "title": "Contact Support",
+                        "methods": [
+                            {
+                                "type": "Email",
+                                "value": "support@smarttrans.ai",
+                                "note": "Response within 24h"
+                            },
+                            {
+                                "type": "GitHub",
+                                "value": "github.com/smarttrans/issues",
+                                "note": "Bug reports & suggestions"
+                            }
+                        ],
+                        "response_time": {
+                            "title": "Response Time:",
+                            "items": [
+                                "Email: Within 24 business hours",
+                                "Urgent issues: Within 4 business hours"
+                            ]
+                        }
+                    },
+                    "faq": {
+                        "title": "Frequently Asked Questions",
+                        "questions": [
+                            {
+                                "q": "How do I start using Smarttrans?",
+                                "a": "To get started, you just need a Google Sheet and share edit access with our system email. Then, paste the sheet link into the form and select your translation preferences."
+                            },
+                            {
+                                "q": "Can I use my own API key?",
+                                "a": "Yes, you can use your own OpenAI API key. This gives you better control over costs and translation speed."
+                            },
+                            {
+                                "q": "How is translation cost calculated?",
+                                "a": "Cost is based on the number of characters in the source text. You'll see an estimated cost before starting and the actual cost after completion."
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}
+````
+
+Những thay đổi này sẽ:
+1. Hỗ trợ đa ngôn ngữ cho toàn bộ nội dung trang support
+2. Tổ chức chuỗi dịch theo cấu trúc rõ ràng
+3. Tự động hiển thị icon phù hợp cho từng phương thức liên hệ
+4. Giữ nguyên layout và style của trang
+5. Dễ dàng thêm/sửa nội dung qua file ngôn ngữ
+
+---
+
+_**User**_
+
+Trong màn hỗ trợ. Hãy bỏ phần github cá nhân và thay email support thành lonlywolf189@gmail.com
+
+---
+
+_**Assistant**_
+
+Tôi sẽ cập nhật thông tin liên hệ trong cả hai file ngôn ngữ:
+
+````json:src/locales/vi.json
+{
+    "pages": {
+        "support": {
+            "content": {
+                "sections": {
+                    "contact": {
+                        "methods": [
+                            {
+                                "type": "Email",
+                                "value": "lonlywolf189@gmail.com",
+                                "note": "Phản hồi trong vòng 24h"
+                            }
+                        ],
+                        "response_time": {
+                            "title": "Thời gian phản hồi:",
+                            "items": [
+                                "Email: Trong vòng 24 giờ làm việc",
+                                "Vấn đề khẩn cấp: Trong vòng 4 giờ làm việc"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+````
+
+````json:src/locales/en.json
+{
+    "pages": {
+        "support": {
+            "content": {
+                "sections": {
+                    "contact": {
+                        "methods": [
+                            {
+                                "type": "Email",
+                                "value": "lonlywolf189@gmail.com",
+                                "note": "Response within 24h"
+                            }
+                        ],
+                        "response_time": {
+                            "title": "Response Time:",
+                            "items": [
+                                "Email: Within 24 business hours",
+                                "Urgent issues: Within 4 business hours"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+````
+
+Những thay đổi này sẽ:
+1. Xóa phương thức liên hệ qua GitHub
+2. Cập nhật email support thành lonlywolf189@gmail.com
+3. Giữ nguyên các thông tin khác về thời gian phản hồi
+4. Giữ nguyên cấu trúc và định dạng của file ngôn ngữ
+
+---
+
+_**User**_
+
+Tôi muốn thêm 1 trường custom prompt . Khi dịch sẽ sử dụng trường custom prompt này. 
+
+---
+
+_**Assistant**_
+
+Tôi sẽ thêm trường custom prompt vào form dịch và cập nhật logic xử lý:
+
+1. Cập nhật form dịch trong translate.ejs:
+
+````html:src/views/translate.ejs
+<!-- Thêm sau phần Domain -->
+<div class="mb-4">
+    <label for="customPrompt" class="form-label d-flex justify-content-between">
+        <%= __('translate.form.custom_prompt.label') %>
+        <i class="bi bi-info-circle" 
+           data-bs-toggle="tooltip" 
+           title="<%= __('translate.form.custom_prompt.tooltip') %>"></i>
+    </label>
+    <textarea class="form-control" 
+              id="customPrompt" 
+              name="customPrompt"
+              rows="3"
+              placeholder="<%= __('translate.form.custom_prompt.placeholder') %>"></textarea>
+    <div class="form-text"><%= __('translate.form.custom_prompt.help') %></div>
+</div>
+````
+
+2. Cập nhật file ngôn ngữ vi.json:
+
+````json:src/locales/vi.json
+{
+    "translate": {
+        "form": {
+            "custom_prompt": {
+                "label": "Hướng dẫn dịch tùy chỉnh",
+                "placeholder": "VD: Giữ nguyên các thuật ngữ kỹ thuật, dịch theo văn phong trang trọng...",
+                "tooltip": "Thêm các yêu cầu đặc biệt khi dịch",
+                "help": "Nhập hướng dẫn chi tiết để điều chỉnh cách dịch theo nhu cầu của bạn"
+            }
+        }
+    }
+}
+````
+
+3. Cập nhật file ngôn ngữ en.json:
+
+````json:src/locales/en.json
+{
+    "translate": {
+        "form": {
+            "custom_prompt": {
+                "label": "Custom Translation Instructions",
+                "placeholder": "E.g.: Keep technical terms unchanged, translate in formal tone...",
+                "tooltip": "Add special requirements for translation",
+                "help": "Enter detailed instructions to customize translation according to your needs"
+            }
+        }
+    }
+}
+````
+
+4. Cập nhật OpenAI service để sử dụng custom prompt:
+
+````javascript:src/services/openai.js
+class OpenAIService {
+    constructor(apiKey = null) {
+        // ... existing code ...
+
+        this.systemPrompts = {
+            technical: 'Technical domain. Keep terms. No explanation.',
+            general: 'Natural translation. Keep terms.'
+        };
+    }
+
+    async translate(text, targetLang, domain, customPrompt = '') {
+        if (!text || text.trim() === '') return '';
+
+        // Combine system prompt with custom prompt
+        const basePrompt = this.systemPrompts[domain] || this.systemPrompts.general;
+        const systemPrompt = customPrompt 
+            ? `${basePrompt}\nAdditional instructions: ${customPrompt}`
+            : basePrompt;
+
+        const completion = await this.client.chat.completions.create({
+            model: this.defaultModel.id,
+            messages: [
+                {
+                    role: "system",
+                    content: `${systemPrompt}\nTranslate to ${targetLang}. If cannot translate, keep original text.`
+                },
+                {
+                    role: "user",
+                    content: text
+                }
+            ],
+            temperature: 0.3,
+            max_tokens: 1000
+        });
+
+        return completion.choices[0].message.content.trim();
+    }
+}
+````
+
+5. Cập nhật controller để xử lý custom prompt:
+
+````javascript:src/controllers/translateController.js
+// Thêm customPrompt vào parameters
+async function translateData(data, targetLang, domain, translationService, req, customPrompt) {
+    // ... existing code ...
+
+    // Cập nhật lời gọi hàm translate để thêm customPrompt
+    const translated = cell?.toString().trim() 
+        ? await translationService.translate(
+            cell.toString().trim(), 
+            targetLang, 
+            domain,
+            customPrompt
+          )
+        : '';
+
+    // ... rest of the code ...
+}
+
+class TranslateController {
+    async handleSheetTranslation(req, res) {
+        try {
+            const { 
+                sheetUrl, 
+                sheetName, 
+                sheetRange, 
+                targetLang, 
+                domain, 
+                apiKey,
+                customPrompt  // Thêm customPrompt vào destructuring
+            } = req.body;
+
+            // ... existing validation code ...
+
+            const translatedData = await translateData(
+                data, 
+                targetLang, 
+                domain, 
+                translationService,
+                req,
+                customPrompt  // Truyền customPrompt vào hàm
+            );
+
+            // ... rest of the code ...
+        } catch (error) {
+            console.error('Translation error:', error);
+            res.status(500).json({
+                success: false,
+                error: error.message
+            });
+        }
+    }
+}
+````
+
+Những thay đổi này sẽ:
+1. Thêm trường nhập custom prompt vào form dịch
+2. Hỗ trợ đa ngôn ngữ cho trường mới
+3. Kết hợp custom prompt với system prompt có sẵn
+4. Truyền custom prompt qua toàn bộ flow xử lý
+5. Áp dụng custom prompt khi gọi API dịch
+
+Người dùng có thể nhập các yêu cầu đặc biệt như:
+- Giữ nguyên các thuật ngữ kỹ thuật
+- Dịch theo văn phong trang trọng/thân mật
+- Thêm các quy tắc dịch riêng cho dự án
+- Và các yêu cầu tùy chỉnh khác
+
+---
+
+_**User**_
+
+hãy mô tả chức năng dịch thuật bao gồm cả validate, các trường yêu cầu,
+Hãy trình bày 1 các có tổ chức dễ nhìn
+
+---
+
+_**Assistant**_
+
+Tôi sẽ mô tả chi tiết chức năng dịch thuật:
+
+## 1. Form Dịch Thuật
+
+### 1.1 Các trường thông tin
+| Trường | Bắt buộc | Mô tả |
+|--------|----------|--------|
+| Project Name | ✓ | Tên dự án dịch |
+| Sheet URL | ✓ | Link Google Sheet cần dịch |
+| Sheet Name | ✓ | Tên sheet cụ thể trong file |
+| Sheet Range |  | Vùng cells cần dịch (VD: A1:B10) |
+| Target Language | ✓ | Ngôn ngữ đích (en, ja, ko, zh) |
+| Domain | ✓ | Lĩnh vực chuyên môn |
+| API Key |  | OpenAI API key (tùy chọn) |
+
+### 1.2 Validation
+#### Sheet URL
+```javascript
+- Phải là URL Google Sheet hợp lệ
+- Format: https://docs.google.com/spreadsheets/d/{sheet_id}/...
+- Sheet ID phải có độ dài tối thiểu 10 ký tự
+```
+
+#### Sheet Range
+```javascript
+- Cho phép để trống (dịch toàn bộ sheet)
+- Các format hợp lệ:
+  + Một ô (VD: A1)
+  + Vùng cells (VD: A1:B10)
+  + Cả cột (VD: A:A, B:D)
+  + Cả hàng (VD: 1:1, 2:5)
+- Validate thứ tự:
+  + Cột bắt đầu <= Cột kết thúc
+  + Hàng bắt đầu <= Hàng kết thúc
+```
+
+#### API Key
+```javascript
+- Nếu có, phải theo format: sk-{32+ ký tự}
+- Kiểm tra tính hợp lệ bằng test request
+- Lưu trong localStorage để tái sử dụng
+```
+
+## 2. Quy Trình Xử Lý
+
+### 2.1 Pre-processing
+```javascript
+1. Validate toàn bộ input
+2. Kiểm tra quyền truy cập Google Sheet
+3. Đọc dữ liệu từ sheet theo range
+4. Khởi tạo OpenAI service với API key
+```
+
+### 2.2 Translation Process
+```javascript
+1. Chia dữ liệu thành các batch
+2. Dịch từng batch:
+   - Bỏ qua cells trống
+   - Cache kết quả dịch
+   - Xử lý rate limit
+3. Cập nhật progress realtime
+4. Ghi kết quả vào sheet
+```
+
+### 2.3 Error Handling
+```javascript
+- Sheet URL không hợp lệ
+- Không có quyền truy cập
+- API key không hợp lệ
+- Rate limit exceeded
+- Network errors
+- Timeout
+```
+
+## 3. Response Format
+
+### 3.1 Success Response
+```json
+{
+    "success": true,
+    "message": "Dịch thành công!",
+    "stats": {
+        "totalCells": 100,
+        "translatedCells": 95,
+        "skippedCells": 5,
+        "timeElapsed": "2m 30s"
+    }
+}
+```
+
+### 3.2 Error Response
+```json
+{
+    "success": false,
+    "error": "Detailed error message"
+}
+```
+
+## 4. Progress Tracking
+```javascript
+- Server-Sent Events (SSE)
+- Real-time updates:
+  + Phần trăm hoàn thành
+  + Số cells đã dịch
+  + Thời gian còn lại
+  + Trạng thái hiện tại
+```
+
+## 5. Rate Limiting
+```javascript
+- OpenAI API: 50 requests/phút
+- Google Sheets API: 60 requests/phút
+- Batch size: 20 cells/request
+- Delay giữa các batch: 500ms
+```
+
+## 6. Caching
+```javascript
+- Cache translation results
+- TTL: 1 giờ
+- Cache key: text + targetLang + domain
+- Stored in memory (Map object)
+```
+
+---
+
+_**User**_
+
+Mô tả chi tiết về trường Vùng dữ liệu trong form translate
+No.
+Item Name	
+Item Content (Description)	
+Type	
+Giá trị khởi tạo	
+Required/Optional	Validation & Format
+						
+
+---
+
+_**Assistant**_
+
+# Trường Vùng Dữ Liệu (Sheet Range)
+
+## 1. Thông Tin Cơ Bản
+| Thuộc tính | Chi tiết |
+|------------|----------|
+| Tên trường | Sheet Range |
+| Mô tả | Xác định vùng cells cần dịch trong Google Sheet |
+| Kiểu dữ liệu | Text |
+| Giá trị mặc định | Trống (dịch toàn bộ sheet) |
+| Bắt buộc | Không |
+
+## 2. Định Dạng Hợp Lệ
+
+### 2.1 Các kiểu vùng dữ liệu
+| Kiểu | Format | Ví dụ | Mô tả |
+|------|---------|-------|--------|
+| Một ô | `[A-Z]+[0-9]+` | A1, B5 | Dịch một ô duy nhất |
+| Vùng cells | `[A-Z]+[0-9]+:[A-Z]+[0-9]+` | A1:B10 | Dịch một vùng cells liên tục |
+| Cả cột | `[A-Z]:[A-Z]` | A:A, B:D | Dịch toàn bộ một hoặc nhiều cột |
+| Cả hàng | `[0-9]+:[0-9]+` | 1:1, 2:5 | Dịch toàn bộ một hoặc nhiều hàng |
+
+### 2.2 Code Validation
+```javascript
+function validateRange(range) {
+    // Cho phép trống
+    if (!range || range.trim() === '') {
+        return true;
+    }
+
+    // Chuẩn hóa input
+    range = range.trim().toUpperCase();
+
+    // Kiểm tra format cho 1 ô (VD: A1, B5)
+    const singleCellFormat = /^[A-Z]+\d+$/;
+    if (singleCellFormat.test(range)) {
+        return true;
+    }
+
+    // Kiểm tra có dấu :
+    if (!range.includes(':')) {
+        throw new Error('Vùng dữ liệu phải có dấu ":" hoặc là một ô đơn (VD: A1)');
+    }
+
+    const [start, end] = range.split(':');
+
+    // Kiểm tra format cột (D:D)
+    const columnFormat = /^[A-Z]$/;
+    if (columnFormat.test(start) && columnFormat.test(end)) {
+        if (start.charCodeAt(0) > end.charCodeAt(0)) {
+            throw new Error('Cột bắt đầu phải nhỏ hơn hoặc bằng cột kết thúc');
+        }
+        return true;
+    }
+
+    // Kiểm tra format dòng (14:14)
+    const rowFormat = /^\d+$/;
+    if (rowFormat.test(start) && rowFormat.test(end)) {
+        if (parseInt(start) > parseInt(end)) {
+            throw new Error('Dòng bắt đầu phải nhỏ hơn hoặc bằng dòng kết thúc');
+        }
+        return true;
+    }
+
+    // Kiểm tra format đầy đủ (A2:A10)
+    const cellFormat = /^[A-Z]+\d+$/;
+    if (cellFormat.test(start) && cellFormat.test(end)) {
+        const startCol = start.match(/^[A-Z]+/)[0];
+        const startRow = parseInt(start.match(/\d+$/)[0]);
+        const endCol = end.match(/^[A-Z]+/)[0];
+        const endRow = parseInt(end.match(/\d+$/)[0]);
+
+        if (startCol > endCol || startRow > endRow) {
+            throw new Error('Vùng chọn không hợp lệ (cột/dòng bắt đầu phải nhỏ hơn hoặc bằng cột/dòng kết thúc)');
+        }
+        return true;
+    }
+
+    throw new Error('Định dạng vùng dữ liệu không hợp lệ');
+}
+```
+
+## 3. Giao Diện Người Dùng
+
+### 3.1 HTML Template
+```html
+<div class="mb-4">
+    <label for="sheetRange" class="form-label">
+        <%= __('translate.form.sheet_range.label') %>
+        <i class="bi bi-info-circle" 
+           data-bs-toggle="tooltip"
+           title="<%= __('translate.form.sheet_range.tooltip') %>">
+        </i>
+    </label>
+    <input type="text" 
+           class="form-control" 
+           id="sheetRange"
+           name="sheetRange"
+           placeholder="<%= __('translate.form.sheet_range.placeholder') %>">
+    <div class="form-text">
+        <%= __('translate.form.sheet_range.help') %>
+    </div>
+</div>
+```
+
+### 3.2 Thông báo lỗi
+| Tình huống | Thông báo |
+|------------|-----------|
+| Format không hợp lệ | "Định dạng vùng dữ liệu không hợp lệ (VD: A2:A10, D:D, 14:14)" |
+| Thứ tự cột sai | "Cột bắt đầu phải nhỏ hơn hoặc bằng cột kết thúc" |
+| Thứ tự hàng sai | "Dòng bắt đầu phải nhỏ hơn hoặc bằng dòng kết thúc" |
+| Vùng không tồn tại | "Vùng dữ liệu nằm ngoài sheet" |
+
+## 4. Xử Lý Đặc Biệt
+
+### 4.1 Trường hợp đặc biệt
+```javascript
+- Để trống: Dịch toàn bộ sheet
+- Một ô: Dịch nhanh không batch
+- Vùng lớn: Chia nhỏ thành batches
+- Vùng không liên tục: Không hỗ trợ
+```
+
+### 4.2 Giới hạn
+```javascript
+- Tối đa 1000 cells/request
+- Không quá 100 cột
+- Không quá 1000 hàng
+- Không hỗ trợ named ranges
+```
+
+## 5. Tích Hợp
+
+### 5.1 Client-side Validation
+```javascript
+// Validate khi nhập
+sheetRange.addEventListener('input', function(e) {
+    try {
+        validateRange(e.target.value);
+        e.target.setCustomValidity('');
+    } catch (error) {
+        e.target.setCustomValidity(error.message);
+    }
+});
+```
+
+### 5.2 Server-side Processing
+```javascript
+// Xử lý range trong controller
+const range = sheetRange ? `${sheetName}!${sheetRange}` : sheetName;
+const data = await googleSheets.readSheet(sheetId, range);
+```
 
 ---
 

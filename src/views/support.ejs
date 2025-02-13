@@ -1,0 +1,81 @@
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold mb-3"><%= __('pages.support.title') %></h1>
+                <p class="lead text-muted"><%= __('pages.support.content.intro') %></p>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-4">
+                        <i class="bi bi-headset me-2 text-primary"></i>
+                        <%= __('pages.support.content.sections.contact.title') %>
+                    </h5>
+                    
+                    <% __('pages.support.content.sections.contact.methods').forEach(method => { %>
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="flex-shrink-0">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
+                                    <i class="bi bi-<%= method.type.toLowerCase() %> text-primary fs-4"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="fw-bold mb-1"><%= method.type %></h6>
+                                <p class="mb-0">
+                                    <a href="<%= method.type.toLowerCase() === 'email' ? 'mailto:' + method.value : method.value %>" 
+                                       class="text-decoration-none"
+                                       <%= method.type.toLowerCase() !== 'email' ? 'target="_blank"' : '' %>>
+                                        <%= method.value %>
+                                    </a>
+                                </p>
+                                <small class="text-muted"><%= method.note %></small>
+                            </div>
+                        </div>
+                    <% }); %>
+
+                    <div class="alert alert-info mb-4">
+                        <div class="d-flex">
+                            <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+                            <div>
+                                <strong><%= __('pages.support.content.sections.contact.response_time.title') %></strong>
+                                <ul class="mb-0 mt-1">
+                                    <% __('pages.support.content.sections.contact.response_time.items').forEach(item => { %>
+                                        <li><%= item %></li>
+                                    <% }); %>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="card-title mb-3">
+                        <i class="bi bi-question-circle me-2 text-primary"></i>
+                        <%= __('pages.support.content.sections.faq.title') %>
+                    </h5>
+                    
+                    <div class="accordion" id="faqAccordion">
+                        <% __('pages.support.content.sections.faq.questions').forEach((faq, index) => { %>
+                            <div class="accordion-item border-0 mb-3">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed bg-light" 
+                                            type="button" 
+                                            data-bs-toggle="collapse" 
+                                            data-bs-target="#faq<%= index %>">
+                                        <%= faq.q %>
+                                    </button>
+                                </h2>
+                                <div id="faq<%= index %>" 
+                                     class="accordion-collapse collapse" 
+                                     data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        <%= faq.a %>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

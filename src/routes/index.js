@@ -6,7 +6,45 @@ const googleSheets = require('../services/googleSheets');
 const { OpenAIService } = require('../services/openai');
 
 // Trang chủ
-router.get('/', translateController.showTranslatePage);
+router.get('/', (req, res) => {
+    res.render('home', {
+        title: 'Trang chủ'
+    });
+});
+
+// Trang dịch
+router.get('/translate', (req, res) => {
+    res.render('translate', {
+        title: 'Dịch thuật tài liệu',
+        error: null,
+        success: null
+    });
+});
+
+// Các trang tĩnh
+router.get('/about', (req, res) => {
+    res.render('about', {
+        title: req.__('pages.about.title')
+    });
+});
+
+router.get('/terms', (req, res) => {
+    res.render('terms', {
+        title: req.__('pages.terms.title')
+    });
+});
+
+router.get('/privacy', (req, res) => {
+    res.render('privacy', {
+        title: req.__('pages.privacy.title')
+    });
+});
+
+router.get('/support', (req, res) => {
+    res.render('support', {
+        title: req.__('pages.support.title')
+    });
+});
 
 // API endpoints
 router.post('/api/translate-sheet', validateGoogleSheet, translateController.handleSheetTranslation);
@@ -43,12 +81,12 @@ router.get('/api/translation-progress', (req, res) => {
         detail: 'Đang kết nối...'
     })}\n\n`);
 
-    // Lưu client connection
-    global.progressClient = res;
+    // Lưu client connection vào app.locals
+    req.app.locals.progressClient = res;
 
     // Cleanup khi client disconnect
     req.on('close', () => {
-        global.progressClient = null;
+        req.app.locals.progressClient = null;
     });
 });
 
@@ -80,20 +118,6 @@ router.post('/api/validate-key', async (req, res) => {
             error: error.message
         });
     }
-});
-
-// Thêm route cho Terms of Service
-router.get('/terms', (req, res) => {
-    res.render('terms', {
-        title: 'Điều khoản dịch vụ'
-    });
-});
-
-// Thêm route cho Privacy Policy
-router.get('/privacy', (req, res) => {
-    res.render('privacy', {
-        title: 'Chính sách bảo mật'
-    });
 });
 
 module.exports = router; 
