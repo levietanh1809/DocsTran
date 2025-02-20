@@ -230,9 +230,10 @@ document.getElementById('sheetUrl').addEventListener('change', async function(e)
 
 // Thêm function copy email
 function copyEmail() {
-    navigator.clipboard.writeText('anh.leviet@vti.com.vn')
+    const email = document.getElementById('googleClientEmail').value;
+    navigator.clipboard.writeText(email)
         .then(() => {
-            // Có thể thêm toast hoặc alert để thông báo đã copy
+            // Notify user that the email has been copied
             const btn = document.querySelector('[onclick="copyEmail()"]');
             const originalHtml = btn.innerHTML;
             btn.innerHTML = '<i class="bi bi-check"></i>';

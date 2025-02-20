@@ -17,7 +17,8 @@ router.get('/translate', (req, res) => {
     res.render('translate', {
         title: 'Dịch thuật tài liệu',
         error: null,
-        success: null
+        success: null,
+        googleClientEmail: process.env.GOOGLE_CLIENT_EMAIL
     });
 });
 

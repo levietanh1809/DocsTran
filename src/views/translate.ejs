@@ -210,6 +210,9 @@
 
                     <!-- Kết quả thành công -->
                     <div id="successAlert" class="alert d-none mt-4"></div>
+
+                    <!-- Add hidden input for Google client email -->
+                    <input type="hidden" id="googleClientEmail" value="<%= process.env.GOOGLE_CLIENT_EMAIL %>">
                 </div>
             </div>
         </div>
@@ -220,5 +223,22 @@
     window.translations = {
         translate: <%- JSON.stringify(__('translate')) %>
     };
+
+    function copyEmail() {
+        const email = document.getElementById('googleClientEmail').value;
+        navigator.clipboard.writeText(email)
+            .then(() => {
+                // Notify user that the email has been copied
+                const btn = document.querySelector('[onclick="copyEmail()"]');
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="bi bi-check"></i>';
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                }, 2000);
+            })
+            .catch(err => {
+                console.error('Failed to copy:', err);
+            });
+    }
 </script>
 <script src="/js/translate.js"></script> 
