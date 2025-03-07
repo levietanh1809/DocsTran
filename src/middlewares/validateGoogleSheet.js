@@ -55,13 +55,25 @@ function validateRange(range) {
             const endCol = end.match(/^[A-Z]+/)[0];
             const endRow = parseInt(end.match(/\d+$/)[0]);
 
+            // Chuyển đổi cột thành số để so sánh
+            const colToNumber = (col) => {
+                let number = 0;
+                for (let i = 0; i < col.length; i++) {
+                    number = number * 26 + (col.charCodeAt(i) - 'A'.charCodeAt(0) + 1);
+                }
+                return number;
+            };
+
             // Kiểm tra thứ tự
-            if (startCol > endCol || startRow > endRow) {
+            const startColNumber = colToNumber(startCol);
+            const endColNumber = colToNumber(endCol);
+
+            if (startColNumber > endColNumber || 
+                (startColNumber === endColNumber && startRow > endRow)) {
                 throw new Error('Vùng chọn không hợp lệ (cột/dòng bắt đầu phải nhỏ hơn hoặc bằng cột/dòng kết thúc)');
             }
-            return true;
+            return '';
         }
-
         throw new Error('Định dạng vùng dữ liệu không hợp lệ (VD: A2:A10, D:D, 44:46)');
     } catch (error) {
         throw new Error(`${error.message}. Ví dụ hợp lệ: A1, A2:A10, D:D, 14:14`);

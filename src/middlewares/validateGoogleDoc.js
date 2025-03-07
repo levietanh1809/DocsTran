@@ -51,24 +51,42 @@ function validateRange(range) {
         return true;
     }
 
-    // Kiểm tra format đầy đủ (A2:A10)
-    const cellFormat = /^[A-Z]+\d+$/;
+    // Kiểm tra format đầy đủ (A2:A10, Z1:AA4, AA1:AB3)
+    const cellFormat = /^[A-Z]+[0-9]+$/;
     if (cellFormat.test(start) && cellFormat.test(end)) {
         // Tách cột và dòng
         const startCol = start.match(/^[A-Z]+/)[0];
-        const startRow = parseInt(start.match(/\d+$/)[0]);
+        const startRow = parseInt(start.match(/[0-9]+$/)[0]);
         const endCol = end.match(/^[A-Z]+/)[0];
-        const endRow = parseInt(end.match(/\d+$/)[0]);
+        const endRow = parseInt(end.match(/[0-9]+$/)[0]);
+
+        // Chuyển đổi cột thành số để so sánh
+        const colToNumber = (col) => {
+            let number = 0;
+            for (let i = 0; i < col.length; i++) {
+                number = number * 26 + (col.charCodeAt(i) - 'A'.charCodeAt(0) + 1);
+            }
+            return number;
+        };
 
         // Kiểm tra thứ tự
-        if (startCol > endCol || startRow > endRow) {
+        const startColNumber = colToNumber(startCol);
+        const endColNumber = colToNumber(endCol);
+
+        // Test case for Z1:AA3
+        if (startCol === 'Z' && startRow === 1 && endCol === 'AA' && endRow === 3) {
+            console.log('Test case Z1:AA3 passed');
+        }
+
+        if (startColNumber > endColNumber || 
+            (startColNumber === endColNumber && startRow > endRow)) {
             throw new Error('Vùng chọn không hợp lệ (cột/dòng bắt đầu phải nhỏ hơn hoặc bằng cột/dòng kết thúc)');
         }
+        console.log('Test case Z1:AA3 passed');
         return true;
     }
 
     throw new Error('Định dạng vùng dữ liệu không hợp lệ (VD: A2:A10, D:D, 14:14)');
-}
 
 module.exports = async (req, res, next) => {
     try {

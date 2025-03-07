@@ -41,7 +41,7 @@ class OpenAIService {
         this.cacheTTL = 60 * 60 * 1000; // 1 hour
     }
 
-    async translate(text, targetLang, domain) {
+    async translate(text, targetLang, domain, customPrompt) {
         const cacheKey = `${text}_${targetLang}_${domain}`;
         
         // Check cache
@@ -51,7 +51,7 @@ class OpenAIService {
         }
 
         // Translate if not in cache
-        const translation = await this._translate(text, targetLang, domain);
+        const translation = await this._translate(text, targetLang, domain, customPrompt);
         
         // Save to cache
         this.cache.set(cacheKey, {
@@ -62,7 +62,7 @@ class OpenAIService {
         return translation;
     }
 
-    async _translate(text, targetLang, domain) {
+    async _translate(text, targetLang, domain, customPrompt) {
         // Check rate limit
         if (Date.now() >= this.resetTime) {
             this.requestCount = 0;
@@ -72,7 +72,7 @@ class OpenAIService {
         if (this.requestCount >= this.rateLimit) {
             const delay = this.resetTime - Date.now();
             await new Promise(resolve => setTimeout(resolve, delay));
-            return this._translate(text, targetLang, domain);
+            return this._translate(text, targetLang, domain, customPrompt);
         }
 
         try {
@@ -84,7 +84,22 @@ class OpenAIService {
                 messages: [
                     {
                         role: "system",
-                        content: `${this.systemPrompts[domain] || this.systemPrompts.general}\nTranslate to ${targetLang}. If cannot translate, keep original text.`
+                        content: `Translate to ${targetLang} apply the following rules:.${this.systemPrompts[domain] || this.systemPrompts.general}\n${customPrompt}\n. If cannot translate, keep original text.`
+                    },
+                    {
+                        role: "user",
+                        content: text
+                    }
+                ],
+                temperature: 0.3,
+                max_tokens: 1000
+            });
+            console.log('Translation Request:', {
+                model: this.defaultModel.id,
+                messages: [
+                    {
+                        role: "system",
+                        content: `Translate to ${targetLang} apply the following rules:.${this.systemPrompts[domain] || this.systemPrompts.general}\n${customPrompt}\n. If cannot translate, keep original text.`
                     },
                     {
                         role: "user",
@@ -100,7 +115,7 @@ class OpenAIService {
             if (error.response?.status === 429) {
                 const delay = parseInt(error.response.headers['retry-after'] || '5') * 1000;
                 await new Promise(resolve => setTimeout(resolve, delay));
-                return this._translate(text, targetLang, domain);
+                return this._translate(text, targetLang, domain, customPrompt);
             }
             throw error;
         }

@@ -122,6 +122,21 @@
                     "technical": "Kỹ thuật",
                     "general": "Chung"
                 }
+            },
+            "custom_prompt": {
+                "label": "Prompt tùy chỉnh",
+                "placeholder": "Nhập prompt tùy chỉnh của bạn ở đây...",
+                "help": "Bạn có thể thêm một prompt tùy chỉnh để hướng dẫn quá trình dịch.",
+                "guide": {
+                    "title": "Hướng dẫn sử dụng Prompt tùy chỉnh",
+                    "intro": "Prompt tùy chỉnh giúp bạn điều chỉnh cách dịch theo ý muốn. Dưới đây là một số ví dụ:",
+                    "examples": {
+                        "formal": "Sử dụng ngôn ngữ trang trọng cho các tài liệu chính thức.",
+                        "casual": "Sử dụng ngôn ngữ thân thiện cho các cuộc hội thoại hàng ngày.",
+                        "technical": "Giữ nguyên các thuật ngữ kỹ thuật trong bản dịch."
+                    },
+                    "case_study": "Ví dụ: Khi dịch một tài liệu kỹ thuật, bạn có thể sử dụng prompt 'Giữ nguyên các thuật ngữ kỹ thuật và sử dụng ngôn ngữ trang trọng.'"
+                }
             }
         },
         "model": {

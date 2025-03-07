@@ -122,6 +122,21 @@
                     "technical": "Technical",
                     "general": "General"
                 }
+            },
+            "custom_prompt": {
+                "label": "Custom Prompt",
+                "placeholder": "Enter your custom prompt here...",
+                "help": "You can add a custom prompt to guide the translation process.",
+                "guide": {
+                    "title": "Custom Prompt Usage Guide",
+                    "intro": "Custom prompts allow you to tailor the translation style. Here are some examples:",
+                    "examples": {
+                        "formal": "Use formal language for official documents.",
+                        "casual": "Use friendly language for everyday conversations.",
+                        "technical": "Maintain technical terms in the translation."
+                    },
+                    "case_study": "Example: When translating a technical document, you might use the prompt 'Maintain technical terms and use formal language.'"
+                }
             }
         },
         "model": {

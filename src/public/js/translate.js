@@ -1,130 +1,136 @@
 console.log('Form script loaded');
 
 // Add to existing form-validation.js or create new file
-document.getElementById('sheetTranslateForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const form = e.target;
-    form.classList.add('was-validated');
-
-    // Kiểm tra form validation
-    if (!form.checkValidity()) {
-        console.log('Form validation failed');
-        return;
-    }
-
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const spinner = submitBtn.querySelector('.spinner-border');
-    const btnText = submitBtn.querySelector('.button-text');
-    const progressBar = submitBtn.querySelector('.progress-bar');
-    const progressDetail = document.getElementById('progressDetail');
-    const progressDiv = document.getElementById('translationProgress');
-    const mainProgressBar = progressDiv.querySelector('.progress-bar');
-    
-    // Reset và hiện progress bars
-    [progressBar, mainProgressBar].forEach(bar => {
-        bar.style.width = '0%';
-        bar.setAttribute('aria-valuenow', 0);
-    });
-    submitBtn.classList.add('processing');
-    progressDiv.classList.remove('d-none');
-
-    try {
-        // Thay đổi trạng thái button và progress
-        submitBtn.disabled = true;
-        spinner.classList.remove('d-none');
-        btnText.textContent = window.translations.translate.button_states.processing;
-        progressDetail.textContent = window.translations.translate.progress.preparing;
-
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData);
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('sheetTranslateForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
         
-        // Tạo EventSource để nhận updates
-        const eventSource = new EventSource('/api/translation-progress');
-        
-        eventSource.onmessage = (event) => {
-            try {
-                const progress = JSON.parse(event.data);
-                console.log('Progress update:', progress);
-                
-                // Cập nhật progress bars
-                const percent = progress.percent || 0;
-                [progressBar, mainProgressBar].forEach(bar => {
-                    bar.style.width = `${percent}%`;
-                    bar.setAttribute('aria-valuenow', percent);
-                    
-                    // Cập nhật text hiển thị phần trăm
-                    const progressText = bar.querySelector('#progressText');
-                    if (progressText) {
-                        progressText.textContent = `${Math.round(percent)}%`;
-                    }
-                    
-                    // Thêm class khi hoàn thành
-                    if (progress.status === 'completed') {
-                        bar.classList.add('bg-success');
-                    }
-                });
+        const form = e.target;
+        form.classList.add('was-validated');
 
-                // Cập nhật text theo trạng thái
-                if (progress.status === 'completed') {
-                    progressDetail.textContent = window.translations.translate.progress.completed;
-                    btnText.textContent = window.translations.translate.button_states.submit;
-                } else {
-                    // Thay thế các placeholder trong message
-                    let message = progress.detail;
-                    if (message.includes('batch')) {
-                        const [current, total] = message.match(/\d+/g);
-                        message = window.translations.translate.progress.batch_progress
-                            .replace('{current}', current)
-                            .replace('{total}', total);
-                    } else if (message.includes('dòng')) {
-                        const [completed, total, percent] = message.match(/\d+/g);
-                        message = window.translations.translate.progress.row_progress
-                            .replace('{completed}', completed)
-                            .replace('{total}', total)
-                            .replace('{percent}', Math.round(percent));
-                    } else {
-                        message = window.translations.translate.progress.processing;
-                    }
-                    progressDetail.textContent = message;
-                    btnText.textContent = `${window.translations.translate.button_states.processing} (${Math.round(percent)}%)`;
-                }
-
-                // Thêm class khi hoàn thành
-                if (progress.status === 'completed') {
-                    progressDiv.classList.add('completed');
-                    eventSource.close();
-                }
-            } catch (error) {
-                console.error('Error parsing progress:', error);
-            }
-        };
-
-        eventSource.onerror = (error) => {
-            console.error('EventSource error:', error);
-            eventSource.close();
-        };
-
-        const response = await fetch('/api/translate-sheet', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-
-        const result = await response.json();
-        
-        if (response.ok && result.success) {
-            handleTranslationSuccess(result);
-        } else {
-            showError(result.error || 'Có lỗi xảy ra');
-            // Reset UI khi có lỗi
-            resetUI();
+        // Kiểm tra form validation
+        if (!form.checkValidity()) {
+            console.log('Form validation failed');
+            return;
         }
 
-    } catch (error) {
-        console.error('Request error:', error);
-        showError('Không thể kết nối đến server');
-    }
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const spinner = submitBtn.querySelector('.spinner-border');
+        const btnText = submitBtn.querySelector('.button-text');
+        const progressBar = submitBtn.querySelector('.progress-bar');
+        const progressDetail = document.getElementById('progressDetail');
+        const progressDiv = document.getElementById('translationProgress');
+        const mainProgressBar = progressDiv.querySelector('.progress-bar');
+        
+        // Reset và hiện progress bars
+        [progressBar, mainProgressBar].forEach(bar => {
+            bar.style.width = '0%';
+            bar.setAttribute('aria-valuenow', 0);
+        });
+        submitBtn.classList.add('processing');
+        progressDiv.classList.remove('d-none');
+
+        try {
+            // Thay đổi trạng thái button và progress
+            submitBtn.disabled = true;
+            spinner.classList.remove('d-none');
+            btnText.textContent = window.translations.translate.button_states.processing;
+            progressDetail.textContent = window.translations.translate.progress.preparing;
+
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            // Add custom prompt to the data
+            const customPrompt = document.getElementById('customPrompt').value;
+            console.log('Custom Prompt:', customPrompt);
+            data.customPrompt = customPrompt;
+            
+            // Tạo EventSource để nhận updates
+            const eventSource = new EventSource('/api/translation-progress');
+            
+            eventSource.onmessage = (event) => {
+                try {
+                    const progress = JSON.parse(event.data);
+                    console.log('Progress update:', progress);
+                    
+                    // Cập nhật progress bars
+                    const percent = progress.percent || 0;
+                    [progressBar, mainProgressBar].forEach(bar => {
+                        bar.style.width = `${percent}%`;
+                        bar.setAttribute('aria-valuenow', percent);
+                        
+                        // Cập nhật text hiển thị phần trăm
+                        const progressText = bar.querySelector('#progressText');
+                        if (progressText) {
+                            progressText.textContent = `${Math.round(percent)}%`;
+                        }
+                        
+                        // Thêm class khi hoàn thành
+                        if (progress.status === 'completed') {
+                            bar.classList.add('bg-success');
+                        }
+                    });
+
+                    // Cập nhật text theo trạng thái
+                    if (progress.status === 'completed') {
+                        progressDetail.textContent = window.translations.translate.progress.completed;
+                        btnText.textContent = window.translations.translate.button_states.submit;
+                    } else {
+                        // Thay thế các placeholder trong message
+                        let message = progress.detail;
+                        if (message.includes('batch')) {
+                            const [current, total] = message.match(/\d+/g);
+                            message = window.translations.translate.progress.batch_progress
+                                .replace('{current}', current)
+                                .replace('{total}', total);
+                        } else if (message.includes('dòng')) {
+                            const [completed, total, percent] = message.match(/\d+/g);
+                            message = window.translations.translate.progress.row_progress
+                                .replace('{completed}', completed)
+                                .replace('{total}', total)
+                                .replace('{percent}', Math.round(percent));
+                        } else {
+                            message = window.translations.translate.progress.processing;
+                        }
+                        progressDetail.textContent = message;
+                        btnText.textContent = `${window.translations.translate.button_states.processing} (${Math.round(percent)}%)`;
+                    }
+
+                    // Thêm class khi hoàn thành
+                    if (progress.status === 'completed') {
+                        progressDiv.classList.add('completed');
+                        eventSource.close();
+                    }
+                } catch (error) {
+                    console.error('Error parsing progress:', error);
+                }
+            };
+
+            eventSource.onerror = (error) => {
+                console.error('EventSource error:', error);
+                eventSource.close();
+            };
+
+            const response = await fetch('/api/translate-sheet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            
+            if (response.ok && result.success) {
+                handleTranslationSuccess(result);
+            } else {
+                showError(result.error || 'Có lỗi xảy ra');
+                // Reset UI khi có lỗi
+                resetUI();
+            }
+
+        } catch (error) {
+            console.error('Request error:', error);
+            showError('Không thể kết nối đến server');
+        }
+    });
 });
 
 // Tách hàm reset UI ra riêng
@@ -351,69 +357,82 @@ document.addEventListener('DOMContentLoaded', loadModels);
 // Thêm validation cho range input
 const rangeInput = document.getElementById('sheetRange');
 if (rangeInput) {
-    function validateRange(value) {
-        // Reset validation state khi input trống
-        if (!value || value.trim() === '') {
+function validateRange(value) {
+    // Reset validation state khi input trống
+    if (!value || value.trim() === '') {
+        return '';
+    }
+
+    try {
+        const range = value.trim().toUpperCase();
+
+        // Kiểm tra format cho 1 ô (VD: A1, B5)
+        const singleCellFormat = /^[A-Z]+\d+$/;
+        if (singleCellFormat.test(range)) {
             return '';
         }
 
-        try {
-            const range = value.trim().toUpperCase();
-
-            // Kiểm tra format cho 1 ô (VD: A1, B5)
-            const singleCellFormat = /^[A-Z]+\d+$/;
-            if (singleCellFormat.test(range)) {
-                return '';
-            }
-
-            // Kiểm tra có dấu :
-            if (!range.includes(':')) {
-                throw new Error('Định dạng vùng dữ liệu không hợp lệ');
-            }
-
-            const [start, end] = range.split(':');
-
-            // Kiểm tra format cột (D:D)
-            const columnFormat = /^[A-Z]$/;
-            if (columnFormat.test(start) && columnFormat.test(end)) {
-                // Kiểm tra thứ tự cột
-                if (start.charCodeAt(0) > end.charCodeAt(0)) {
-                    throw new Error('Cột bắt đầu phải nhỏ hơn hoặc bằng cột kết thúc');
-                }
-                return '';
-            }
-
-            // Kiểm tra format dòng (14:14)
-            const rowFormat = /^\d+$/;
-            if (rowFormat.test(start) && rowFormat.test(end)) {
-                // Kiểm tra thứ tự dòng
-                if (parseInt(start) > parseInt(end)) {
-                    throw new Error('Dòng bắt đầu phải nhỏ hơn hoặc bằng dòng kết thúc');
-                }
-                return '';
-            }
-
-            // Kiểm tra format đầy đủ (A2:A10)
-            const cellFormat = /^[A-Z]+\d+$/;
-            if (cellFormat.test(start) && cellFormat.test(end)) {
-                // Tách cột và dòng
-                const startCol = start.match(/^[A-Z]+/)[0];
-                const startRow = parseInt(start.match(/\d+$/)[0]);
-                const endCol = end.match(/^[A-Z]+/)[0];
-                const endRow = parseInt(end.match(/\d+$/)[0]);
-
-                // Kiểm tra thứ tự
-                if (startCol > endCol || startRow > endRow) {
-                    throw new Error('Vùng chọn không hợp lệ (cột/dòng bắt đầu phải nhỏ hơn hoặc bằng cột/dòng kết thúc)');
-                }
-                return '';
-            }
-
+        // Kiểm tra có dấu :
+        if (!range.includes(':')) {
             throw new Error('Định dạng vùng dữ liệu không hợp lệ');
-        } catch (error) {
-            return `${error.message} (VD: A1, A2:A10, D:D, 14:14)`;
         }
+
+        const [start, end] = range.split(':');
+
+        // Kiểm tra format cột (D:D)
+        const columnFormat = /^[A-Z]$/;
+        if (columnFormat.test(start) && columnFormat.test(end)) {
+            // Kiểm tra thứ tự cột
+            if (start.charCodeAt(0) > end.charCodeAt(0)) {
+                throw new Error('Cột bắt đầu phải nhỏ hơn hoặc bằng cột kết thúc');
+            }
+            return '';
+        }
+
+        // Kiểm tra format dòng (14:14)
+        const rowFormat = /^\d+$/;
+        if (rowFormat.test(start) && rowFormat.test(end)) {
+            // Kiểm tra thứ tự dòng
+            if (parseInt(start) > parseInt(end)) {
+                throw new Error('Dòng bắt đầu phải nhỏ hơn hoặc bằng dòng kết thúc');
+            }
+            return '';
+        }
+
+        // Kiểm tra format đầy đủ (A2:A10, Z1:AA3, Y1:AB3)
+        const cellFormat = /^[A-Z]+\d+$/;
+        if (cellFormat.test(start) && cellFormat.test(end)) {
+            // Tách cột và dòng
+            const startCol = start.match(/^[A-Z]+/)[0];
+            const startRow = parseInt(start.match(/\d+$/)[0]);
+            const endCol = end.match(/^[A-Z]+/)[0];
+            const endRow = parseInt(end.match(/\d+$/)[0]);
+
+            // Chuyển đổi cột thành số để so sánh
+            const colToNumber = (col) => {
+                let number = 0;
+                for (let i = 0; i < col.length; i++) {
+                    number = number * 26 + (col.charCodeAt(i) - 'A'.charCodeAt(0) + 1);
+                }
+                return number;
+            };
+
+            // Kiểm tra thứ tự
+            const startColNumber = colToNumber(startCol);
+            const endColNumber = colToNumber(endCol);
+
+            if (startColNumber > endColNumber || 
+                (startColNumber === endColNumber && startRow > endRow)) {
+                throw new Error('Vùng chọn không hợp lệ (cột/dòng bắt đầu phải nhỏ hơn hoặc bằng cột/dòng kết thúc)');
+            }
+            return '';
+        }
+
+        throw new Error('Định dạng vùng dữ liệu không hợp lệ');
+    } catch (error) {
+        return `${error.message} (VD: A1, A2:A10, D:D, 14:14, Z1:AA3, Y1:AB3)`;
     }
+}
 
     // Validate range khi input thay đổi
     rangeInput.addEventListener('input', function() {
@@ -526,23 +545,6 @@ document.getElementById('apiKey').addEventListener('input', function() {
     } else {
         this.setCustomValidity('');
     }
-});
-
-// Update form submit to include API key from settings
-document.getElementById('sheetTranslateForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    // ... existing validation code ...
-
-    const formData = {
-        sheetUrl: form.sheetUrl.value,
-        sheetName: form.sheetName.value,
-        sheetRange: form.sheetRange.value,
-        targetLang: form.targetLang.value,
-        domain: form.domain.value,
-        apiKey: localStorage.getItem('openai_api_key') // Get API key from settings
-    };
-
-    // ... rest of the submit handler
 });
 
 // Hàm hiển thị thông báo lỗi

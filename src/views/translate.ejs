@@ -157,6 +157,36 @@
                             </select>
                         </div>
 
+                        <!-- Custom Prompt -->
+                        <div class="mb-4">
+                            <label for="customPrompt" class="form-label"><%= __('translate.form.custom_prompt.label') %></label>
+                            <textarea class="form-control" id="customPrompt" name="customPrompt" rows="3" maxlength="200"
+                                      placeholder="<%= __('translate.form.custom_prompt.placeholder') %>"></textarea>
+                            <div class="form-text">
+                                <%= __('translate.form.custom_prompt.help') %>
+                            </div>
+                            <div class="accordion mt-2">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#customPromptGuideContent">
+                                            <i class="bi bi-info-circle me-2"></i> <%= __('translate.form.custom_prompt.guide.title') %>
+                                        </button>
+                                    </h2>
+                                    <div id="customPromptGuideContent" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <p class="mb-2"><%= __('translate.form.custom_prompt.guide.intro') %></p>
+                                            <ul class="small mb-2">
+                                                <% Object.entries(__('translate.form.custom_prompt.guide.examples')).forEach(([key, value]) => { %>
+                                                    <li><strong><%= key %>:</strong> <%= value %></li>
+                                                <% }); %>
+                                            </ul>
+                                            <p class="mb-0"><strong><%= __('translate.form.custom_prompt.guide.case_study') %></strong></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- AI Model Selection -->
                         <div class="alert alert-info mb-4">
                             <div class="d-flex align-items-center">

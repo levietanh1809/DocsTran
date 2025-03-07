@@ -4,11 +4,11 @@ const OpenAIService = require('../services/openai').OpenAIService;
 
 // Constants
 const RETRY_DELAY_MS = 10000; // Giảm xuống 10s
-const MAX_RETRIES = 3;  // Giảm số lần retry
-const BATCH_SIZE = 20;  // Tăng batch size
+const MAX_RETRIES = 3; // Giảm số lần retry
+const BATCH_SIZE = 20; // Tăng batch size
 const BATCH_DELAY = 500; // Giảm delay giữa các batch
-const OPENAI_RATE_LIMIT = 20;    // Số request/phút cho OpenAI
-const GOOGLE_RATE_LIMIT = 60;    // Số request/phút cho Google Sheets
+const OPENAI_RATE_LIMIT = 20; // Số request/phút cho OpenAI
+const GOOGLE_RATE_LIMIT = 60; // Số request/phút cho Google Sheets
 
 // Helper functions
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -29,61 +29,72 @@ function updateProgress(req, percent, detail) {
     }
 }
 
-// Thêm tham số req vào hàm translateData
+/**
+ * Hàm translateData thực hiện việc dịch dữ liệu từ một ngôn ngữ sang ngôn ngữ khác.
+ * 
+ * @param {Array} data - Dữ liệu cần dịch, có thể là một mảng các mảng (tương ứng với các hàng và cột).
+ * @param {string} targetLang - Ngôn ngữ đích mà dữ liệu sẽ được dịch sang.
+ * @param {string} domain - Miền ngữ nghĩa cho việc dịch (nếu có).
+ * @param {Object} translationService - Dịch vụ dịch thuật được sử dụng để thực hiện việc dịch.
+ * @param {Object} req - Đối tượng yêu cầu từ Express, chứa thông tin về yêu cầu HTTP.
+ * 
+ * @returns {Array} - Mảng dữ liệu đã được dịch.
+ */
 async function translateData(data, targetLang, domain, translationService, req) {
-    const total = data.length;
-    let completed = 0;
-    const translatedData = [];
+    const total = data.length; // Tổng số ô cần dịch
+    let completed = 0; // Số ô đã dịch
+    const translatedData = []; // Mảng chứa dữ liệu đã dịch
+    const customPrompt = req.body.customPrompt || ''; // Lấy prompt tùy chỉnh từ yêu cầu
 
-    // Nếu chỉ có 1 cell
+    // Nếu chỉ có 1 ô
     if (data.length === 1 && data[0].length === 1) {
-        const cell = data[0][0];
-        updateProgress(req, 50, 'Đang dịch...');
-        const translated = cell?.toString().trim() 
-            ? await translationService.translate(cell.toString().trim(), targetLang, domain)
+        const cell = data[0][0]; // Lấy ô duy nhất
+        updateProgress(req, 50, 'Đang dịch...'); // Cập nhật tiến độ
+        const translated = cell?.toString().trim()
+            ? await translationService.translate(cell.toString().trim(), targetLang, domain, customPrompt) // Dịch ô
             : '';
-        updateProgress(req, 100, 'Hoàn thành!');
-        return [[translated]];
+        updateProgress(req, 100, 'Hoàn thành!'); // Cập nhật tiến độ hoàn thành
+        return [[translated]]; // Trả về mảng chứa ô đã dịch
     }
 
     // Xử lý theo batch
-    const batchSize = Math.min(20, Math.ceil(total / 10));
-    
-    for (let i = 0; i < data.length; i += batchSize) {
-        const rowBatch = data.slice(i, i + batchSize);
-        updateProgress(req, (i / total) * 100, 
-            `Đang xử lý batch ${Math.floor(i/batchSize) + 1}/${Math.ceil(total/batchSize)}...`
-        );
+    const batchSize = Math.min(20, Math.ceil(total / 10)); // Kích thước batch tối đa là 20 hoặc 1/10 tổng số ô
 
-        // Translate batch
+    for (let i = 0; i < data.length; i += batchSize) {
+        const rowBatch = data.slice(i, i + batchSize); // Lấy batch hàng
+        updateProgress(req, (i / total) * 100,
+            `Đang xử lý batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(total / batchSize)}...`
+        ); // Cập nhật tiến độ cho batch
+
+        // Dịch batch
         const batchResults = await Promise.all(
             rowBatch.map(async (row) => {
                 const translatedRow = await Promise.all(
-                    row.map(cell => 
-                        cell?.toString().trim() 
-                            ? translationService.translate(cell.toString().trim(), targetLang, domain)
+                    row.map(cell =>
+                        cell?.toString().trim()
+                            ? translationService.translate(cell.toString().trim(), targetLang, domain, customPrompt) // Dịch từng ô trong hàng
                             : ''
                     )
                 );
-                
-                completed++;
-                const percent = (completed / total) * 100;
-                updateProgress(req, percent, 
+
+                completed++; // Tăng số ô đã dịch
+                const percent = (completed / total) * 100; // Tính phần trăm đã dịch
+                updateProgress(req, percent,
                     `Đã dịch ${completed}/${total} dòng (${Math.round(percent)}%)`
-                );
-                return translatedRow;
+                ); // Cập nhật tiến độ
+                return translatedRow; // Trả về hàng đã dịch
             })
         );
 
-        translatedData.push(...batchResults);
+        translatedData.push(...batchResults); // Thêm kết quả vào mảng dữ liệu đã dịch
 
         if (i + batchSize < data.length) {
-            const delayMs = Math.min(1000, batchSize * 50);
-            await delay(delayMs);
+            const delayMs = Math.min(1000, batchSize * 50); // Tính thời gian delay
+            await delay(delayMs); // Delay giữa các batch
         }
     }
 
-    return translatedData;
+    return translatedData; // Trả về dữ liệu đã dịch
 }
 
 // Thêm hàm tính thống kê
@@ -136,7 +147,7 @@ class TranslateController {
     async handleSheetTranslation(req, res) {
         try {
             const { sheetUrl, sheetName, sheetRange, targetLang, domain, apiKey } = req.body;
-            
+
             // Validate input
             if (!sheetUrl || !sheetName || !targetLang || !domain) {
                 throw new Error('Thiếu thông tin cần thiết');
@@ -160,22 +171,22 @@ class TranslateController {
             }
 
             updateProgress(req, 20, 'Đang đọc dữ liệu...');
-            
+
             const data = await googleSheets.readSheet(sheetId, fullRange);
-            
+
             if (data.length * data[0].length > 1000) {
                 updateProgress(req, 0, 'Đang xử lý dữ liệu lớn, có thể mất nhiều thời gian...');
             }
-            
+
             // Truyền thêm req vào hàm translateData
             const translatedData = await translateData(
-                data, 
-                targetLang, 
-                domain, 
+                data,
+                targetLang,
+                domain,
                 translationService,
                 req
             );
-            
+
             // Update sheet với range đầy đủ
             await googleSheets.updateSheet(sheetId, fullRange, translatedData);
 
@@ -198,4 +209,4 @@ class TranslateController {
     }
 }
 
-module.exports = new TranslateController(); 
+module.exports = new TranslateController();
