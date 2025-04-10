@@ -29,6 +29,14 @@ app.use(i18n.init);
 // Thêm locale middleware sau i18n
 app.use(localeMiddleware);
 
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true }
+}));
+
 // Import routes
 const routes = require('./routes');
 
@@ -37,13 +45,6 @@ app.use('/', routes);
 
 // Serve static files
 app.use(express.static('src/public'));
-
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true }
-}));
 
 sequelize.authenticate()
   .then(() => {

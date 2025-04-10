@@ -30,16 +30,11 @@ const login = async (req, res) => {
       });
     }
 
-    if (!req.session) {
-        console.error('⚠️ req.session is undefined!');
-        return res.status(500).send('Lỗi phiên làm việc. Vui lòng thử lại sau.');
-      }
-
     // Lưu session khi đăng nhập thành công
     req.session.user = {
       id: user.id,
       email: user.email,
-      name: user.name
+      name: user.username
     };
 
     return res.redirect('/translate');
