@@ -394,6 +394,14 @@
                     }
                 }
             }
+        },
+        "login": {
+            "title": "Login",
+            "username": "Username",
+            "email": "Email",
+            "password": "Password",
+            "submit": "Login",
+            "note": "If you don't have an account, please contact the admin to be granted access!"
         }
     }
 } 

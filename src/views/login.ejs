@@ -1,0 +1,32 @@
+<div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-4">
+        <h3 class="text-center mb-4"><%= __('pages.login.title') %></h3>
+        <% if (errors.length > 0) { %>
+            <div class="alert alert-danger">
+              <ul class="mb-0">
+                <% errors.forEach(function(error) { %>
+                  <li><%= error.msg %></li>
+                <% }); %>
+              </ul>
+            </div>
+          <% } %>
+        <form method="POST" action="/login">
+          <div class="mb-3">
+            <label for="username" class="form-label"><%= __('pages.login.email') %></label>
+            <input type="text" name="email" id="email" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label"><%= __('pages.login.password') %></label>
+            <input type="password" name="password" id="password" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100"><%= __('pages.login.submit') %></button>
+        </form>
+  
+        <p class="text-muted mt-3 text-center" style="font-size: 0.9rem;">
+          Nếu chưa có tài khoản, hãy liên hệ với admin để được cung cấp.
+        </p>
+      </div>
+    </div>
+</div>
+  
