@@ -11,11 +11,11 @@ const authController = require('../controllers/authController');
 // Middleware kiểm tra login
 const requireLogin = (req, res, next) => {
     console.log(req.session.user);
-    // if (req.session && req.session.user) {
+    if (req.session && req.session.user) {
       next();
-    // } else {
-    //   res.redirect('/login');
-    // }
+    } else {
+      res.redirect('/login');
+    }
 };
 
 
@@ -146,6 +146,8 @@ router.get("/login", (req, res) => {
         errors: errors,
     });
 });
+
+router.get('/logout', requireLogin, authController.logout);
 
 router.post('/login', validateLogin, authController.login);
 

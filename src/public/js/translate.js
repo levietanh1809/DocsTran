@@ -121,9 +121,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.ok && result.success) {
                 handleTranslationSuccess(result);
             } else {
-                showError(result.error || 'Có lỗi xảy ra');
-                // Reset UI khi có lỗi
-                resetUI();
+                if (response.status === 401) {
+                    window.location.href = '/login';
+                } else {
+                    console.log(result);
+                    showError(result.error || 'Có lỗi xảy ra');
+                    // Reset UI khi có lỗi
+                    resetUI();
+                }
             }
 
         } catch (error) {
@@ -569,4 +574,17 @@ function showErrorAlert(error) {
         </h5>
         <p class="mb-0">${errorMessage}</p>
     `;
-} 
+}
+
+function showError(errorMessage) {    
+    const successAlert = document.getElementById('successAlert');
+    successAlert.classList.remove('d-none', 'alert-success');
+    successAlert.classList.add('alert-danger');
+    successAlert.innerHTML = `
+        <h5 class="alert-heading">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            ${window.translations.translate.result.error.title}
+        </h5>
+        <p class="mb-0">${errorMessage}</p>
+    `;
+}

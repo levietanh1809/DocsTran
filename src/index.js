@@ -7,6 +7,7 @@ const localeMiddleware = require('./middlewares/localeMiddleware');
 const cookieParser = require('cookie-parser');
 const app = express();
 const session = require('express-session');
+const sessionUser = require('./middlewares/sessionUser');
 
 // database
 const sequelize = require('./config/sequelize');
@@ -34,8 +35,12 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }
+    sameSite: 'lax',
+    rolling: true,
+    cookie: { secure: process.env.NODE_ENV === 'production', maxAge: 24 * 60 * 60 * 1000 }
 }));
+
+app.use(sessionUser);
 
 // Import routes
 const routes = require('./routes');
