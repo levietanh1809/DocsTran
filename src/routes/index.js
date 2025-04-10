@@ -138,16 +138,14 @@ router.post('/api/validate-key', async (req, res) => {
 
 // Route: login page
 router.get("/login", (req, res) => {
+    const errors = req.session.errors || [];
+    req.session.errors = [];
+
     res.render('login', {
         title: req.__('pages.login.title'),
-        errors: [],
+        errors: errors,
     });
 });
-
-const fakeUser = {
-    email: 'user@example.com',
-    passwordHash: '$2b$10$R5DR9vqYB4ZgQtYbQErqeuRyGehsDqKZYw9goRrAc.3mbcA39Jf2e', // hash của: "123456"
-};
 
 router.post('/login', validateLogin, authController.login);
 

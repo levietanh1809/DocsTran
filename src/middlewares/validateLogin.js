@@ -11,11 +11,10 @@ exports.validateLogin = [
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.render('login', {
-        title: 'Đăng nhập',
-        errors: errors.array(),
-        old: req.body,
-      });
+      req.session.errors = errors.array();
+      req.session.save();
+
+      return res.redirect("/login");
     }
     next();
   },
