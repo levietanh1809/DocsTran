@@ -1,6 +1,9 @@
 const googleSheets = require('../services/googleSheets');
 const openai = require('../services/openai');
 const OpenAIService = require('../services/openai').OpenAIService;
+const History = require('../models/History');
+const User = require('../models/User');
+const sequelize = require('../config/sequelize');
 
 // Constants
 const RETRY_DELAY_MS = 10000; // Giảm xuống 10s
@@ -113,20 +116,21 @@ function calculateStats(data, translatedData) {
 
     // Tính chi phí dựa trên OpenAI API
     const pricing = openai.calculatePrice(totalChars);
+    const details = {
+      inputTokens: pricing.details.inputTokens,
+      outputTokens: pricing.details.outputTokens,
+      inputCost: `$${pricing.inputCost.toFixed(4)}`,
+      outputCost: `$${pricing.outputCost.toFixed(4)}`,
+      inputRate: pricing.details.inputRate,
+      outputRate: pricing.details.outputRate,
+    };
 
     return {
         totalCells,
         totalChars,
         model: pricing.model,
         estimatedCost: `$${pricing.totalCost.toFixed(4)}`,
-        details: {
-            inputTokens: pricing.details.inputTokens,
-            outputTokens: pricing.details.outputTokens,
-            inputCost: `$${pricing.inputCost.toFixed(4)}`,
-            outputCost: `$${pricing.outputCost.toFixed(4)}`,
-            inputRate: pricing.details.inputRate,
-            outputRate: pricing.details.outputRate
-        }
+        details: details
     };
 }
 
@@ -145,6 +149,25 @@ class TranslateController {
 
     // POST /api/translate-sheet
     async handleSheetTranslation(req, res) {
+        if (!req.session?.user) {
+            res.status(401).json({});
+        }
+
+        const user = await User.findOne({ where: { id: req.session.user.id } });
+        if (!user) {    
+            return res.status(404).json({
+                success: false,
+                error: "Tài khoản đã bị xóa",
+            });
+        }
+
+        if (user.balance <= 0.0001) {
+            return res.status(403).json({
+                success: false,
+                error: "Số dư không đủ,hãy liên hệ admin để tiếp tục sử dụng",
+            });
+        }
+        
         try {
             const { sheetUrl, sheetName, sheetRange, targetLang, domain, apiKey } = req.body;
 
@@ -193,6 +216,26 @@ class TranslateController {
             // Tính toán thống kê
             const stats = calculateStats(data, translatedData);
 
+            // Save history
+            const history = {
+                ...stats.details,
+                ...req.body,
+                userId: req.session.user.id,
+                totalCells: stats.totalCells,
+                totalChars: stats.totalChars,
+                inputCost: stats.details.inputCost.slice(1),
+                outputCost: stats.details.outputCost.slice(1),
+                estimatedCost: stats.estimatedCost.slice(1),
+            };
+
+            user.balance = user.balance >= parseFloat(stats.estimatedCost.slice(1)) ? user.balance - parseFloat(stats.estimatedCost.slice(1)) : 0;
+            
+            await sequelize.transaction(async (t) => {
+                await user.save({ transaction: t });
+                await History.create(history, { transaction: t });
+            });
+              
+
             res.json({
                 success: true,
                 message: 'Dịch thành công!',
@@ -201,7 +244,7 @@ class TranslateController {
 
         } catch (error) {
             console.error('Translation error:', error);
-            res.status(500).json({
+            return res.status(500).json({
                 success: false,
                 error: error.message
             });

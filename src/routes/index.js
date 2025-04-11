@@ -4,6 +4,20 @@ const translateController = require('../controllers/translateController');
 const validateGoogleSheet = require('../middlewares/validateGoogleSheet');
 const googleSheets = require('../services/googleSheets');
 const { OpenAIService } = require('../services/openai');
+const { validateLogin } = require('../middlewares/validateLogin');
+const bcrypt = require('bcrypt');
+const authController = require('../controllers/authController');
+
+// Middleware kiểm tra login
+const requireLogin = (req, res, next) => {
+    console.log(req.session.user);
+    if (req.session && req.session.user) {
+      next();
+    } else {
+      res.redirect('/login');
+    }
+};
+
 
 // Trang chủ
 router.get('/', (req, res) => {
@@ -13,7 +27,7 @@ router.get('/', (req, res) => {
 });
 
 // Trang dịch
-router.get('/translate', (req, res) => {
+router.get('/translate', requireLogin, (req, res) => {
     res.render('translate', {
         title: 'Dịch thuật tài liệu',
         error: null,
@@ -120,5 +134,21 @@ router.post('/api/validate-key', async (req, res) => {
         });
     }
 });
+
+
+// Route: login page
+router.get("/login", (req, res) => {
+    const errors = req.session.errors || [];
+    req.session.errors = [];
+
+    res.render('login', {
+        title: req.__('pages.login.title'),
+        errors: errors,
+    });
+});
+
+router.get('/logout', requireLogin, authController.logout);
+
+router.post('/login', validateLogin, authController.login);
 
 module.exports = router; 

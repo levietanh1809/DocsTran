@@ -394,6 +394,14 @@
                     }
                 }
             }
+        },
+        "login": {
+            "title": "Đăng nhập",
+            "username": "Tài khoản",
+            "email": "Email",
+            "password": "Mật khẩu",
+            "submit": "Đăng nhập",
+            "note": "Nếu chưa có tài khoản, hãy liên hệ với admin để được cung cấp!"
         }
     }
 } 

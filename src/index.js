@@ -6,6 +6,11 @@ const i18n = require('./config/i18n');
 const localeMiddleware = require('./middlewares/localeMiddleware');
 const cookieParser = require('cookie-parser');
 const app = express();
+const session = require('express-session');
+const sessionUser = require('./middlewares/sessionUser');
+
+// database
+const sequelize = require('./config/sequelize');
 
 // Cấu hình middleware
 app.use(express.json());
@@ -25,6 +30,18 @@ app.use(i18n.init);
 // Thêm locale middleware sau i18n
 app.use(localeMiddleware);
 
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    sameSite: 'lax',
+    rolling: true,
+    cookie: { secure: process.env.NODE_ENV === 'production', maxAge: 24 * 60 * 60 * 1000 }
+}));
+
+app.use(sessionUser);
+
 // Import routes
 const routes = require('./routes');
 
@@ -34,7 +51,19 @@ app.use('/', routes);
 // Serve static files
 app.use(express.static('src/public'));
 
-const PORT = process.env.PORT || 3000;
+sequelize.authenticate()
+  .then(() => {
+    console.log('✅ Connected to MySQL');
+    return sequelize.sync(); // { force: true } nếu muốn drop và tạo lại bảng
+  })
+  .then(() => {
+    console.log('✅ Models synced');
+  })
+  .catch((err) => {
+    console.error('❌ Unable to connect to DB:', err);
+  });
+
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server đang chạy tại port ${PORT}`);
 });
